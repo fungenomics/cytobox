@@ -18,18 +18,18 @@ To install locally, you will need [`devtools`](https://cran.r-project.org/web/pa
 
 Clone the cytokit repository (you will be prompted for your GitHub username and password):
 ```bash
-$ git clone https://github.com/sjessa/cytokit.git
+git clone https://github.com/sjessa/cytokit.git
 ```
 
 And then in R, install the package using devtools:
-```
+```r
 devtools::install_local("path/to/cytokit")
 ```
 
 To update the package, you will need to pull changes to your copy of the repository:
 ```bash
-$ cd cytokit
-$ git pull
+cd cytokit
+git pull
 ```
 
 and run the same `devtools` command in R as above.
