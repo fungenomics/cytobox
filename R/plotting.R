@@ -1,4 +1,4 @@
-# Functions for plotting
+# Functions for general plotting
 
 
 #' tsneByMeanMarkerExpression
@@ -40,7 +40,7 @@ tsneByMeanMarkerExpression <- function(object, markers,
     gg <- exp_df %>%
         dplyr::arrange(Mean_marker_expression) %>% # Order in which points will be plot
         ggplot(aes(x = exp_df[[vars[1]]], y = exp_df[[vars[2]]])) +
-        geom_point(aes(colour = Mean_marker_expression), size = rel(0.8)) +
+        geom_point(aes(colour = Mean_marker_expression), size = rel(0.8), alpha = 0.6) +
         viridis::scale_color_viridis() +
         xlab(vars[1]) + ylab(vars[2])
 
