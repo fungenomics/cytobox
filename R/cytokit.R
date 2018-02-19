@@ -20,10 +20,6 @@ NULL
 #' @inherit Seurat::pbmc_small
 "pbmc"
 
-#' @import ggmin
-NULL
-
-
 #' @import ggplot2
 NULL
 
@@ -31,4 +27,7 @@ NULL
 NULL
 
 #' @import dplyr
+NULL
+
+#' @importFrom rlang :=
 NULL

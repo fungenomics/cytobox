@@ -46,12 +46,14 @@ cd cytokit
 git checkout -b dev-selin
 ```
 
-Make changes locally on your branch and commit them. Then, push your changes:
+Make changes locally on your branch and once the package passes [`R CMD check`](http://r-pkgs.had.co.nz/check.html) with 0 errors,
+commit them. Then, push your changes:
 ```bash
 git push -u origin dev-selin
 ```
 
-On the GitHub website, create a pull request, to merge changes in your dev branch with the master branch.
+If the Travis build passes, there will be a green checkmark next to the 
+most recent commit on your branch. When the build has passed, create a pull request on the GitHub website and merge changes in your dev branch with the master branch.
 
 ### From now on
 

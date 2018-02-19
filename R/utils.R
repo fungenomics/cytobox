@@ -21,6 +21,7 @@
 #'
 #' @references https://stackoverflow.com/a/8197703
 #' @aliases ggColors
+#' @importFrom grDevices hcl
 ggColours <- function(n) {
 
     hues <- seq(15, 375, length = n + 1)
@@ -40,6 +41,15 @@ ggColors <- ggColours
 #' Given a Seurat object and a data frame where the rows correspond to cells,
 #' in the same order as in the Seurat object, add two columns giving coordinates
 #' in a dimensionality reduced space.
+#'
+#' @param object Seurat object, where dimensionality reduction has been applied,
+#' i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)
+#' @param df Data frame where rows correspond to cells, in the same order
+#' as in \code{rownames(object@@meta.data)}.
+#' @param reduction String specifying the dimensionality reduction to use,
+#' retrieves t-SNE by default. This should match the names of the elements of
+#' the list object@@dr, so it will typically be one of "pca" or "tsne".
+#' Default: "tsne"
 #'
 #' @export
 #' @author Selin Jessa
