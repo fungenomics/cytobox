@@ -2,6 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{ggColours}
 \alias{ggColours}
+\alias{ggColors}
 \title{ggColours}
 \usage{
 ggColours(n)
@@ -17,7 +18,8 @@ Named character vector, where names are the names of clusters, from
 Get evenly spaced colours from around the colour wheel, which are the default
 colours assigned to clusters by Seurat. The output of this function can be
 passed to the \code{scale_colour_manual()} and \code{scale_fill_manual()} functions
-from ggplot2, as the \code{values} argument.
+from ggplot2, as the \code{values} argument. (\code{\link{ggColors}} points
+to this function.)
 }
 \examples{
 

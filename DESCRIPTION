@@ -9,10 +9,15 @@ Encoding: UTF-8
 License: file LICENSE
 LazyData: true
 Imports: 
-    ggmin,
     ggplot2 (>= 2.2.1),
-    Seurat (>= 2.2.0)
-Remotes: sjessa/ggmin
+    Seurat (>= 2.2.0),
+    dplyr (>= 0.7.0),
+    viridis (>= 0.4.1),
+    magrittr (>= 1.5),
+    tibble
 RoxygenNote: 6.0.1
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

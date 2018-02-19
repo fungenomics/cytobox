@@ -22,7 +22,7 @@ Since the repo is private, there are a couple steps to install `cytokit`:
 3. Install `cytokit` and include the token as an argument:
 
 ```r
-devtools::install_github("sjessa/cytokit", auth_token = "abc123")
+devtools::install_github("sjessa/cytokit", auth_token = "abc123", build_vignettes = TRUE)
 
 ```
 
@@ -51,7 +51,7 @@ Make changes locally on your branch and commit them. Then, push your changes:
 git push -u origin dev-selin
 ```
 
-5. On the GitHub website, create a pull request, to merge changes in your dev branch with the master branch.
+On the GitHub website, create a pull request, to merge changes in your dev branch with the master branch.
 
 ### From now on
 
