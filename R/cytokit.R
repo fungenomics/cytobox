@@ -23,6 +23,9 @@ NULL
 #' @import ggplot2
 NULL
 
+#' @importFrom glue glue
+NULL
+
 #' @importFrom viridis viridis
 NULL
 

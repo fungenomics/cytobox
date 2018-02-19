@@ -63,4 +63,6 @@ git checkout dev-selin # This command switches to your dev branch
 git merge master # Merge changes from master branch onto dev-selin
 ```
 
+and then continue the edit/commit/push cycle.
+
 (There is a more sophisticated way of doing this, called rebasing: https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
