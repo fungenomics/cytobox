@@ -43,6 +43,7 @@ meanMarkerExpression <- function(object, markers) {
 #'
 #' @export
 #' @author adapted from code from Alexis Blanchet-Cohen
+#' @importFrom stats ecdf
 percentilesMarkerExpression <- function(object, markers) {
 
     # Get expression data

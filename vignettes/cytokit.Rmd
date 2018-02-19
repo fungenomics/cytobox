@@ -11,6 +11,7 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  dev = "png",
   comment = "#>"
 )
 ```
@@ -23,7 +24,7 @@ library(cytokit)
 
 Plot a t-SNE coloured by mean marker expression
 
-```{r tsneByMeanMarkerExpression}
+```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4}
 
 tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
 
@@ -32,8 +33,18 @@ tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
 
 Plot a t-SNE coloured by percentiles marker expression
 
-```{r tsneByPercentilesMarkerExpression}
+```{r tsneByPercentilesMarkerExpression, fig.width = 6, fig.height = 4}
 
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"))
+
+```
+
+
+Heatmap of minimum % overlap of gene markers between clusters from two different samples:
+(here, comparing one dataset to itself)
+
+```{r heatmapPercentMarkerOverlap, fig.width = 5, fig.height = 4}
+
+heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc, s1_name = "PBMC", s2_name = "PBMC")
 
 ```
