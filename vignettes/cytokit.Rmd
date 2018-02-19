@@ -39,6 +39,14 @@ tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"))
 
 ```
 
+Pariwise violin plot
+
+```{r markerViolinPlot, fig.width = 6, fig.height = 4}
+
+markerViolinPlot(pbmc, markers_pbmc, pbmc, "PBMC1", "PBMC2", "res.1", "res.1")
+
+```
+
 
 Heatmap of minimum % overlap of gene markers between clusters from two different samples:
 (here, comparing one dataset to itself)

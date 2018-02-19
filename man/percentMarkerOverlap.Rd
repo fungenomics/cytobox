@@ -12,8 +12,8 @@ percentMarkerOverlap(markers1, markers2, marker_col = "gene")
 \item{markers2}{Data frame of markers for second dataset as returned by Seurat::FindAllMarkers()}
 
 \item{marker_col}{String specifying the column in the markers data frames which
-specifies the cluster. By default, Seurat calls this "gene" (the default here); in the pipeline,
-it may be called "external_gene_name".}
+specifies the cluster. By default, Seurat calls this "gene" (the default here);
+in objects produced by the lab's pipeline, it may be called "external_gene_name".}
 }
 \value{
 Data frame with three columns: "s1_cluster" giving the cluster for

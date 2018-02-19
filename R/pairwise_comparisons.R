@@ -1,6 +1,100 @@
 # Functions for pairwise comparisons of two SC datasets
 
 
+
+#' meanMarkerExprByCluster
+#'
+#' @return Data frame where the first two columns are "Cell" and "Cluster",
+#' and all remaining columns give the mean expression of markers identified
+#' for each cluster
+#'
+#' @export
+#' @author Selin Jessa
+meanMarkerExprByCluster <- function(object, markers, cluster_col, marker_col = "gene") {
+
+    perCluster <- function(cluster) {
+
+        # Keep marker genes for cluster
+        keep_markers <- markers[markers$cluster == cluster, marker_col]
+
+        # Filtered expression
+        filt_exp <- exp[rownames(exp) %in% keep_markers, ]
+
+        # For each cell, compute its mean expression of gene markers for the cluster
+        mean_exp <- colSums(filt_exp)/nrow(filt_exp)
+        mean_exp <- data.frame(mean = as.numeric(mean_exp))
+
+        names(mean_exp)[1] <- cluster
+        return(mean_exp)
+
+    }
+
+    exp <- object@data %>% as.matrix %>% as.data.frame
+    n_clusters <- length(unique(object@meta.data[, cluster_col]))
+    clusters <- seq(0, n_clusters - 1)
+
+    # Bind columns, each of which corresponds to a cluster
+    purrr::map_dfc(clusters, perCluster) %>%
+        tibble::add_column(Cluster = as.character(object@meta.data[,cluster_col]), .before = 1) %>%
+        tibble::add_column(Cell = colnames(exp), .before = 1)
+
+}
+
+
+#' markerViolinPlot
+#'
+#' Make a grid of violin plots with the mean expression of each cluster, for markers
+# of each cluster either from that same dataset, or from a different one. Here,
+#' dataset 1 is the sample whose expression values will be plot, and dataset 2
+#' is the sample whose cluster markers are used.
+#'
+#' @param object1 Seurat object for which to plot expression
+#' @param markers Data frame as returned by Seurat::FindAllMarkers()
+#' @param object2 Seurat object from which cluster markers (\code{markers}) were defined
+#' @param s1_name String, sample name for \code{object1}
+#' @param s2_name String, sample name for \code{object2}
+#' @param cluster_col1 String, column in \code{object1@@meta.data} which stores
+#' the cluster assignments to use.
+#' @param cluster_col2 String, column in \code{object2@@meta.data} which stores
+#' the cluster assignments to use.
+#' @param marker_col String specifying the column in the \code{markers} data frames which
+#' specifies the cluster. By default, Seurat calls this "gene" (the default here);
+#' in objects produced by the lab's pipeline, it may be called "external_gene_name".
+#'
+#' @return A ggplot object
+#' @author adapted from code from Alexis Blanchet-Cohen
+#'
+#' @export
+#' @examples
+#' markerViolinPlot(pbmc, markers_pbmc, pbmc, "Test1", "Test2", "res.1", "res.1")
+markerViolinPlot <- function(object1, markers, object2, s1_name, s2_name,
+                             cluster_col1, cluster_col2, marker_col = "gene") {
+
+    s1_clusters <- sort(unique(object1@meta.data[, cluster_col1]))
+    s2_clusters <- sort(unique(object2@meta.data[, cluster_col2]))
+    clusters2 <- paste0(s2_name, " cluster ", sort(s2_clusters))
+
+    exp <- meanMarkerExprByCluster(object1, markers, cluster_col1, marker_col)
+
+    gg <- exp %>%
+        tidyr::gather(s2_cluster, mean_expression, 3:ncol(.)) %>%
+        dplyr::mutate(s1_cluster = factor(Cluster, levels = sort(s1_clusters)),
+               s2_cluster = glue("{s2_name} cluster {s2_cluster}")) %>%
+        mutate(s2_cluster = factor(s2_cluster, levels = clusters2)) %>%
+        ggplot(aes(x = s1_cluster, y = mean_expression)) +
+        geom_violin(aes(fill = s2_cluster)) +
+        facet_wrap(~ s2_cluster) +
+        theme_min() +
+        xlab(glue("{s1_name} cluster")) +
+        scale_fill_discrete(name = glue("{s2_name} cluster")) +
+        theme(panel.grid.major.x = element_line(colour = "grey90"))
+
+    return(gg)
+
+}
+
+
+
 #' percentMarkerOverlap
 #'
 #' @param markers1 Data frame of markers for one dataset as returned by Seurat::FindAllMarkers()
@@ -86,7 +180,7 @@ heatmapPercentMarkerOverlap <- function(markers1, markers2,
         geom_raster(aes(fill = marker_overlap)) +
         geom_text(aes(label = round(marker_overlap, 2)), colour = "white", size = 3) +
         scale_x_discrete(position = "top") +
-        scale_fill_viridis_c(limits = c(0, 1)) +
+        ggplot2::scale_fill_viridis_c(limits = c(0, 1)) +
         theme_min() +
         theme(panel.border = element_blank()) +
         ggtitle("Min % overlap in cluster gene markers, sorted by % overlap")
