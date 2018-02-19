@@ -1,0 +1,39 @@
+---
+title: "cytokit examples"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{cytokit examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Load the package
+
+```{r load}
+library(cytokit)
+```
+
+Plot a t-SNE coloured by mean marker expression
+
+```{r tsneByMeanMarkerExpression}
+
+tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
+
+```
+
+
+Plot a t-SNE coloured by percentiles marker expression
+
+```{r tsneByPercentilesMarkerExpression}
+
+tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"))
+
+```

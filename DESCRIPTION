@@ -1,6 +1,6 @@
 Package: cytokit
 Type: Package
-Title: A toolkit for analyzing single cell RNA-seq data.
+Title: A toolkit for analyzing single cell RNA-seq data
 Description: Shared functions for processing, interrogating, and
     visualizing single cell RNA-seq data.
 Version: 0.0.9999
@@ -8,11 +8,18 @@ Authors@R: person("Selin", "Jessa", email = "selinjessa@gmail.com", role = c("au
 Encoding: UTF-8
 License: file LICENSE
 LazyData: true
+Depends: R (>= 3.4)
 Imports: 
-    ggmin,
     ggplot2 (>= 2.2.1),
-    Seurat (>= 2.2.0)
-Remotes: sjessa/ggmin
+    Seurat (>= 2.2.0),
+    dplyr (>= 0.7.0),
+    viridis (>= 0.4.1),
+    magrittr (>= 1.5),
+    tibble,
+    rlang
 RoxygenNote: 6.0.1
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
