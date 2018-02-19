@@ -17,6 +17,7 @@ Imports:
     magrittr (>= 1.5),
     tibble,
     rlang,
+    data.table,
     purrr,
     glue,
     tidyr
