@@ -3,20 +3,20 @@
 
 #' meanMarkerExpression
 #'
-#' @param object Seurat object
+#' @param seurat Seurat object
 #' @param markers String or character vector specifying gene(s) to use
 #'
 #' @return Data frame with two columns: "Cell" which specifies the cell ID
-#' obtained from \code{colnames(object@@data)}, and "Mean_marker_expression"
+#' obtained from \code{colnames(seurat@@data)}, and "Mean_marker_expression"
 #' which is the expression value for the marker gene, or mean if multiple
 #' genes were provided.
 #'
 #' @export
 #' @author Selin Jessa
-meanMarkerExpression <- function(object, markers) {
+meanMarkerExpression <- function(seurat, markers) {
 
-    # Get expression data from the Seurat object
-    exp <- object@data %>% as.matrix %>% as.data.frame
+    # Get expression data from the Seurat seurat
+    exp <- as.data.frame(as.matrix(seurat@data))
 
     # Filter to the markers
     filt_exp <- exp[rownames(exp) %in% markers, ]
@@ -32,11 +32,11 @@ meanMarkerExpression <- function(object, markers) {
 
 #' perecentilesMarkerExpression
 #'
-#' @param object Seurat object
+#' @param seurat Seurat object
 #' @param markers String or character vector specifying gene(s) to use
 #'
 #' @return Data frame with three columns: "Cell" which specifies the cell ID
-#' obtained from \code{colnames(object@@data)}, "Percentile" giving the
+#' obtained from \code{colnames(seurat@@data)}, "Percentile" giving the
 #' percentile expression for each cell, and
 #' "Gradient_group" which gives the ordering that should be used to assign
 #' colours by gradient.
@@ -44,30 +44,29 @@ meanMarkerExpression <- function(object, markers) {
 #' @export
 #' @author adapted from code from Alexis Blanchet-Cohen
 #' @importFrom stats ecdf
-percentilesMarkerExpression <- function(object, markers) {
+percentilesMarkerExpression <- function(seurat, markers) {
 
-    # Get expression data
-    exp <- object@data %>%
-        as.matrix() %>%
-        as.data.frame() %>%
+    exp.matrix <- as.data.frame(as.matrix(seurat@data)) %>%
         tibble::rownames_to_column(var = "gene_name")
 
-    exp_filt <- exp %>% filter(gene_name %in% markers)
-    exp_filt_summed <- exp_filt %>% dplyr::select(-gene_name) %>% colSums()
-    exp_filt_summed <- data.frame(Cell = colnames(object@data),
-                                  Exp_sum = unname(exp_filt_summed))
+    exp.matrix.filt <- filter(exp.matrix, gene_name %in% markers)
+    exp.matrix.filt.summed <- colSums(select(exp.matrix.filt, -gene_name))
+    # Notice that cell.type is really the sum of expression values for all the genes
+    # in the markers argument
+    exp.matrix.filt.summed <- data.frame(cell.type = unname(exp.matrix.filt.summed),
+                                          Cell = colnames(seurat@data))
 
-    exp_zero <- exp_filt_summed %>% filter(Exp_sum == 0) %>%
-        dplyr::mutate(percentile = NA)
-    exp_not_zero <- exp_filt_summed %>% filter(Exp_sum != 0)
+    exp <- exp.matrix.filt.summed
 
     # Add percentiles
-    exp_not_zero$percentile <- ecdf(exp_not_zero$Exp_sum)(exp_not_zero$Exp_sum) * 100
-    exp_data <- rbind(exp_zero, exp_not_zero)
+    exp.zero     <- filter(exp, cell.type == 0) %>% mutate(percentile=NA)
+    exp.not.zero <- filter(exp, cell.type != 0)
+    exp.not.zero$percentile <- ecdf(exp.not.zero$cell.type)(exp.not.zero$cell.type) * 100
+    exp <- rbind(exp.zero, exp.not.zero)
 
-    # Add colour columns based on percentiles
-    exp_data <- exp_data %>%
-        dplyr::mutate(gradient_group = case_when(
+    # Add color columns
+    exp <- exp %>%
+        dplyr::mutate(Gradient_group = case_when(
             percentile > 0  & percentile <= 50  ~ 2,
             percentile > 50 & percentile <= 70  ~ 3,
             percentile > 70 & percentile <= 90  ~ 4,
@@ -76,11 +75,12 @@ percentilesMarkerExpression <- function(object, markers) {
             percentile > 94 & percentile <= 96  ~ 7,
             percentile > 96 & percentile <= 98  ~ 8,
             percentile > 98 & percentile <= 100 ~ 9,
-            TRUE ~ 1
-        )) %>%
-        dplyr::arrange(Exp_sum) %>%
-        dplyr::select(Cell, Percentile = percentile, Gradient_group = gradient_group)
+            TRUE ~ 1)) %>%
+        dplyr::select(Cell, Cell.type = cell.type, Percentile = percentile,
+                      Gradient_group)
 
-    return(exp_data)
+    exp <- dplyr::arrange(exp, Cell.type)
+
+    return(exp)
 
 }

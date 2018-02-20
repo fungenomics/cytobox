@@ -4,18 +4,22 @@
 \alias{tsneByPercentileMarkerExpression}
 \title{tsneByPercentileMarkerExpression}
 \usage{
-tsneByPercentileMarkerExpression(object, markers, reduction = "tsne")
+tsneByPercentileMarkerExpression(seurat, markers, reduction = "tsne",
+  palette = "viridis")
 }
 \arguments{
-\item{object}{Seurat object, where dimensionality reduction has been applied,
+\item{seurat}{Seurat object, where dimensionality reduction has been applied,
 i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 
 \item{markers}{String or character vector specifying gene(s) to use}
 
 \item{reduction}{String specifying the dimensionality reduction to use,
 retrieves t-SNE by default. This should match the names of the elements of
-the list object@dr, so it will typically be one of "pca" or "tsne".
+the list seurat@dr, so it will typically be one of "pca" or "tsne".
 Default: "tsne"}
+
+\item{palette}{String, one of "viridis" or "blues", specifying which gradient
+palette to use. Default: viridis.}
 }
 \value{
 A ggplot object

@@ -10,7 +10,7 @@
 #'
 #' @export
 #' @author Selin Jessa
-meanMarkerExprByCluster <- function(object, markers, cluster_col, marker_col = "gene") {
+meanMarkerExprByCluster <- function(seurat, markers, cluster_col, marker_col = "gene") {
 
     perCluster <- function(cluster) {
 
@@ -29,13 +29,13 @@ meanMarkerExprByCluster <- function(object, markers, cluster_col, marker_col = "
 
     }
 
-    exp <- object@data %>% as.matrix %>% as.data.frame
-    n_clusters <- length(unique(object@meta.data[, cluster_col]))
+    exp <- seurat@data %>% as.matrix %>% as.data.frame
+    n_clusters <- length(unique(seurat@meta.data[, cluster_col]))
     clusters <- seq(0, n_clusters - 1)
 
     # Bind columns, each of which corresponds to a cluster
     purrr::map_dfc(clusters, perCluster) %>%
-        tibble::add_column(Cluster = as.character(object@meta.data[,cluster_col]), .before = 1) %>%
+        tibble::add_column(Cluster = as.character(seurat@meta.data[,cluster_col]), .before = 1) %>%
         tibble::add_column(Cell = colnames(exp), .before = 1)
 
 }
@@ -48,14 +48,14 @@ meanMarkerExprByCluster <- function(object, markers, cluster_col, marker_col = "
 #' dataset 1 is the sample whose expression values will be plot, and dataset 2
 #' is the sample whose cluster markers are used.
 #'
-#' @param object1 Seurat object for which to plot expression
+#' @param seurat1 Seurat object for which to plot expression
 #' @param markers Data frame as returned by Seurat::FindAllMarkers()
-#' @param object2 Seurat object from which cluster markers (\code{markers}) were defined
-#' @param s1_name String, sample name for \code{object1}
-#' @param s2_name String, sample name for \code{object2}
-#' @param cluster_col1 String, column in \code{object1@@meta.data} which stores
+#' @param seurat2 Seurat object from which cluster markers (\code{markers}) were defined
+#' @param s1_name String, sample name for \code{seurat1}
+#' @param s2_name String, sample name for \code{seurat2}
+#' @param cluster_col1 String, column in \code{seurat1@@meta.data} which stores
 #' the cluster assignments to use.
-#' @param cluster_col2 String, column in \code{object2@@meta.data} which stores
+#' @param cluster_col2 String, column in \code{seurat2@@meta.data} which stores
 #' the cluster assignments to use.
 #' @param marker_col String specifying the column in the \code{markers} data frames which
 #' specifies the cluster. By default, Seurat calls this "gene" (the default here);
@@ -67,14 +67,14 @@ meanMarkerExprByCluster <- function(object, markers, cluster_col, marker_col = "
 #' @export
 #' @examples
 #' markerViolinPlot(pbmc, markers_pbmc, pbmc, "Test1", "Test2", "res.1", "res.1")
-markerViolinPlot <- function(object1, markers, object2, s1_name, s2_name,
+markerViolinPlot <- function(seurat1, markers, seurat2, s1_name, s2_name,
                              cluster_col1, cluster_col2, marker_col = "gene") {
 
-    s1_clusters <- sort(unique(object1@meta.data[, cluster_col1]))
-    s2_clusters <- sort(unique(object2@meta.data[, cluster_col2]))
+    s1_clusters <- sort(unique(seurat1@meta.data[, cluster_col1]))
+    s2_clusters <- sort(unique(seurat2@meta.data[, cluster_col2]))
     clusters2 <- paste0(s2_name, " cluster ", sort(s2_clusters))
 
-    exp <- meanMarkerExprByCluster(object1, markers, cluster_col1, marker_col)
+    exp <- meanMarkerExprByCluster(seurat1, markers, cluster_col1, marker_col)
 
     gg <- exp %>%
         tidyr::gather(s2_cluster, mean_expression, 3:ncol(.)) %>%
