@@ -21,7 +21,8 @@ Imports:
     data.table,
     purrr,
     glue,
-    tidyr
+    tidyr,
+    RColorBrewer
 Remotes:
     tidyverse/ggplot2
 RoxygenNote: 6.0.1

@@ -4,17 +4,17 @@
 \alias{tsneByMeanMarkerExpression}
 \title{tsneByMeanMarkerExpression}
 \usage{
-tsneByMeanMarkerExpression(object, markers, reduction = "tsne")
+tsneByMeanMarkerExpression(seurat, markers, reduction = "tsne")
 }
 \arguments{
-\item{object}{Seurat object, where dimensionality reduction has been applied,
+\item{seurat}{Seurat object, where dimensionality reduction has been applied,
 i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 
 \item{markers}{String or character vector specifying gene(s) to use}
 
 \item{reduction}{String specifying the dimensionality reduction to use,
 retrieves t-SNE by default. This should match the names of the elements of
-the list object@dr, so it will typically be one of "pca" or "tsne".
+the list seurat@dr, so it will typically be one of "pca" or "tsne".
 Default: "tsne"}
 }
 \value{
@@ -25,10 +25,6 @@ Plot a low-dimensional embedding of the cells,
 coloured by expression of a gene, or mean expression of a group of marker
 genes. Defaults to t-SNE space, but see the \code{reduction} argument for
 how to plot in PCA space instead.
-}
-\examples{
-tsneByMeanMarkerExpression(pbmc, "IL32")
-tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 }
 \author{
 Selin Jessa

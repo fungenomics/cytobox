@@ -4,16 +4,16 @@
 \alias{percentilesMarkerExpression}
 \title{perecentilesMarkerExpression}
 \usage{
-percentilesMarkerExpression(object, markers)
+percentilesMarkerExpression(seurat, markers)
 }
 \arguments{
-\item{object}{Seurat object}
+\item{seurat}{Seurat object}
 
 \item{markers}{String or character vector specifying gene(s) to use}
 }
 \value{
 Data frame with three columns: "Cell" which specifies the cell ID
-obtained from \code{colnames(object@data)}, "Percentile" giving the
+obtained from \code{colnames(seurat@data)}, "Percentile" giving the
 percentile expression for each cell, and
 "Gradient_group" which gives the ordering that should be used to assign
 colours by gradient.
