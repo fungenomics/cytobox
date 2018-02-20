@@ -8,33 +8,33 @@
 #' genes. Defaults to t-SNE space, but see the \code{reduction} argument for
 #' how to plot in PCA space instead.
 #'
-#' @param object Seurat object, where dimensionality reduction has been applied,
+#' @param seurat Seurat object, where dimensionality reduction has been applied,
 #' i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)
 #' @param markers String or character vector specifying gene(s) to use
 #' @param reduction String specifying the dimensionality reduction to use,
 #' retrieves t-SNE by default. This should match the names of the elements of
-#' the list object@@dr, so it will typically be one of "pca" or "tsne".
+#' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
 #' Default: "tsne"
 #'
-#' @export
+# @export
 #'
 #' @return A ggplot object
 #'
 #' @author Selin Jessa
-#' @examples
-#' tsneByMeanMarkerExpression(pbmc, "IL32")
-#' tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
-tsneByMeanMarkerExpression <- function(object, markers,
+# @examples
+# tsneByMeanMarkerExpression(pbmc, "IL32")
+# tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+tsneByMeanMarkerExpression <- function(seurat, markers,
                                        reduction = "tsne") {
 
     # Get mean expression for markers
-    exp_df <- meanMarkerExpression(object, markers)
+    exp_df <- meanMarkerExpression(seurat, markers)
 
     # Get dimensionality reduction coordinates
-    exp_df <- object %>% addEmbedding(exp_df, reduction)
+    exp_df <- seurat %>% addEmbedding(exp_df, reduction)
 
     # Get the variable names
-    vars <- colnames(object@dr[[reduction]]@cell.embeddings)[c(1, 2)]
+    vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
 
     # Plot
     gg <- exp_df %>%
@@ -58,13 +58,15 @@ tsneByMeanMarkerExpression <- function(object, markers,
 #' coloured by expression percentile of a gene, of the total expression of a
 #' group of marker genes.
 #'
-#' @param object Seurat object, where dimensionality reduction has been applied,
+#' @param seurat Seurat object, where dimensionality reduction has been applied,
 #' i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)
 #' @param markers String or character vector specifying gene(s) to use
 #' @param reduction String specifying the dimensionality reduction to use,
 #' retrieves t-SNE by default. This should match the names of the elements of
-#' the list object@dr, so it will typically be one of "pca" or "tsne".
+#' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
 #' Default: "tsne"
+#' @param palette String, one of "viridis" or "blues", specifying which gradient
+#' palette to use. Default: viridis.
 #'
 #' @export
 #'
@@ -74,55 +76,74 @@ tsneByMeanMarkerExpression <- function(object, markers,
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
 #' tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
-tsneByPercentileMarkerExpression <- function(object, markers, reduction = "tsne") {
+tsneByPercentileMarkerExpression <- function(seurat, markers, reduction = "tsne",
+                                             palette = "viridis") {
 
     # Get expression percentiles
-    percentiles <- percentilesMarkerExpression(object, markers)
+    percentiles <- percentilesMarkerExpression(seurat, markers)
 
     color_grad_labels <- c("Undetected",
-                           "> 0 & \u2265 50",
-                           "> 50 & \u2265 70",
-                          "> 70 & \u2265 90",
-                          "> 90 & \u2265 92",
-                          "> 92 & \u2265 94",
-                          "> 94 & \u2265 96",
-                          "> 96 & \u2265 98",
-                          "> 98 & \u2265 100")
+                           "> 0 & \u2264 50",
+                           "> 50 & \u2264 70",
+                          "> 70 & \u2264 90",
+                          "> 90 & \u2264 92",
+                          "> 92 & \u2264 94",
+                          "> 94 & \u2264 96",
+                          "> 96 & \u2264 98",
+                          "> 98 & \u2264 100")
+    alpha_grad <- c(0.025, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
+    alpha_grad_labels <- color_grad_labels
+
+    # TODO you can just set the alpha group to the gradient group,
+    # and as its values, pass the discrete gradient by hand... saves some code
 
     # Get the variable names, and embedding
-    vars <- colnames(object@dr[[reduction]]@cell.embeddings)[c(1, 2)]
-    percentiles <- object %>% addEmbedding(percentiles, reduction)
+    vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
+    percentiles <- addEmbedding(seurat, percentiles, reduction)
 
     # Plot
-    gg <- percentiles %>%
-        dplyr::arrange(Percentile) %>%
-        ggplot(aes(x = percentiles[[vars[1]]], y = percentiles[[vars[2]]])) +
-        geom_point(aes(colour = factor(Gradient_group, levels = seq(1, 9))),
-                   alpha = 0.6) +
-        scale_color_manual(values = viridis(9),
-                           name = "Expression level percentile",
-                           labels = color_grad_labels,
-                           # Ensured all levels are displayed in the legend
-                           drop = FALSE) +
-        guides(colour = guide_legend(order = 1)) +
-        xlab(vars[1]) + ylab(vars[2])
+    gg <- ggplot(percentiles,
+                 aes(x = percentiles[[vars[1]]], y = percentiles[[vars[2]]])) +
+        geom_point(aes(colour = factor(Gradient_group, levels = seq(1, 9)),
+                       alpha = factor(Gradient_group, levels = seq(1, 9))))
 
-    gg <- gg + theme_min()
+    if (palette == "viridis") {
+
+        gg <- gg +
+            scale_color_manual(
+                values = viridis(9),
+                name = "Expression level percentile",
+                labels = color_grad_labels,
+                # Ensure all levels are displayed in the legend
+                drop = FALSE)
+
+    } else if (palette == "blues") {
+
+        gg <- gg +
+            scale_color_manual(
+                values = RColorBrewer::brewer.pal(n = 9, name = "Blues"),
+                name = "Expression level percentile",
+                labels = color_grad_labels,
+                drop = FALSE)
+    }
+
+    gg <- gg +
+        guides(colour = guide_legend(order = 1)) +
+        scale_alpha_manual(values = alpha_grad, labels = alpha_grad_labels,
+                           name = "Expression level percentile", drop = FALSE) +
+        xlab(vars[1]) + ylab(vars[2]) +
+        theme_min()
 
     return(gg)
 
 }
 
 
-
-#' @importFrom ggplot2 theme_light
-NULL
-
-
 #' theme_min
 #'
 #' A clean theme for ggplot2
 #'
+#' @importFrom ggplot2 theme_light
 #' @export
 theme_min <- function(base_size = 11, base_family = "") {
 

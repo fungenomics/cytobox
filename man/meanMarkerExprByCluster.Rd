@@ -4,7 +4,7 @@
 \alias{meanMarkerExprByCluster}
 \title{meanMarkerExprByCluster}
 \usage{
-meanMarkerExprByCluster(object, markers, cluster_col, marker_col = "gene")
+meanMarkerExprByCluster(seurat, markers, cluster_col, marker_col = "gene")
 }
 \value{
 Data frame where the first two columns are "Cell" and "Cluster",

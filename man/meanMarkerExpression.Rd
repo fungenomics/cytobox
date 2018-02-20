@@ -4,16 +4,16 @@
 \alias{meanMarkerExpression}
 \title{meanMarkerExpression}
 \usage{
-meanMarkerExpression(object, markers)
+meanMarkerExpression(seurat, markers)
 }
 \arguments{
-\item{object}{Seurat object}
+\item{seurat}{Seurat object}
 
 \item{markers}{String or character vector specifying gene(s) to use}
 }
 \value{
 Data frame with two columns: "Cell" which specifies the cell ID
-obtained from \code{colnames(object@data)}, and "Mean_marker_expression"
+obtained from \code{colnames(seurat@data)}, and "Mean_marker_expression"
 which is the expression value for the marker gene, or mean if multiple
 genes were provided.
 }

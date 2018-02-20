@@ -57,12 +57,16 @@ most recent commit on your branch. When the build has passed, create a pull requ
 
 ### From now on
 
-From now on, to continue working on the package, first merge the latest changes from the master branch:
+From now on, to continue contributing to the package, switch to your branch and make your
+changes there, following the same edit/commit/push workflow. 
+
+If changes have been made to master since first merge the latest changes from the master branch:
 ```bash
-git checkout dev-selin # This command switches to your dev branch
+git checkout master
+git pull
+git checkout dev-selin
 git merge master # Merge changes from master branch onto dev-selin
 ```
 
-and then continue the edit/commit/push cycle.
 
-(There is a more sophisticated way of doing this, called rebasing: https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
+(There is a more sophisticated way of doing this merge, called rebasing: https://www.atlassian.com/git/tutorials/merging-vs-rebasing)

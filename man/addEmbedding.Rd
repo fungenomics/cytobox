@@ -4,28 +4,27 @@
 \alias{addEmbedding}
 \title{addEmbedding}
 \usage{
-addEmbedding(object, df, reduction = "tsne")
+addEmbedding(seurat, df, reduction = "tsne")
 }
 \arguments{
-\item{object}{Seurat object, where dimensionality reduction has been applied,
-i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
+\item{seurat}{Seurat object, where dimensionality reduction has been applied,
+i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object).}
 
-\item{df}{Data frame where rows correspond to cells, in the same order
-as in \code{rownames(object@meta.data)}.}
+\item{df}{Data frame with at least one column, "Cell", giving the cell ID}
 
 \item{reduction}{String specifying the dimensionality reduction to use,
 retrieves t-SNE by default. This should match the names of the elements of
-the list object@dr, so it will typically be one of "pca" or "tsne".
+the list seurat@dr, so it will typically be one of "pca" or "tsne".
 Default: "tsne"}
 }
 \description{
-Given a Seurat object and a data frame where the rows correspond to cells,
-in the same order as in the Seurat object, add two columns giving coordinates
+Given a Seurat seurat and a data frame where the rows correspond to cells,
+in the same order as in the Seurat seurat, add two columns giving coordinates
 in a dimensionality reduced space.
 }
 \examples{
 df <- data.frame(Cell = rownames(pbmc@meta.data),
-                 Cluster = pbmc@meta.data$res.0.8)
+                 Cluster = pbmc@meta.data$res.1)
 
 addEmbedding(pbmc, df, reduction = "tsne")
 }

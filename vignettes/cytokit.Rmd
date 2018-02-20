@@ -24,7 +24,7 @@ library(cytokit)
 
 Plot a t-SNE coloured by mean marker expression
 
-```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4}
+```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = FALSE, eval = FALSE}
 
 tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
 

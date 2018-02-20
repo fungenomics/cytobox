@@ -4,24 +4,24 @@
 \alias{markerViolinPlot}
 \title{markerViolinPlot}
 \usage{
-markerViolinPlot(object1, markers, object2, s1_name, s2_name, cluster_col1,
+markerViolinPlot(seurat1, markers, seurat2, s1_name, s2_name, cluster_col1,
   cluster_col2, marker_col = "gene")
 }
 \arguments{
-\item{object1}{Seurat object for which to plot expression}
+\item{seurat1}{Seurat object for which to plot expression}
 
 \item{markers}{Data frame as returned by Seurat::FindAllMarkers()}
 
-\item{object2}{Seurat object from which cluster markers (\code{markers}) were defined}
+\item{seurat2}{Seurat object from which cluster markers (\code{markers}) were defined}
 
-\item{s1_name}{String, sample name for \code{object1}}
+\item{s1_name}{String, sample name for \code{seurat1}}
 
-\item{s2_name}{String, sample name for \code{object2}}
+\item{s2_name}{String, sample name for \code{seurat2}}
 
-\item{cluster_col1}{String, column in \code{object1@meta.data} which stores
+\item{cluster_col1}{String, column in \code{seurat1@meta.data} which stores
 the cluster assignments to use.}
 
-\item{cluster_col2}{String, column in \code{object2@meta.data} which stores
+\item{cluster_col2}{String, column in \code{seurat2@meta.data} which stores
 the cluster assignments to use.}
 
 \item{marker_col}{String specifying the column in the \code{markers} data frames which
