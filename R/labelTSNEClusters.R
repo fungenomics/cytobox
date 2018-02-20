@@ -19,9 +19,9 @@ labelTSNEClusters <- function(seurat, labelsFile) {
 
     if (colors %in% labels$color) {
      # Selected colors.
-        p <- TSNEPlot(object = data, do.label = FALSE, pt.size = 0.5, colors.use=labels$color, do.return=TRUE)
+        p <- TSNEPlot(object = seurat, do.label = FALSE, pt.size = 0.5, colors.use=labels$color, do.return=TRUE)
     } else {
-        p <- TSNEPlot(object = data, do.label = FALSE, pt.size = 0.5, do.return=TRUE)
+        p <- TSNEPlot(object = seurat, do.label = FALSE, pt.size = 0.5, do.return=TRUE)
     }
     return(p)
 }
