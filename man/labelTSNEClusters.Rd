@@ -7,9 +7,9 @@
 labelTSNEClusters(seurat, labelsFile)
 }
 \arguments{
-\item{labelsFile}{Path to labels file}
+\item{seurat}{Seurat object}
 
-\item{object}{Seurat object}
+\item{labelsFile}{Path to labels file}
 }
 \value{
 tSNE plot with labelled clusters
