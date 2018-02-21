@@ -2,7 +2,7 @@
 
 #' labelTSNEClusters
 #'
-#' @param object Seurat object
+#' @param seurat Seurat object
 #' @param labelsFile Path to labels file
 #'
 #' @return tSNE plot with labelled clusters
