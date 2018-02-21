@@ -4,15 +4,17 @@
 \alias{labelTSNEClusters}
 \title{labelTSNEClusters}
 \usage{
-labelTSNEClusters(seurat, labelsFile)
+labelTSNEClusters(seurat, labels)
 }
 \arguments{
-\item{seurat}{Seurat object}
+\item{seurat}{Seurat object.}
 
-\item{labelsFile}{Path to labels file}
+\item{labels}{A data frame with 3 columns: "cluster", "label" and "color". The "color" column is optional.}
+
+\item{colors}{Cluster colors (Optional).}
 }
 \value{
-tSNE plot with labelled clusters
+A ggplot2 object. A tSNE plot with labelled clusters
 }
 \description{
 labelTSNEClusters
