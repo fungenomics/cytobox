@@ -15,7 +15,7 @@ labelTSNEClusters <- function(seurat, labels) {
     old.cluster.ids <- levels(unique(GetClusters(seurat)$cluster))
     new.cluster.ids <- old.cluster.ids
     new.cluster.ids[labels$cluster+1] <- labels$label
-    data@ident <- plyr::mapvalues(x = seurat@ident, from = old.cluster.ids, to = new.cluster.ids)
+    seurat@ident <- plyr::mapvalues(x = seurat@ident, from = old.cluster.ids, to = new.cluster.ids)
 
     if ("color" %in% labels$color) {
      # Selected colors.
