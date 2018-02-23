@@ -4,14 +4,16 @@
 \alias{tsneByPercentileMarkerExpression}
 \title{tsneByPercentileMarkerExpression}
 \usage{
-tsneByPercentileMarkerExpression(seurat, markers, reduction = "tsne",
-  palette = "viridis")
+tsneByPercentileMarkerExpression(seurat, markers, label = TRUE,
+  reduction = "tsne", palette = "viridis", extra = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
 i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 
 \item{markers}{String or character vector specifying gene(s) to use}
+
+\item{label}{Logical, whether to label clusters on the plot. Default: TRUE.}
 
 \item{reduction}{String specifying the dimensionality reduction to use,
 retrieves t-SNE by default. This should match the names of the elements of

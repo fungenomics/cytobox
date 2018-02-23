@@ -84,3 +84,43 @@ percentilesMarkerExpression <- function(seurat, markers) {
     return(exp)
 
 }
+
+
+
+#' clusterCenters
+#'
+#' Get centers of clusters given a Seurat object, to use for labelling
+#' in tSNE space.
+#'
+#' @param seurat Seurat object, where dimensionality reduction has been applied,
+#' i.e. (after applying Seurat::RunTSNE() to the object).
+#'
+#' @return Data frame with three columns: Cluster, mean_tSNE_1, and mean_tSNE_2
+#' @export
+#'
+#' @author Selin Jessa
+#' @examples
+#'
+#' clusterCenters(pbmc)
+clusterCenters <- function(seurat) {
+
+    n_clusters <- length(unique(seurat@ident))
+
+    # Attempts at tidyeval...
+    # vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
+    # col_names <- paste0("mean_", vars)
+
+    # Get the embedding
+    df <- as.data.frame(seurat@dr$tsne@cell.embeddings) %>%
+        mutate(Cell = names(seurat@ident),
+               Cluster = seurat@ident)
+
+    # Compute cluster centers
+    centers <- df %>%
+        group_by(Cluster) %>%
+        summarise(mean_tSNE_1 = mean(tSNE_1),
+                  mean_tSNE_2 = mean(tSNE_2))
+
+    return(centers)
+
+}

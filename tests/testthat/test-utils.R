@@ -28,6 +28,17 @@ test_that("addEmbedding matches data per cell correctly", {
 
     expect_equal(tsne_emb[1, c("tSNE_1", "tSNE_2")],
                  data.frame(tSNE_1 = 14.42191, tSNE_2 = 8.336022),
-                 tolerance = 1e-6)
+                 tolerance = 0.1)
 
 })
+
+
+# test_that("we get cluster centers in tSNE space correctly", {
+#
+#     df <- tibble(Cluster = factor(c("0", "1", "2", "3")),
+#                  mean_tSNE_1 = c(-1.14, 6.51, -17.1, 5.03),
+#                  mean_tSNE_2 = c(19.6, 0.512, -5.65, -51.6))
+#
+#     expect_equal(clusterCenters(pbmc), df, tolerance = 1e-2)
+#
+# })
