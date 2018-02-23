@@ -2,10 +2,12 @@
 % Please edit documentation in R/plotting.R
 \name{tsneByPercentileMarkerExpression}
 \alias{tsneByPercentileMarkerExpression}
+\alias{dashboard}
 \title{tsneByPercentileMarkerExpression}
 \usage{
-tsneByPercentileMarkerExpression(seurat, markers, reduction = "tsne",
-  palette = "viridis")
+tsneByPercentileMarkerExpression(seurat, markers, label = TRUE,
+  reduction = "tsne", title = NULL, palette = "viridis", extra = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -13,13 +15,27 @@ i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 
 \item{markers}{String or character vector specifying gene(s) to use}
 
+\item{label}{Logical, whether to label clusters on the plot. Default: TRUE.}
+
 \item{reduction}{String specifying the dimensionality reduction to use,
 retrieves t-SNE by default. This should match the names of the elements of
 the list seurat@dr, so it will typically be one of "pca" or "tsne".
 Default: "tsne"}
 
+\item{title}{(Optional) string used as title for the plot.}
+
 \item{palette}{String, one of "viridis" or "blues", specifying which gradient
 palette to use. Default: viridis.}
+
+\item{extra}{Logical, plot a detailed three-panel plot, where the first
+is a proportional bar plot of cells in each cluster in each percentile
+group, the second is a ridge plot showing density in each cluster of the mean
+expression of the markers (coloured by median percentile group within the
+cluster), and the third is the labelled tSNE plot coloured
+by percentiles. Requires \code{label = TRUE}. Default: FALSE.
+Default: FALSE.}
+
+\item{verbose}{Logical, whether to print status updates. Default: FALSE.}
 }
 \value{
 A ggplot object

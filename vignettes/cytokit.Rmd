@@ -37,6 +37,9 @@ Plot a t-SNE coloured by percentiles marker expression
 
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"))
 
+# No labels
+tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label = FALSE)
+
 ```
 
 Pariwise violin plot
