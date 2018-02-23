@@ -83,6 +83,7 @@ tsneByMeanMarkerExpression <- function(seurat, markers,
 #' @return A ggplot object
 #'
 #' @author Selin Jessa
+#' @aliases dashboard
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
 #' tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
@@ -292,6 +293,19 @@ tsneByPercentileMarkerExpression <- function(seurat, markers,
 }
 
 
+#' @export
+dashboard <- function(seurat, markers,
+                      title = NULL,
+                      verbose = FALSE) {
+
+
+    tsneByPercentileMarkerExpression(seurat, markers, title = title,
+                                     extra = TRUE, verbose = verbose)
+
+}
+
+
+
 #' theme_min
 #'
 #' A clean theme for ggplot2
@@ -319,3 +333,5 @@ theme_min <- function(base_size = 11, base_family = "") {
             legend.background = element_rect(colour = NA, fill = NA)
         )
 }
+
+

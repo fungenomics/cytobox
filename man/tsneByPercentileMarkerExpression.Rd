@@ -2,6 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{tsneByPercentileMarkerExpression}
 \alias{tsneByPercentileMarkerExpression}
+\alias{dashboard}
 \title{tsneByPercentileMarkerExpression}
 \usage{
 tsneByPercentileMarkerExpression(seurat, markers, label = TRUE,
