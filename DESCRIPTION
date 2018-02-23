@@ -24,7 +24,8 @@ Imports:
     RColorBrewer,
     ggrepel,
     cowplot,
-    ggridges
+    ggridges,
+    ggrepel
 Remotes:
     tidyverse/ggplot2
 RoxygenNote: 6.0.1
