@@ -21,7 +21,8 @@ Imports:
     purrr,
     glue,
     tidyr,
-    RColorBrewer
+    RColorBrewer,
+    ggrepel
 Remotes:
     tidyverse/ggplot2
 RoxygenNote: 6.0.1

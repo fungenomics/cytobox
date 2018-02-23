@@ -61,6 +61,7 @@ tsneByMeanMarkerExpression <- function(seurat, markers,
 #' @param seurat Seurat object, where dimensionality reduction has been applied,
 #' i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)
 #' @param markers String or character vector specifying gene(s) to use
+#' @param label Logical, whether to label clusters on the plot. Default: TRUE.
 #' @param reduction String specifying the dimensionality reduction to use,
 #' retrieves t-SNE by default. This should match the names of the elements of
 #' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
@@ -76,8 +77,11 @@ tsneByMeanMarkerExpression <- function(seurat, markers,
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
 #' tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
-tsneByPercentileMarkerExpression <- function(seurat, markers, reduction = "tsne",
-                                             palette = "viridis") {
+tsneByPercentileMarkerExpression <- function(seurat, markers,
+                                             label = TRUE,
+                                             reduction = "tsne",
+                                             palette = "viridis",
+                                             extra = FALSE) {
 
     # Get expression percentiles
     percentiles <- percentilesMarkerExpression(seurat, markers)
@@ -133,6 +137,33 @@ tsneByPercentileMarkerExpression <- function(seurat, markers, reduction = "tsne"
                            name = "Expression level percentile", drop = FALSE) +
         xlab(vars[1]) + ylab(vars[2]) +
         theme_min()
+
+    if (label) {
+
+        if (reduction == "pca") {
+
+            message("Plotting labels is currently only available for reduction = 'tsne';",
+                    " returning plot without labels.")
+            return(gg)
+        }
+
+        centers <- clusterCenters(seurat)
+
+        gg <- gg +
+            ggrepel::geom_label_repel(data = centers,
+                             aes(x = mean_tSNE_1, y = mean_tSNE_2),
+                             label = centers$Cluster,
+                             segment.color = 'grey50',
+                             fontface = 'bold',
+                             alpha = 0.8,
+                             segment.alpha = 0.8,
+                             label.size = NA,
+                             force = 2,
+                             nudge_x = 5, nudge_y = 5,
+                             segment.size = 0.5,
+                             arrow = arrow(length = unit(0.01, 'npc')))
+
+    }
 
     return(gg)
 
