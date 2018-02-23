@@ -5,7 +5,8 @@
 \title{tsneByPercentileMarkerExpression}
 \usage{
 tsneByPercentileMarkerExpression(seurat, markers, label = TRUE,
-  reduction = "tsne", palette = "viridis", extra = FALSE)
+  reduction = "tsne", title = NULL, palette = "viridis", extra = FALSE,
+  verbose = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -20,8 +21,20 @@ retrieves t-SNE by default. This should match the names of the elements of
 the list seurat@dr, so it will typically be one of "pca" or "tsne".
 Default: "tsne"}
 
+\item{title}{(Optional) string used as title for the plot.}
+
 \item{palette}{String, one of "viridis" or "blues", specifying which gradient
 palette to use. Default: viridis.}
+
+\item{extra}{Logical, plot a detailed three-panel plot, where the first
+is a proportional bar plot of cells in each cluster in each percentile
+group, the second is a ridge plot showing density in each cluster of the mean
+expression of the markers (coloured by median percentile group within the
+cluster), and the third is the labelled tSNE plot coloured
+by percentiles. Requires \code{label = TRUE}. Default: FALSE.
+Default: FALSE.}
+
+\item{verbose}{Logical, whether to print status updates. Default: FALSE.}
 }
 \value{
 A ggplot object

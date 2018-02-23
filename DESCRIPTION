@@ -22,7 +22,9 @@ Imports:
     glue,
     tidyr,
     RColorBrewer,
-    ggrepel
+    ggrepel,
+    cowplot,
+    ggridges
 Remotes:
     tidyverse/ggplot2
 RoxygenNote: 6.0.1
