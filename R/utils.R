@@ -21,7 +21,7 @@
 #'
 #' @references https://stackoverflow.com/a/8197703
 #' @aliases ggColors
-#' @importFrom grDevices hcl hues
+#' @importFrom grDevices hcl
 ggColours <- function(n) {
 
     hues <- seq(15, 375, length = n + 1)
