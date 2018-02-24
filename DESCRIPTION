@@ -4,8 +4,8 @@ Title: A toolkit for analyzing single cell RNA-seq data
 Description: Shared functions for processing, interrogating, and
     visualizing single cell RNA-seq data.
 Version: 0.0.9999
-Authors@R: c(person("Selin", "Jessa", email = "selinjessa@gmail.com", role = c("aut", "cre")),
-            person("Blanchet-Cohen", "Alexis", email="alexis.blanchet-cohen@mail.mcgill.ca", role=c("aut")))
+Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role = c("aut", "cre")),
+            person("Alexis", "Blanchet-Cohen", email = "alexis.blanchet-cohen@mail.mcgill.ca", role=c("aut")))
 Encoding: UTF-8
 License: file LICENSE
 LazyData: true
@@ -24,8 +24,7 @@ Imports:
     RColorBrewer,
     ggrepel,
     cowplot,
-    ggridges,
-    ggrepel
+    ggridges
 Remotes:
     tidyverse/ggplot2
 RoxygenNote: 6.0.1

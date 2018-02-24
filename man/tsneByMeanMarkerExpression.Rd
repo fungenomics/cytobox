@@ -4,13 +4,13 @@
 \alias{tsneByMeanMarkerExpression}
 \title{tsneByMeanMarkerExpression}
 \usage{
-tsneByMeanMarkerExpression(seurat, markers, reduction = "tsne")
+tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne")
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
 i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 
-\item{markers}{String or character vector specifying gene(s) to use}
+\item{genes}{String or character vector specifying gene(s) to use}
 
 \item{reduction}{String specifying the dimensionality reduction to use,
 retrieves t-SNE by default. This should match the names of the elements of

@@ -23,6 +23,9 @@ NULL
 #' @import ggplot2
 NULL
 
+#' @importFrom ggplot2 theme
+NULL
+
 #' @importFrom glue glue
 NULL
 
