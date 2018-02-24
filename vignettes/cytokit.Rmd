@@ -44,6 +44,17 @@ vln(pbmc, c("IL32", "MS4A1"), facet_by = "cluster")
 
 ```
 
+
+Panel of tiny violin plots for a set of genes, as in Figure 5D in the drop-seq paper
+
+```{r vlnPanel, fig.width = 7, fig.height = 2}
+
+# Use the first 15 genes in the data
+vlnGrid(pbmc, genes = head(rownames(pbmc@data), 15))
+
+```
+
+
 Plot a t-SNE coloured by percentiles marker expression
 
 ```{r tsneByPercentilesMarkerExpression, fig.width = 6, fig.height = 4}

@@ -21,7 +21,7 @@
 #'
 #' @references https://stackoverflow.com/a/8197703
 #' @aliases ggColors
-#' @importFrom grDevices hcl
+#' @importFrom grDevices hcl hues
 ggColours <- function(n) {
 
     hues <- seq(15, 375, length = n + 1)
@@ -142,7 +142,7 @@ fetchData <- function(seurat, genes, clusters = NULL, return_cell = FALSE, retur
 #' A clean theme for ggplot2
 #' @references https://github.com/sjessa/ggmin
 #'
-#' @importFrom ggplot2 theme_light
+#' @importFrom ggplot2 theme_light theme
 #' @author Selin Jessa
 #' @export
 theme_min <- function(base_size = 11, base_family = "") {

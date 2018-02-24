@@ -4,12 +4,12 @@
 \alias{percentilesMarkerExpression}
 \title{perecentilesMarkerExpression}
 \usage{
-percentilesMarkerExpression(seurat, markers)
+percentilesMarkerExpression(seurat, genes)
 }
 \arguments{
 \item{seurat}{Seurat object}
 
-\item{markers}{String or character vector specifying gene(s) to use}
+\item{genes}{String or character vector specifying gene(s) to use}
 }
 \value{
 Data frame with three columns: "Cell" which specifies the cell ID

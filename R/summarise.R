@@ -4,7 +4,7 @@
 #' meanMarkerExpression
 #'
 #' @param seurat Seurat object
-#' @param markers String or character vector specifying gene(s) to use
+#' @param genes String or character vector specifying gene(s) to use
 #'
 #' @return Data frame with two columns: "Cell" which specifies the cell ID
 #' obtained from \code{colnames(seurat@@data)}, and "Mean_marker_expression"
@@ -13,13 +13,13 @@
 #'
 #' @export
 #' @author Selin Jessa
-meanMarkerExpression <- function(seurat, markers) {
+meanMarkerExpression <- function(seurat, genes) {
 
     # Get expression data from the Seurat seurat
     exp <- as.data.frame(as.matrix(seurat@data))
 
-    # Filter to the markers
-    filt_exp <- exp[rownames(exp) %in% markers, ]
+    # Filter to the genes
+    filt_exp <- exp[rownames(exp) %in% genes, ]
 
     # Calculate mean expression
     mean_exp <- colSums(filt_exp)/nrow(filt_exp)
@@ -33,7 +33,7 @@ meanMarkerExpression <- function(seurat, markers) {
 #' perecentilesMarkerExpression
 #'
 #' @param seurat Seurat object
-#' @param markers String or character vector specifying gene(s) to use
+#' @param genes String or character vector specifying gene(s) to use
 #'
 #' @return Data frame with three columns: "Cell" which specifies the cell ID
 #' obtained from \code{colnames(seurat@@data)}, "Percentile" giving the
@@ -44,15 +44,15 @@ meanMarkerExpression <- function(seurat, markers) {
 #' @export
 #' @author adapted from code from Alexis Blanchet-Cohen
 #' @importFrom stats ecdf
-percentilesMarkerExpression <- function(seurat, markers) {
+percentilesMarkerExpression <- function(seurat, genes) {
 
     exp.matrix <- as.data.frame(as.matrix(seurat@data)) %>%
         tibble::rownames_to_column(var = "gene_name")
 
-    exp.matrix.filt <- filter(exp.matrix, gene_name %in% markers)
+    exp.matrix.filt <- filter(exp.matrix, gene_name %in% genes)
     exp.matrix.filt.summed <- colSums(select(exp.matrix.filt, -gene_name))
     # Notice that cell.type is really the sum of expression values for all the genes
-    # in the markers argument
+    # in the genes argument
     exp.matrix.filt.summed <- data.frame(cell.type = unname(exp.matrix.filt.summed),
                                           Cell = colnames(seurat@data))
 

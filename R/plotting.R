@@ -10,7 +10,7 @@
 #'
 #' @param seurat Seurat object, where dimensionality reduction has been applied,
 #' i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)
-#' @param markers String or character vector specifying gene(s) to use
+#' @param genes String or character vector specifying gene(s) to use
 #' @param reduction String specifying the dimensionality reduction to use,
 #' retrieves t-SNE by default. This should match the names of the elements of
 #' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
@@ -24,11 +24,11 @@
 # @examples
 # tsneByMeanMarkerExpression(pbmc, "IL32")
 # tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
-tsneByMeanMarkerExpression <- function(seurat, markers,
+tsneByMeanMarkerExpression <- function(seurat, genes,
                                        reduction = "tsne") {
 
     # Get mean expression for markers
-    exp_df <- meanMarkerExpression(seurat, markers)
+    exp_df <- meanMarkerExpression(seurat, genes)
 
     # Get dimensionality reduction coordinates
     exp_df <- seurat %>% addEmbedding(exp_df, reduction)
@@ -60,7 +60,7 @@ tsneByMeanMarkerExpression <- function(seurat, markers,
 #'
 #' @param seurat Seurat object, where dimensionality reduction has been applied,
 #' i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)
-#' @param markers String or character vector specifying gene(s) to use
+#' @param genes String or character vector specifying gene(s) to use
 #' @param label Logical, whether to label clusters on the plot. Default: TRUE.
 #' @param reduction String specifying the dimensionality reduction to use,
 #' retrieves t-SNE by default. This should match the names of the elements of
@@ -87,7 +87,7 @@ tsneByMeanMarkerExpression <- function(seurat, markers,
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
 #' tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
-tsneByPercentileMarkerExpression <- function(seurat, markers,
+tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label = TRUE,
                                              reduction = "tsne",
                                              title = NULL,
@@ -98,7 +98,7 @@ tsneByPercentileMarkerExpression <- function(seurat, markers,
     if (verbose) message("Computing percentiles...")
 
     # Get expression percentiles
-    percentiles <- percentilesMarkerExpression(seurat, markers)
+    percentiles <- percentilesMarkerExpression(seurat, genes)
 
     color_grad_labels <- c("Undetected",
                            "> 0 & \u2264 50",
@@ -240,7 +240,7 @@ tsneByPercentileMarkerExpression <- function(seurat, markers,
             if (verbose) message("Computing means...")
 
             # Ridge plot
-            df_means <- meanMarkerExpression(seurat, markers) %>%
+            df_means <- meanMarkerExpression(seurat, genes) %>%
                 full_join(df, by = "Cell") %>%
                 group_by(Cluster) %>%
                 mutate(Median = median(Gradient_group)) %>%
@@ -294,12 +294,12 @@ tsneByPercentileMarkerExpression <- function(seurat, markers,
 
 
 #' @export
-dashboard <- function(seurat, markers,
+dashboard <- function(seurat, genes,
                       title = NULL,
                       verbose = FALSE) {
 
 
-    tsneByPercentileMarkerExpression(seurat, markers, title = title,
+    tsneByPercentileMarkerExpression(seurat, genes, title = title,
                                      extra = TRUE, verbose = verbose)
 
 }
@@ -351,6 +351,46 @@ vln <- function(seurat, genes, facet_by = "cluster") {
 
 }
 
+
+#' vlnGrid
+#'
+#' A grid of small violin plots, one plot per gene per cluster, similar to
+#' Figure 5D in the Drop-seq paper by Macosko et al.
+#'
+#' @param seurat Seurat object
+#' @param genes Genes to plot violins for
+#'
+#' @return A ggplot2 object
+#' @export
+#'
+#' @author Selin Jessa
+#'
+#' @examples
+# Use the first 15 genes in the data
+#' vlnGrid(pbmc, head(rownames(pbmc@data), 15))
+vlnGrid <- function(seurat, genes) {
+
+    expr <- fetchData(seurat, genes, return_cell = TRUE, return_cluster = TRUE) %>%
+        tidyr::gather(Marker, Expression, 3:length(.))
+
+    expr$Cluster <- factor(expr$Cluster, levels = seq(length(unique(seurat@ident))-1, 0))
+
+    gg <- expr %>%
+        ggplot(aes(x = Cluster, y = Expression)) +
+        geom_violin(aes(fill = Cluster), scale = "width", size = 0.5) +
+        facet_wrap(~ Marker, ncol = length(unique(expr$Marker))) +
+        theme_min() +
+        coord_flip() +
+        ggplot2::theme(panel.border = element_blank(),
+              axis.ticks.x = element_blank(),
+              axis.text.x = element_blank(),
+              axis.line.x = element_blank(),
+              legend.position = "none",
+              strip.text.x = element_text(angle = 30, size = 8))
+
+    return(gg)
+
+}
 
 
 
