@@ -24,14 +24,25 @@ library(cytokit)
 
 # One-sample plots
 
-Plot a t-SNE coloured by mean marker expression
+<!-- Plot a t-SNE coloured by mean marker expression -->
 
-```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = FALSE, eval = FALSE}
+<!-- ```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = FALSE, eval = FALSE} -->
 
-tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
+<!-- tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2")) -->
+
+<!-- ``` -->
+
+
+Violin plot for a set of genes (like `Seurat::VlnPlot()`)
+
+```{r violin}
+
+vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
+
+# Inverted, one plot per cluster (the default)
+vln(pbmc, c("IL32", "MS4A1"), facet_by = "cluster")
 
 ```
-
 
 Plot a t-SNE coloured by percentiles marker expression
 

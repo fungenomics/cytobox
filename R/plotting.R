@@ -306,32 +306,51 @@ dashboard <- function(seurat, markers,
 
 
 
-#' theme_min
-#'
-#' A clean theme for ggplot2
-#'
-#' @importFrom ggplot2 theme_light
-#' @export
-theme_min <- function(base_size = 11, base_family = "") {
 
-    theme_light(base_size = 11, base_family = "") +
-        theme(
-            panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(),
-            panel.background = element_blank(),
-            panel.border = element_rect(fill = NA, colour = "grey90", size = 1),
-            strip.background = element_rect(fill = NA, colour = NA),
-            strip.text.x = element_text(colour = "black", size = rel(1.2)),
-            strip.text.y = element_text(colour = "black", size = rel(1.2)),
-            title = element_text(size = rel(0.9)),
-            axis.text = element_text(colour = "black", size = rel(0.8)),
-            axis.title = element_text(colour = "black", size = rel(0.9)),
-            legend.title = element_text(colour = "black", size = rel(0.9)),
-            legend.key.size = unit(0.9, "lines"),
-            legend.text = element_text(size = rel(0.7), colour = "black"),
-            legend.key = element_rect(colour = NA, fill = NA),
-            legend.background = element_rect(colour = NA, fill = NA)
-        )
+#' vln
+#'
+#' Similar to Seurat::VlnPlot() except it silently skips genes that are not found in the
+#' data, and has an option to group plots by cluster instead of gene.
+#'
+#' @param seurat Seurat object
+#' @param genes Genes to plot violins for
+#' @param facet_by String, one of "gene" or "cluster". Default: "cluster",
+#' genes will be on the x axis, and there will be one plot per cluster.
+#' If "gene", clusters will be on the x axis, and there will be one plot per
+#' gene (akin to Seurat::VlnPlot)
+#'
+#' @return A ggplot2 object
+#' @author Selin Jessa
+#' @export
+#'
+#' @examples
+#' vln(pbmc, c("IL32", "MS4A1"))
+#' vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
+vln <- function(seurat, genes, facet_by = "cluster") {
+
+    exp <- fetchData(seurat, genes, return_cluster = TRUE) %>%
+        tidyr::gather(Gene, Expression, 2:length(.))
+
+    if (facet_by == "gene") gg <- ggplot(exp, aes(x = Cluster, y = Expression, fill = Cluster))
+    else if (facet_by == "cluster") gg <- ggplot(exp, aes(x = Gene, y = Expression, fill = Cluster))
+
+    gg <- gg +
+        geom_violin(scale = "width", adjust = 1, trim = TRUE) +
+        geom_jitter(size = 0.4, alpha = 0.5) +
+        theme_min() +
+        theme(legend.position = "none")
+
+    if (facet_by == "gene") {
+
+        gg <- gg + facet_wrap(~ Gene, scales = "free_y", ncol = 2) +
+            theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+    } else if (facet_by == "cluster") gg <- gg + facet_wrap(~ Cluster, scales = "free_y")
+
+    return(gg)
+
 }
+
+
 
 
