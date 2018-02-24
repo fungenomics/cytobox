@@ -3,6 +3,7 @@
 export(addEmbedding)
 export(clusterCenters)
 export(dashboard)
+export(fetchData)
 export(ggColors)
 export(ggColours)
 export(heatmapPercentMarkerOverlap)

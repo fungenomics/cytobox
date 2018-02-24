@@ -22,6 +22,8 @@ Load the package
 library(cytokit)
 ```
 
+# One-sample plots
+
 Plot a t-SNE coloured by mean marker expression
 
 ```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = FALSE, eval = FALSE}
@@ -40,7 +42,10 @@ tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"))
 # No labels
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label = FALSE)
 
+
 ```
+
+# Two-sample plots
 
 Pariwise violin plot
 
@@ -57,5 +62,17 @@ Heatmap of minimum % overlap of gene markers between clusters from two different
 ```{r heatmapPercentMarkerOverlap, fig.width = 5, fig.height = 4}
 
 heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc, s1_name = "PBMC", s2_name = "PBMC")
+
+```
+
+
+# Helper functions
+
+Subset data by gene and cluster
+
+```{r fetchData}
+
+head(fetchData(pbmc, "IL32", c(1, 2)))
+head(fetchData(pbmc, c("IL32", "MS4A1"), c(1, 2), return_cluster = TRUE, return_cell = TRUE))
 
 ```

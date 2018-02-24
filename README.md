@@ -28,12 +28,18 @@ devtools::install_github("sjessa/cytokit", auth_token = "abc123", build_vignette
 
 ## Getting help
 
+Access the very barebones vignette from within R for a list of examplesx:
+
+```r
+browseVignettes("cytokit")
+```
+
 You can look up the documentation for any `cytokit` function from the R console:
 ```r
 ?cytokit::ggColours
 ```
 
-Some functions will specify the author in the documentation.
+Some functions will specify the author in the documentation, whom you could contact directly :)
 
 ## Contribution
 

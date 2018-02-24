@@ -33,6 +33,19 @@ test_that("addEmbedding matches data per cell correctly", {
 })
 
 
+test_that("subsetting and fetching expression data works", {
+
+    expect_error(fetchData(pbmc, "foo"), "No genes specified")
+    expect_equal(nrow(fetchData(pbmc, c("IL32"), c(1, 2))), 41)
+    expect_equal(nrow(fetchData(pbmc, c("IL32", "MS4A1"))), 80)
+    expect_equal(ncol(fetchData(pbmc, c("IL32", "MS4A1"))), 2)
+    expect_equal(names(fetchData(pbmc, c("IL32"), return_cluster = TRUE, return_cell = TRUE)),
+                 c("Cell", "Cluster", "IL32"))
+
+})
+
+
+
 # test_that("we get cluster centers in tSNE space correctly", {
 #
 #     df <- tibble(Cluster = factor(c("0", "1", "2", "3")),

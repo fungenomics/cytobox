@@ -71,3 +71,65 @@ addEmbedding <- function(seurat, df, reduction = "tsne") {
     return(df)
 
 }
+
+
+
+
+
+
+#' fetchData
+#'
+#' Subset the seurat@@data matrix by gene and cluster.
+#' Similar to Seurat::FetchData except it doesn't thrown an error if a gene
+#' is not found in the data, and is more limited.
+#'
+#' @param seurat Seurat object
+#' @param genes Genes to filter
+#' @param clusters (Optional) Vector, include only cells with these identities
+#' (e.g. cluster assignments). Searches in seurat@@ident.
+#' @param return_cell Logical, whether or not to include a column with the cell ID.
+#' Default: FALSE
+#' @param return_cluster Logical, whether or not to include a column with the cluster.
+#' Default: FALSE
+#'
+#' @return Expression matrix for genes specified
+#' @export
+#'
+#' @author Selin Jessa
+#' @examples
+#' fetchData(pbmc, c("IL32", "MS4A1"))
+#' fetchData(pbmc, c("IL32"), c(1, 2))
+#' fetchData(pbmc, c("IL32", "MS4A1"), c(1, 2), return_cluster = TRUE, return_cell = TRUE)
+fetchData <- function(seurat, genes, clusters = NULL, return_cell = FALSE, return_cluster = FALSE) {
+
+    exp <- as.matrix(seurat@data)
+
+    if(!any(genes %in% rownames(exp))) stop("No genes specified were ",
+                                            "found in the data.")
+
+    exp_filt <- as.data.frame(t(exp[which(rownames(exp) %in% genes),]))
+
+    # Keep all
+    if(is.null(clusters)) clusters <- unique(seurat@ident)
+    ident_idx <- which(seurat@ident %in% clusters)
+
+    # Handle only one gene case, and properly return a data frame
+    if(nrow(exp_filt) == 1) {
+
+        if(!is.null(ident)) exp_filt <- exp_filt[ident_idx]
+
+        exp_filt <- as.data.frame(t(exp_filt))
+        names(exp_filt) <- rownames(exp)[rownames(exp) %in% genes]
+
+    } else {
+        if(!is.null(ident)) exp_filt <- exp_filt[ident_idx,]
+    }
+
+    rownames(exp_filt) <- c() # Get rid of rownames
+
+    if(return_cluster) exp_filt <- tibble::add_column(exp_filt, Cluster = seurat@ident[ident_idx], .before = 1)
+    if(return_cell) exp_filt <- tibble::add_column(exp_filt, Cell = names(seurat@ident)[ident_idx], .before = 1)
+
+    return(exp_filt)
+
+}
