@@ -3,7 +3,7 @@ Type: Package
 Title: A toolkit for analyzing single cell RNA-seq data
 Description: Shared functions for processing, interrogating, and
     visualizing single cell RNA-seq data.
-Version: 0.0.9999
+Version: 0.1
 Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role = c("aut", "cre")),
             person("Alexis", "Blanchet-Cohen", email = "alexis.blanchet-cohen@mail.mcgill.ca", role=c("aut")))
 Encoding: UTF-8
@@ -11,7 +11,7 @@ License: file LICENSE
 LazyData: true
 Depends: R (>= 3.4)
 Imports: 
-    ggplot2 (>= 2.2.1.9000),
+    ggplot2 (>= 2.2.1),
     Seurat (>= 2.2.0),
     dplyr (>= 0.7.0),
     viridis (>= 0.4.1),
@@ -24,9 +24,8 @@ Imports:
     RColorBrewer,
     ggrepel,
     cowplot,
-    ggridges
-Remotes:
-    tidyverse/ggplot2
+    ggridges,
+    plyr
 RoxygenNote: 6.0.1
 Suggests: 
     testthat,

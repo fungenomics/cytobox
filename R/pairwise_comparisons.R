@@ -4,18 +4,21 @@
 
 #' meanMarkerExprByCluster
 #'
+#' Compute the mean expression of markers for each cluster in one dataset,
+#' in each cluster of another dataset. Used for \code{\link{markerViolinPlot}}
+#'
 #' @return Data frame where the first two columns are "Cell" and "Cluster",
 #' and all remaining columns give the mean expression of markers identified
 #' for each cluster
 #'
 #' @export
 #' @author Selin Jessa
-meanMarkerExprByCluster <- function(seurat, markers, cluster_col, marker_col = "gene") {
+meanMarkerExprByCluster <- function(seurat, markers, marker_col = "gene") {
 
-    perCluster <- function(cluster) {
+    perCluster <- function(i) {
 
         # Keep marker genes for cluster
-        keep_markers <- markers[markers$cluster == cluster, marker_col]
+        keep_markers <- filter(markers, cluster == i) %>% `[[`(marker_col)
 
         # Filtered expression
         filt_exp <- exp[rownames(exp) %in% keep_markers, ]
@@ -24,18 +27,17 @@ meanMarkerExprByCluster <- function(seurat, markers, cluster_col, marker_col = "
         mean_exp <- colSums(filt_exp)/nrow(filt_exp)
         mean_exp <- data.frame(mean = as.numeric(mean_exp))
 
-        names(mean_exp)[1] <- cluster
+        names(mean_exp)[1] <- i
         return(mean_exp)
 
     }
 
-    exp <- seurat@data %>% as.matrix %>% as.data.frame
-    n_clusters <- length(unique(seurat@meta.data[, cluster_col]))
-    clusters <- seq(0, n_clusters - 1)
+    exp <- as.data.frame(as.matrix(seurat@data))
+    clusters <- sort(unique(markers$cluster))
 
     # Bind columns, each of which corresponds to a cluster
     purrr::map_dfc(clusters, perCluster) %>%
-        tibble::add_column(Cluster = as.character(seurat@meta.data[,cluster_col]), .before = 1) %>%
+        tibble::add_column(Cluster = as.character(seurat@ident), .before = 1) %>%
         tibble::add_column(Cell = colnames(exp), .before = 1)
 
 }
@@ -53,10 +55,6 @@ meanMarkerExprByCluster <- function(seurat, markers, cluster_col, marker_col = "
 #' @param seurat2 Seurat object from which cluster markers (\code{markers}) were defined
 #' @param s1_name String, sample name for \code{seurat1}
 #' @param s2_name String, sample name for \code{seurat2}
-#' @param cluster_col1 String, column in \code{seurat1@@meta.data} which stores
-#' the cluster assignments to use.
-#' @param cluster_col2 String, column in \code{seurat2@@meta.data} which stores
-#' the cluster assignments to use.
 #' @param marker_col String specifying the column in the \code{markers} data frames which
 #' specifies the cluster. By default, Seurat calls this "gene" (the default here);
 #' in objects produced by the lab's pipeline, it may be called "external_gene_name".
@@ -66,19 +64,18 @@ meanMarkerExprByCluster <- function(seurat, markers, cluster_col, marker_col = "
 #'
 #' @export
 #' @examples
-#' markerViolinPlot(pbmc, markers_pbmc, pbmc, "Test1", "Test2", "res.1", "res.1")
-markerViolinPlot <- function(seurat1, markers, seurat2, s1_name, s2_name,
-                             cluster_col1, cluster_col2, marker_col = "gene") {
+#' markerViolinPlot(pbmc, markers_pbmc, pbmc, "Test1", "Test2")
+markerViolinPlot <- function(seurat1, markers, seurat2, s1_name, s2_name, marker_col = "gene") {
 
-    s1_clusters <- sort(unique(seurat1@meta.data[, cluster_col1]))
-    s2_clusters <- sort(unique(seurat2@meta.data[, cluster_col2]))
-    clusters2 <- paste0(s2_name, " cluster ", sort(s2_clusters))
+    s1_clusters <- sort(unique(seurat1@ident))
+    s2_clusters <- sort(unique(seurat2@ident))
+    clusters2 <- paste0(s2_name, " cluster ", s2_clusters)
 
-    exp <- meanMarkerExprByCluster(seurat1, markers, cluster_col1, marker_col)
+    exp <- meanMarkerExprByCluster(seurat1, markers, marker_col)
 
     gg <- exp %>%
         tidyr::gather(s2_cluster, mean_expression, 3:ncol(.)) %>%
-        dplyr::mutate(s1_cluster = factor(Cluster, levels = sort(s1_clusters)),
+        dplyr::mutate(s1_cluster = factor(Cluster, levels = s1_clusters),
                s2_cluster = glue("{s2_name} cluster {s2_cluster}")) %>%
         mutate(s2_cluster = factor(s2_cluster, levels = clusters2)) %>%
         ggplot(aes(x = s1_cluster, y = mean_expression)) +
@@ -178,9 +175,9 @@ heatmapPercentMarkerOverlap <- function(markers1, markers2,
                s2_cluster = factor(s2_cluster, levels = unique(olap_srt$s2_cluster))) %>%
         ggplot(aes(x = s2_cluster, y = cluster)) +
         geom_raster(aes(fill = marker_overlap)) +
+        scale_fill_gradientn(colors = viridis::viridis(100)) +
         geom_text(aes(label = round(marker_overlap, 2)), colour = "white", size = 3) +
         scale_x_discrete(position = "top") +
-        ggplot2::scale_fill_viridis_c(limits = c(0, 1)) +
         theme_min() +
         theme(panel.border = element_blank()) +
         ggtitle("Min % overlap in cluster gene markers, sorted by % overlap")

@@ -37,3 +37,6 @@ NULL
 
 #' @importFrom rlang :=
 NULL
+
+#' @importFrom stats median
+NULL

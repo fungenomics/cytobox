@@ -73,7 +73,7 @@ Pariwise violin plot
 
 ```{r markerViolinPlot, fig.width = 6, fig.height = 4}
 
-markerViolinPlot(pbmc, markers_pbmc, pbmc, "PBMC1", "PBMC2", "res.1", "res.1")
+markerViolinPlot(pbmc, markers_pbmc, pbmc, "PBMC1", "PBMC2")
 
 ```
 

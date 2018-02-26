@@ -10,8 +10,6 @@ labelTSNEClusters(seurat, labels)
 \item{seurat}{Seurat object.}
 
 \item{labels}{A data frame with 3 columns: "cluster", "label" and "color". The "color" column is optional.}
-
-\item{colors}{Cluster colors (Optional).}
 }
 \value{
 A ggplot2 object. A tSNE plot with labelled clusters
