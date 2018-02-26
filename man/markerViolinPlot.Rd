@@ -4,8 +4,8 @@
 \alias{markerViolinPlot}
 \title{markerViolinPlot}
 \usage{
-markerViolinPlot(seurat1, markers, seurat2, s1_name, s2_name, cluster_col1,
-  cluster_col2, marker_col = "gene")
+markerViolinPlot(seurat1, markers, seurat2, s1_name, s2_name,
+  marker_col = "gene")
 }
 \arguments{
 \item{seurat1}{Seurat object for which to plot expression}
@@ -17,12 +17,6 @@ markerViolinPlot(seurat1, markers, seurat2, s1_name, s2_name, cluster_col1,
 \item{s1_name}{String, sample name for \code{seurat1}}
 
 \item{s2_name}{String, sample name for \code{seurat2}}
-
-\item{cluster_col1}{String, column in \code{seurat1@meta.data} which stores
-the cluster assignments to use.}
-
-\item{cluster_col2}{String, column in \code{seurat2@meta.data} which stores
-the cluster assignments to use.}
 
 \item{marker_col}{String specifying the column in the \code{markers} data frames which
 specifies the cluster. By default, Seurat calls this "gene" (the default here);
@@ -37,7 +31,7 @@ dataset 1 is the sample whose expression values will be plot, and dataset 2
 is the sample whose cluster markers are used.
 }
 \examples{
-markerViolinPlot(pbmc, markers_pbmc, pbmc, "Test1", "Test2", "res.1", "res.1")
+markerViolinPlot(pbmc, markers_pbmc, pbmc, "Test1", "Test2")
 }
 \author{
 adapted from code from Alexis Blanchet-Cohen
