@@ -4,7 +4,7 @@
 #'
 #' @param seurat Seurat object.
 #' @param labels A data frame with 3 columns: "cluster", "label" and "color". The "color" column is optional.
-#' @param colors Cluster colors (Optional).
+# #' @param colors Cluster colors (Optional).
 #'
 #' @return A ggplot2 object. A tSNE plot with labelled clusters
 #'

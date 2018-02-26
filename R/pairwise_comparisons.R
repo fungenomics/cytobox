@@ -178,9 +178,9 @@ heatmapPercentMarkerOverlap <- function(markers1, markers2,
                s2_cluster = factor(s2_cluster, levels = unique(olap_srt$s2_cluster))) %>%
         ggplot(aes(x = s2_cluster, y = cluster)) +
         geom_raster(aes(fill = marker_overlap)) +
+        scale_fill_gradientn(colors = viridis::viridis(100)) +
         geom_text(aes(label = round(marker_overlap, 2)), colour = "white", size = 3) +
         scale_x_discrete(position = "top") +
-        ggplot2::scale_fill_viridis_c(limits = c(0, 1)) +
         theme_min() +
         theme(panel.border = element_blank()) +
         ggtitle("Min % overlap in cluster gene markers, sorted by % overlap")
