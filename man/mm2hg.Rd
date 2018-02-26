@@ -13,8 +13,12 @@ mm2hg(...)
 Character vector of converted names
 }
 \description{
-Wrapper around \code{\link{convertName}}
+Convert genes from mouse to human, wrapper around \code{\link{convertName}}
 }
 \examples{
 mm2hg("Tubb5", "Nes")
+mm2hg(c("Tubb5", "Nes"))
+}
+\author{
+adapted from Claudia Kleinman
 }

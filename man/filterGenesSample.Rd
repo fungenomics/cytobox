@@ -7,7 +7,7 @@
 filterGenesSample(genes, seurat, from_sp = "hg", to_sp = "mm")
 }
 \arguments{
-\item{genes}{Genes to search for}
+\item{genes}{Character vector of genes to search for}
 
 \item{seurat}{Seurat object}
 
@@ -19,8 +19,13 @@ filterGenesSample(genes, seurat, from_sp = "hg", to_sp = "mm")
 Character vector of converted gene names which are detected in the sample
 }
 \description{
-filterGenesSample
+Given a set of genes, filter to the ones found in the sample.
+This is useful because some Seurat functions (Seurat::VlnPlot, Seurat::FeaturePlot)
+will quit on an error if a gene is not found (i.e. not in the rownames of seurat@data).
 }
 \examples{
 filterGenesSample(c("IL32", "foo"), pbmc, "hg", "hg")
+}
+\author{
+adapted from Claudia Kleinman
 }

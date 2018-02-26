@@ -87,6 +87,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
 #' tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+#' dashboard(pbmc, "IL32", "Test dashboard")
 tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label = TRUE,
                                              reduction = "tsne",
@@ -318,6 +319,10 @@ dashboard <- function(seurat, genes,
 #' genes will be on the x axis, and there will be one plot per cluster.
 #' If "gene", clusters will be on the x axis, and there will be one plot per
 #' gene (akin to Seurat::VlnPlot)
+#' @param point_size Numeric value for point size, use -1 to hide points. Default: 0.4.
+#' @param adjust Bandwidth for density estimation, passed to \code{geom_violin}.
+#' See ggplot2 documentation for more info. Default: 0.1. NOTE/TODO: If vln() with
+#' facet = gene looks different from Seurat::VlnPlot, this is probably the culprit.
 #'
 #' @return A ggplot2 object
 #' @author Selin Jessa
@@ -326,7 +331,8 @@ dashboard <- function(seurat, genes,
 #' @examples
 #' vln(pbmc, c("IL32", "MS4A1"))
 #' vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
-vln <- function(seurat, genes, facet_by = "cluster") {
+#' vln(pbmc, c("IL32", "MS4A1"), point_size = -1, facet_by = "gene")
+vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 0.01) {
 
     exp <- fetchData(seurat, genes, return_cluster = TRUE) %>%
         tidyr::gather(Gene, Expression, 2:length(.))
@@ -334,11 +340,16 @@ vln <- function(seurat, genes, facet_by = "cluster") {
     if (facet_by == "gene") gg <- ggplot(exp, aes(x = Cluster, y = Expression, fill = Cluster))
     else if (facet_by == "cluster") gg <- ggplot(exp, aes(x = Gene, y = Expression, fill = Cluster))
 
+    # Seurat::SingleVlnPlot limits the data in this way
+    # y.max <- max(select(exp, Expression))
+    # y.min <- min(select(exp, Expression))
+
     gg <- gg +
-        geom_violin(scale = "width", adjust = 1, trim = TRUE) +
-        geom_jitter(size = 0.4, alpha = 0.5) +
+        geom_violin(scale = "width", adjust = adjust, trim = TRUE) +
+        geom_jitter(size = point_size, alpha = 0.5) +
         theme_min() +
         theme(legend.position = "none")
+    # + ylim(y.min, y.max)
 
     if (facet_by == "gene") {
 
@@ -350,6 +361,7 @@ vln <- function(seurat, genes, facet_by = "cluster") {
     return(gg)
 
 }
+
 
 
 #' vlnGrid

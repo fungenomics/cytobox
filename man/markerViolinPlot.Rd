@@ -34,5 +34,5 @@ is the sample whose cluster markers are used.
 markerViolinPlot(pbmc, markers_pbmc, pbmc, "Test1", "Test2")
 }
 \author{
-adapted from code from Alexis Blanchet-Cohen
+adapted from Alexis Blanchet-Cohen
 }

@@ -60,7 +60,7 @@ meanMarkerExprByCluster <- function(seurat, markers, marker_col = "gene") {
 #' in objects produced by the lab's pipeline, it may be called "external_gene_name".
 #'
 #' @return A ggplot object
-#' @author adapted from code from Alexis Blanchet-Cohen
+#' @author adapted from Alexis Blanchet-Cohen
 #'
 #' @export
 #' @examples

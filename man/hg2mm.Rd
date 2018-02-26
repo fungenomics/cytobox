@@ -13,9 +13,12 @@ hg2mm(...)
 Character vector of converted names
 }
 \description{
-Wrapper around \code{\link{convertName}}
+Convert genes from human to mouse, wrapper around \code{\link{convertName}}
 }
 \examples{
 hg2mm("TUBB", "NES")
 hg2mm(c("TUBB", "NES"))
+}
+\author{
+adapted from Claudia Kleinman
 }
