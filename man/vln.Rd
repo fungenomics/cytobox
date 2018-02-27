@@ -26,8 +26,9 @@ facet = gene looks different from Seurat::VlnPlot, this is probably the culprit.
 A ggplot2 object
 }
 \description{
-Similar to Seurat::VlnPlot() except it silently skips genes that are not found in the
-data, and has an option to group plots by cluster instead of gene.
+Similar to Seurat::VlnPlot() except it prints genes that are not found in the
+data, but continues plotting without error,
+and has a (default) option to group plots by cluster instead of gene.
 }
 \examples{
 vln(pbmc, c("IL32", "MS4A1"))

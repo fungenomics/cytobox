@@ -45,12 +45,16 @@ vln(pbmc, c("IL32", "MS4A1"), facet_by = "cluster")
 ```
 
 
-Panel of tiny violin plots for a set of genes, as in Figure 5D in the drop-seq paper
+Panel of tiny violin plots for a set of genes, as in Figure 5D in the drop-seq paper.
+See docs for default ordering method.
 
 ```{r vlnPanel, fig.width = 7, fig.height = 2}
 
 # Use the first 15 genes in the data
 vlnGrid(pbmc, genes = head(rownames(pbmc@data), 15))
+
+# Specify order
+vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 1, 2, 3))
 
 ```
 
