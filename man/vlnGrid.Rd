@@ -4,12 +4,26 @@
 \alias{vlnGrid}
 \title{vlnGrid}
 \usage{
-vlnGrid(seurat, genes)
+vlnGrid(seurat, genes, order = "genes", scale = "width")
 }
 \arguments{
 \item{seurat}{Seurat object}
 
-\item{genes}{Genes to plot violins for}
+\item{genes}{Genes to plot violins for, in the order in which they should be
+plotted.}
+
+\item{order}{Either "genes", or a vector containing the clusters in the order
+they should be plotted (from top to bottom). If "genes", clusters will be sorted
+in decreasing order of their median expression* of these genes, in the order
+in which they're provided. Passing a vector will cause clusters to be plot
+in that order. Default: "genes". *We take the median of cells with non-zero
+expression values.}
+
+\item{width}{String, one of "width", "area", or "count". From the ggplot2
+documentation of \code{geom_violin}: "if "area" (default), all violins have
+the same area (before trimming the tails). If "count", areas are scaled
+proportionally to the number of observations. If "width", all violins have
+the same maximum width." Default: "width".}
 }
 \value{
 A ggplot2 object
@@ -19,7 +33,11 @@ A grid of small violin plots, one plot per gene per cluster, similar to
 Figure 5D in the Drop-seq paper by Macosko et al.
 }
 \examples{
+# Use the first 15 genes in the data, order by gene
 vlnGrid(pbmc, head(rownames(pbmc@data), 15))
+
+# Specify order
+vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 1, 2, 3))
 }
 \author{
 Selin Jessa

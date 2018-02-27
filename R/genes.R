@@ -12,6 +12,7 @@
 #'
 #' @return Rows of annotation corresponding to the symbols
 #' @export
+#' @author adapted from Claudia Kleinman
 #'
 #' @examples
 #' geneName("TUBB", species = "hg")
@@ -30,6 +31,7 @@ geneName <- function(symbols, species = c("hg", "mm")) {
 #'
 #' @return Character vector of converted gene names
 #' @export
+#' @author adapted from Claudia Kleinman
 #'
 #' @examples
 #' convertName(c("TUBB", "NES"), "hg", "mm")
@@ -42,15 +44,17 @@ convertName <- function(symbol, from, to = NULL) {
 
 #' mm2hg
 #'
-#' Wrapper around \code{\link{convertName}}
+#' Convert genes from mouse to human, wrapper around \code{\link{convertName}}
 #'
 #' @param ... Mouse genes to convert, as individual strings or one character vector
 #'
 #' @return Character vector of converted names
 #' @export
+#' @author adapted from Claudia Kleinman
 #'
 #' @examples
 #' mm2hg("Tubb5", "Nes")
+#' mm2hg(c("Tubb5", "Nes"))
 mm2hg <- function(...) {
     convertName(c(...), "mm")
 }
@@ -58,12 +62,13 @@ mm2hg <- function(...) {
 
 #' hg2mm
 #'
-#' Wrapper around \code{\link{convertName}}
+#' Convert genes from human to mouse, wrapper around \code{\link{convertName}}
 #'
 #' @param ... Human genes to convert, as individual strings or one character vector
 #'
 #' @return Character vector of converted names
 #' @export
+#' @author adapted from Claudia Kleinman
 #'
 #' @examples
 #' hg2mm("TUBB", "NES")
@@ -75,13 +80,18 @@ hg2mm <- function(...) {
 
 #' filterGenesSample
 #'
-#' @param genes Genes to search for
+#' Given a set of genes, filter to the ones found in the sample.
+#' This is useful because some Seurat functions (Seurat::VlnPlot, Seurat::FeaturePlot)
+#' will quit on an error if a gene is not found (i.e. not in the rownames of seurat@@data).
+#'
+#' @param genes Character vector of genes to search for
 #' @param seurat Seurat object
 #' @param from_sp One of "hg" or "mm". Default: "hg"
 #' @param to_sp One of "hg" or "mm". Default: "mm"
 #'
 #' @return Character vector of converted gene names which are detected in the sample
 #' @export
+#' @author adapted from Claudia Kleinman
 #'
 #' @examples
 #' filterGenesSample(c("IL32", "foo"), pbmc, "hg", "hg")

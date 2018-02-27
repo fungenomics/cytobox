@@ -87,6 +87,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
 #' tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+#' dashboard(pbmc, "IL32", "Test dashboard")
 tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label = TRUE,
                                              reduction = "tsne",
@@ -96,6 +97,8 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              verbose = FALSE) {
 
     if (verbose) message("Computing percentiles...")
+
+
 
     # Get expression percentiles
     percentiles <- percentilesMarkerExpression(seurat, genes)
@@ -309,8 +312,9 @@ dashboard <- function(seurat, genes,
 
 #' vln
 #'
-#' Similar to Seurat::VlnPlot() except it silently skips genes that are not found in the
-#' data, and has an option to group plots by cluster instead of gene.
+#' Similar to Seurat::VlnPlot() except it prints genes that are not found in the
+#' data, but continues plotting without error,
+#' and has a (default) option to group plots by cluster instead of gene.
 #'
 #' @param seurat Seurat object
 #' @param genes Genes to plot violins for
@@ -318,6 +322,10 @@ dashboard <- function(seurat, genes,
 #' genes will be on the x axis, and there will be one plot per cluster.
 #' If "gene", clusters will be on the x axis, and there will be one plot per
 #' gene (akin to Seurat::VlnPlot)
+#' @param point_size Numeric value for point size, use -1 to hide points. Default: 0.4.
+#' @param adjust Bandwidth for density estimation, passed to \code{geom_violin}.
+#' See ggplot2 documentation for more info. Default: 0.1. NOTE/TODO: If vln() with
+#' facet = gene looks different from Seurat::VlnPlot, this is probably the culprit.
 #'
 #' @return A ggplot2 object
 #' @author Selin Jessa
@@ -326,19 +334,30 @@ dashboard <- function(seurat, genes,
 #' @examples
 #' vln(pbmc, c("IL32", "MS4A1"))
 #' vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
-vln <- function(seurat, genes, facet_by = "cluster") {
+#' vln(pbmc, c("IL32", "MS4A1"), point_size = -1, facet_by = "gene")
+vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 0.01) {
 
     exp <- fetchData(seurat, genes, return_cluster = TRUE) %>%
         tidyr::gather(Gene, Expression, 2:length(.))
 
+    genes_out <- findGenes(seurat, genes)
+    if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
+                                                         paste0(genes_out$undetected, collapse = ", "),
+                                                         "] undetected in the data"))
+
     if (facet_by == "gene") gg <- ggplot(exp, aes(x = Cluster, y = Expression, fill = Cluster))
     else if (facet_by == "cluster") gg <- ggplot(exp, aes(x = Gene, y = Expression, fill = Cluster))
 
+    # Seurat::SingleVlnPlot limits the data in this way
+    # y.max <- max(select(exp, Expression))
+    # y.min <- min(select(exp, Expression))
+
     gg <- gg +
-        geom_violin(scale = "width", adjust = 1, trim = TRUE) +
-        geom_jitter(size = 0.4, alpha = 0.5) +
+        geom_violin(scale = "width", adjust = adjust, trim = TRUE) +
+        geom_jitter(size = point_size, alpha = 0.5) +
         theme_min() +
         theme(legend.position = "none")
+    # + ylim(y.min, y.max)
 
     if (facet_by == "gene") {
 
@@ -352,13 +371,26 @@ vln <- function(seurat, genes, facet_by = "cluster") {
 }
 
 
+
 #' vlnGrid
 #'
 #' A grid of small violin plots, one plot per gene per cluster, similar to
 #' Figure 5D in the Drop-seq paper by Macosko et al.
 #'
 #' @param seurat Seurat object
-#' @param genes Genes to plot violins for
+#' @param genes Genes to plot violins for, in the order in which they should be
+#' plotted.
+#' @param order Either "genes", or a vector containing the clusters in the order
+#' they should be plotted (from top to bottom). If "genes", clusters will be sorted
+#' in decreasing order of their median expression* of these genes, in the order
+#' in which they're provided. Passing a vector will cause clusters to be plot
+#' in that order. Default: "genes". *We take the median of cells with non-zero
+#' expression values.
+#' @param width String, one of "width", "area", or "count". From the ggplot2
+#' documentation of \code{geom_violin}: "if "area" (default), all violins have
+#' the same area (before trimming the tails). If "count", areas are scaled
+#' proportionally to the number of observations. If "width", all violins have
+#' the same maximum width." Default: "width".
 #'
 #' @return A ggplot2 object
 #' @export
@@ -366,27 +398,61 @@ vln <- function(seurat, genes, facet_by = "cluster") {
 #' @author Selin Jessa
 #'
 #' @examples
-# Use the first 15 genes in the data
+#' # Use the first 15 genes in the data, order by gene
 #' vlnGrid(pbmc, head(rownames(pbmc@data), 15))
-vlnGrid <- function(seurat, genes) {
+#'
+#' # Specify order
+#' vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 1, 2, 3))
+vlnGrid <- function(seurat, genes, order = "genes", scale = "width") {
 
     expr <- fetchData(seurat, genes, return_cell = TRUE, return_cluster = TRUE) %>%
         tidyr::gather(Marker, Expression, 3:length(.))
 
-    expr$Cluster <- factor(expr$Cluster, levels = seq(length(unique(seurat@ident))-1, 0))
+    genes_out <- findGenes(seurat, genes)
+    if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
+                                                         paste0(genes_out$undetected, collapse = ", "),
+                                                         "] undetected in the data"))
+
+    if (length(order) == 1) {
+
+        if (order == "genes") {
+
+            sort_criteria <- glue::glue("desc({genes_out$detected})")
+
+            cluster_order <- expr %>%
+                filter(Expression != 0) %>%
+                tidyr::spread(Marker, Expression) %>%
+                select(-Cell) %>%
+                group_by(Cluster) %>%
+                summarise_all(funs(median), na.rm = TRUE) %>%
+                arrange_(sort_criteria) %>%
+                `[[`("Cluster")
+
+            expr$Cluster <- factor(expr$Cluster, levels = rev(cluster_order))
+
+        } else stop("Please set order = 'genes', or provide an ordering which includes all clusters.")
+
+    } else {
+
+        if(length(order) != length(unique(seurat@ident))) stop("Please provide an ordering which includes all clusters.")
+        expr$Cluster <- factor(expr$Cluster, levels = rev(order))
+
+    }
+
+    expr$Marker <- factor(expr$Marker, levels = genes_out$detected)
 
     gg <- expr %>%
         ggplot(aes(x = Cluster, y = Expression)) +
-        geom_violin(aes(fill = Cluster), scale = "width", size = 0.5) +
+        geom_violin(aes(fill = Cluster), scale = scale, size = 0.5) +
         facet_wrap(~ Marker, ncol = length(unique(expr$Marker))) +
         theme_min() +
         coord_flip() +
         ggplot2::theme(panel.border = element_blank(),
-              axis.ticks.x = element_blank(),
-              axis.text.x = element_blank(),
-              axis.line.x = element_blank(),
-              legend.position = "none",
-              strip.text.x = element_text(angle = 30, size = 8))
+                       axis.ticks.x = element_blank(),
+                       axis.text.x = element_blank(),
+                       axis.line.x = element_blank(),
+                       legend.position = "none",
+                       strip.text.x = element_text(angle = 30, size = 8))
 
     return(gg)
 

@@ -26,15 +26,26 @@ devtools::install_github("sjessa/cytokit", auth_token = "abc123", build_vignette
 
 ```
 
+You'll need this token again in the future to update `cytokit`, so it's a good
+idea to save the above command in a script, or save your token somewhere you 
+can copy-paste it. 
+
+#### Updating
+
+If you don't know your old token, go to https://github.com/settings/tokens, click 'Edit' on
+your cytokit token, and click 'Regenerate', and repeat the install command in Step
+3 above with the new token.
+
 ## Getting help
 
-Access the very barebones vignette from within R for a list of examplesx:
+Access the very barebones vignette from within R for a list of examples:
 
 ```r
 browseVignettes("cytokit")
 ```
 
-You can look up the documentation for any `cytokit` function from the R console:
+You can look up the documentation for any `cytokit` function from the R console,
+these also contain an example or two for many functions:
 ```r
 ?cytokit::ggColours
 ```

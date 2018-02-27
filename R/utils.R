@@ -136,6 +136,33 @@ fetchData <- function(seurat, genes, clusters = NULL, return_cell = FALSE, retur
 
 
 
+#' findGenes
+#'
+#' Given a set of genes, find the ones which are detected in the sample,
+#' and which are not.
+#'
+#' @param seurat Seurat object
+#' @param genes Character vector of genes
+#'
+#' @return A named list with two elements: "detected" and "undetected"
+#' each storing character vectors with the genes in each category
+#' @export
+#'
+#' @author Selin Jessa
+#' @examples
+#' find_out <- findGenes(pbmc, c("IL32", "CD79B", "foo"))
+#' find_out$detected
+#' find_out$undetected
+findGenes <- function(seurat, genes) {
+
+    genes_detected <- genes[genes %in% rownames(seurat@data)]
+    genes_undetected <- setdiff(genes, genes_detected)
+
+    list(detected = genes_detected, undetected = genes_undetected)
+
+}
+
+
 
 #' theme_min
 #'

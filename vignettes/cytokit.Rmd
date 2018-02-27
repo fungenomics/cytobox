@@ -35,7 +35,7 @@ library(cytokit)
 
 Violin plot for a set of genes (like `Seurat::VlnPlot()`)
 
-```{r violin}
+```{r violin, fig.width = 5, fig.height = 3}
 
 vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
 
@@ -45,12 +45,16 @@ vln(pbmc, c("IL32", "MS4A1"), facet_by = "cluster")
 ```
 
 
-Panel of tiny violin plots for a set of genes, as in Figure 5D in the drop-seq paper
+Panel of tiny violin plots for a set of genes, as in Figure 5D in the drop-seq paper.
+See docs for default ordering method.
 
 ```{r vlnPanel, fig.width = 7, fig.height = 2}
 
 # Use the first 15 genes in the data
 vlnGrid(pbmc, genes = head(rownames(pbmc@data), 15))
+
+# Specify order
+vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 1, 2, 3))
 
 ```
 
@@ -66,6 +70,23 @@ tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label = FALSE)
 
 
 ```
+
+Dashboard plot, which gives a bit more distrubtional information than tSNE:
+
+```{r dashboard, fig.width = 8, fig.height = 4, warning = FALSE}
+
+tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label = TRUE, extra = TRUE, verbose = TRUE)
+
+# This function is a shortcut for the above
+dashboard(pbmc, c("IL32", "CD2"), title = "test genes")
+
+```
+
+Notes:
+- This doesn't look good with few clusters; for a real sample with ~ 15 clusters, a good set of dimensions is width = 14, height = 8
+- Known issue: the dashboard plots throw a big warning related to the unicode symbols.
+Do warning = FALSE in the chunk options to not print it.
+
 
 # Two-sample plots
 

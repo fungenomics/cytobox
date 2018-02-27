@@ -22,3 +22,6 @@ convertName
 \examples{
 convertName(c("TUBB", "NES"), "hg", "mm")
 }
+\author{
+adapted from Claudia Kleinman
+}

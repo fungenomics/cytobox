@@ -12,7 +12,8 @@ and all remaining columns give the mean expression of markers identified
 for each cluster
 }
 \description{
-meanMarkerExprByCluster
+Compute the mean expression of markers for each cluster in one dataset,
+in each cluster of another dataset. Used for \code{\link{markerViolinPlot}}
 }
 \author{
 Selin Jessa

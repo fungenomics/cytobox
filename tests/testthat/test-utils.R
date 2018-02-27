@@ -45,6 +45,15 @@ test_that("subsetting and fetching expression data works", {
 })
 
 
+test_that("findGenes works", {
+
+    find_out <- findGenes(pbmc, c("IL32", "CD79B", "foo"))
+    expect_equal(find_out$detected, c("IL32", "CD79B"))
+    expect_equal(find_out$undetected, "foo")
+
+})
+
+
 
 # test_that("we get cluster centers in tSNE space correctly", {
 #

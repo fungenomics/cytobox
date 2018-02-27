@@ -48,6 +48,7 @@ group of marker genes.
 \examples{
 tsneByPercentileMarkerExpression(pbmc, "IL32")
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+dashboard(pbmc, "IL32", "Test dashboard")
 }
 \author{
 Selin Jessa

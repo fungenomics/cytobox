@@ -21,3 +21,6 @@ TODO: return object does not preserve order of original list
 \examples{
 geneName("TUBB", species = "hg")
 }
+\author{
+adapted from Claudia Kleinman
+}
