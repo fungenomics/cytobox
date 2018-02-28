@@ -43,7 +43,7 @@ meanMarkerExprByCluster <- function(seurat, markers, marker_col = "gene") {
 }
 
 
-#' markerViolinPlot
+#' pairwiseVln
 #'
 #' Make a grid of violin plots with the mean expression of each cluster, for markers
 # of each cluster either from that same dataset, or from a different one. Here,
@@ -62,10 +62,11 @@ meanMarkerExprByCluster <- function(seurat, markers, marker_col = "gene") {
 #' @return A ggplot object
 #' @author adapted from Alexis Blanchet-Cohen
 #'
+#' @aliases markerViolinPlot
 #' @export
 #' @examples
-#' markerViolinPlot(pbmc, markers_pbmc, pbmc, "Test1", "Test2")
-markerViolinPlot <- function(seurat1, markers, seurat2, s1_name, s2_name, marker_col = "gene") {
+#' pairwiseVln(pbmc, markers_pbmc, pbmc, "Test1", "Test2")
+pairwiseVln <- function(seurat1, markers, seurat2, s1_name, s2_name, marker_col = "gene") {
 
     s1_clusters <- sort(unique(seurat1@ident))
     s2_clusters <- sort(unique(seurat2@ident))
@@ -89,6 +90,10 @@ markerViolinPlot <- function(seurat1, markers, seurat2, s1_name, s2_name, marker
     return(gg)
 
 }
+
+
+#' @export
+markerViolinPlot <- pairwiseVln
 
 
 

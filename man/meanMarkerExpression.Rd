@@ -18,7 +18,10 @@ which is the expression value for the marker gene, or mean if multiple
 genes were provided.
 }
 \description{
-meanMarkerExpression
+Calculate, for each cell, the mean expression of the given set of marker genes.
+}
+\examples{
+meanMarkerExpression(pbmc, genes = c("IL32", "MS4A1"))
 }
 \author{
 Selin Jessa

@@ -16,8 +16,7 @@
 #' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
 #' Default: "tsne"
 #'
-# @export
-#'
+#' @export
 #' @return A ggplot object
 #'
 #' @author Selin Jessa
@@ -31,20 +30,19 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
     exp_df <- meanMarkerExpression(seurat, genes)
 
     # Get dimensionality reduction coordinates
-    exp_df <- seurat %>% addEmbedding(exp_df, reduction)
+    exp_df <- addEmbedding(seurat, exp_df, reduction) %>%
+        # Order in which points will be plot, "front" points at the bottom
+        dplyr::arrange(Mean_marker_expression)
 
     # Get the variable names
     vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
 
     # Plot
     gg <- exp_df %>%
-        dplyr::arrange(Mean_marker_expression) %>% # Order in which points will be plot
         ggplot(aes(x = exp_df[[vars[1]]], y = exp_df[[vars[2]]])) +
         geom_point(aes(colour = Mean_marker_expression), size = rel(0.8), alpha = 0.6) +
         viridis::scale_color_viridis() +
-        xlab(vars[1]) + ylab(vars[2])
-
-    gg <- gg +
+        xlab(vars[1]) + ylab(vars[2]) +
         theme_min()
 
     return(gg)
