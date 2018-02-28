@@ -3,6 +3,8 @@
 
 #' meanMarkerExpression
 #'
+#' Calculate, for each cell, the mean expression of the given set of marker genes.
+#'
 #' @param seurat Seurat object
 #' @param genes String or character vector specifying gene(s) to use
 #'
@@ -13,20 +15,15 @@
 #'
 #' @export
 #' @author Selin Jessa
+#' @examples
+#' meanMarkerExpression(pbmc, genes = c("IL32", "MS4A1"))
 meanMarkerExpression <- function(seurat, genes) {
 
     # Get expression data from the Seurat seurat
-    exp <- as.data.frame(as.matrix(seurat@data))
+    data.frame(Cell = seurat@cell.names,
+               Mean_marker_expression = rowMeans(fetchData(seurat, genes)),
+               stringsAsFactors = FALSE)
 
-    # Filter to the genes
-    filt_exp <- exp[rownames(exp) %in% genes, ]
-
-    # Calculate mean expression
-    mean_exp <- colSums(filt_exp)/nrow(filt_exp)
-    exp_df <- data.frame(Cell = colnames(exp),
-                         Mean_marker_expression = as.numeric(mean_exp))
-
-    return(exp_df)
 }
 
 

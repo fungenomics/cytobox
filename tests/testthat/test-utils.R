@@ -9,7 +9,8 @@ test_that("getting ggplot2 default colours works", {
 test_that("we can flexibly add embedding to a dataframe", {
 
     df <- data.frame(Cell = rownames(pbmc@meta.data),
-                                     Cluster = pbmc@meta.data$res.0.8)
+                                     Cluster = pbmc@meta.data$res.0.8,
+                     stringsAsFactors = FALSE)
 
     tsne_emb <- addEmbedding(pbmc, df)
     expect_equal(names(tsne_emb), c("Cell", "Cluster", "tSNE_1", "tSNE_2"))
@@ -22,7 +23,8 @@ test_that("we can flexibly add embedding to a dataframe", {
 test_that("addEmbedding matches data per cell correctly", {
 
     df <- data.frame(Cell = rownames(pbmc@meta.data),
-                     Cluster = pbmc@meta.data$res.0.8)
+                     Cluster = pbmc@meta.data$res.0.8,
+                     stringsAsFactors = FALSE)
 
     tsne_emb <- addEmbedding(pbmc, df)
 

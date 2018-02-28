@@ -63,7 +63,7 @@ addEmbedding <- function(seurat, df, reduction = "tsne") {
     # See here: http://dplyr.tidyverse.org/articles/programming.html#setting-variable-names
     vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
 
-    embedding <- data.frame(Cell = rownames(seurat@dr[[reduction]]@cell.embeddings)) %>%
+    embedding <- data.frame(Cell = seurat@cell.names, stringsAsFactors = FALSE) %>%
         mutate(!!vars[1] := seurat@dr[[reduction]]@cell.embeddings[, 1],
                !!vars[2] := seurat@dr[[reduction]]@cell.embeddings[, 2])
 

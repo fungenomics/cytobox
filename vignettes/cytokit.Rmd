@@ -24,13 +24,13 @@ library(cytokit)
 
 # One-sample plots
 
-<!-- Plot a t-SNE coloured by mean marker expression -->
+Plot a t-SNE coloured by mean marker expression
 
-<!-- ```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = FALSE, eval = FALSE} -->
+```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = FALSE, eval = FALSE}
 
-<!-- tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2")) -->
+tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
 
-<!-- ``` -->
+```
 
 
 Violin plot for a set of genes (like `Seurat::VlnPlot()`)
@@ -83,6 +83,7 @@ dashboard(pbmc, c("IL32", "CD2"), title = "test genes")
 ```
 
 Notes:
+
 - This doesn't look good with few clusters; for a real sample with ~ 15 clusters, a good set of dimensions is width = 14, height = 8
 - Known issue: the dashboard plots throw a big warning related to the unicode symbols.
 Do warning = FALSE in the chunk options to not print it.
@@ -94,7 +95,7 @@ Pariwise violin plot
 
 ```{r markerViolinPlot, fig.width = 6, fig.height = 4}
 
-markerViolinPlot(pbmc, markers_pbmc, pbmc, "PBMC1", "PBMC2")
+pairwiseVln(pbmc, markers_pbmc, pbmc, "PBMC1", "PBMC2")
 
 ```
 
@@ -119,3 +120,5 @@ head(fetchData(pbmc, "IL32", c(1, 2)))
 head(fetchData(pbmc, c("IL32", "MS4A1"), c(1, 2), return_cluster = TRUE, return_cell = TRUE))
 
 ```
+
+
