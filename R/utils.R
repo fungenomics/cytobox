@@ -102,12 +102,17 @@ addEmbedding <- function(seurat, df, reduction = "tsne") {
 #' fetchData(pbmc, c("IL32", "MS4A1"), c(1, 2), return_cluster = TRUE, return_cell = TRUE)
 fetchData <- function(seurat, genes, clusters = NULL, return_cell = FALSE, return_cluster = FALSE) {
 
+    genes_out <- findGenes(seurat, genes)
+    if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
+                                                         paste0(genes_out$undetected, collapse = ", "),
+                                                         "] undetected in the data"))
+
+    if(length(genes_out$detected) == 0) stop("No genes specified were ",
+                                             "found in the data.")
+
     exp <- as.matrix(seurat@data)
 
-    if(!any(genes %in% rownames(exp))) stop("No genes specified were ",
-                                            "found in the data.")
-
-    exp_filt <- as.data.frame(t(exp[which(rownames(exp) %in% genes),]))
+    exp_filt <- as.data.frame(t(exp[which(rownames(exp) %in% genes_out$detected),]))
 
     # Keep all
     if(is.null(clusters)) clusters <- unique(seurat@ident)
