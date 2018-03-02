@@ -5,6 +5,6 @@
 library(data.table)
 library(usethis)
 
-abcam.neuronal.marker.genes <- fread("../../../analyses/njabado/single_cell/abcam_neural_markers/abcam_neuronal_markers.txt", data.table = FALSE)
+abcam.neuronal.markers <- fread("../../../analyses/njabado/single_cell/abcam_neural_markers/abcam_neuronal_markers.txt", data.table = FALSE)
 
-usethis::use_data(abcam.neuronal.marker.genes)
+usethis::use_data(abcam.neuronal.markers)
