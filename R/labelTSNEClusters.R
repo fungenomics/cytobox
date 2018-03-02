@@ -12,7 +12,7 @@
 #' @author Alexis Blanchet-Cohen
 labelTSNEClusters <- function(seurat, labels) {
 
-    old.cluster.ids <- levels(unique(GetClusters(seurat)$cluster))
+    old.cluster.ids <- levels(unique(Seurat::GetClusters(seurat)$cluster))
     new.cluster.ids <- old.cluster.ids
     new.cluster.ids[labels$cluster+1] <- labels$label
     seurat@ident <- plyr::mapvalues(x = seurat@ident, from = old.cluster.ids, to = new.cluster.ids)
