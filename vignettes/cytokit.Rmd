@@ -89,6 +89,16 @@ Notes:
 Do warning = FALSE in the chunk options to not print it.
 
 
+Feature plot, akin to `Seurat::FeaturePlot()`
+```{r feature, fig.width = 4, fig.height = 4, warning = FALSE}
+
+tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label_repel = FALSE, palette = "redgrey", alpha = FALSE, point_size = 0.1, legend = FALSE)
+
+# This function is a shortcut for the above
+feature(pbmc, c("IL32", "CD2"))
+
+```
+
 # Two-sample plots
 
 Pariwise violin plot

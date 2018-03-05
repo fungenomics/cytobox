@@ -3,10 +3,12 @@
 \name{tsneByPercentileMarkerExpression}
 \alias{tsneByPercentileMarkerExpression}
 \alias{dashboard}
+\alias{feature}
 \title{tsneByPercentileMarkerExpression}
 \usage{
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
-  reduction = "tsne", title = NULL, palette = "viridis", extra = FALSE,
+  reduction = "tsne", palette = "viridis", title = NULL, alpha = TRUE,
+  legend = TRUE, point_size = 1, label_repel = TRUE, extra = FALSE,
   verbose = FALSE)
 }
 \arguments{
@@ -17,15 +19,24 @@ i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 
 \item{label}{Logical, whether to label clusters on the plot. Default: TRUE.}
 
-\item{reduction}{String specifying the dimensionality reduction to use,
-retrieves t-SNE by default. This should match the names of the elements of
-the list seurat@dr, so it will typically be one of "pca" or "tsne".
-Default: "tsne"}
+\item{palette}{String, one of "viridis" or "blues", specifying which gradient
+palette to use. Default: viridis.}
 
 \item{title}{(Optional) string used as title for the plot.}
 
-\item{palette}{String, one of "viridis" or "blues", specifying which gradient
-palette to use. Default: viridis.}
+\item{alpha}{Logical, whether to vary the alpha (point opacity) with percentile
+group to highlight cells in the top percentiles.
+If FALSE, sets a fixed opacity of 0.8. Default: TRUE.}
+
+\item{legend}{Logical, whether to plot the legend. Default: FALSE.}
+
+\item{point_size}{Numeric, size of points in scatterplot. Default: 1. (A smaller
+value around 0.5 is better for plots which will be viewed at small scale.)}
+
+\item{label_repel}{Logical, if \code{label} is TRUE, whether to plot cluster
+labels repelled from the center, on a slightly transparent white background and
+with an arrow pointing to the cluster center. If FALSE, simply plot the
+cluster label at the cluster center. Default: TRUE.}
 
 \item{extra}{Logical, plot a detailed three-panel plot, where the first
 is a proportional bar plot of cells in each cluster in each percentile
@@ -49,6 +60,7 @@ group of marker genes.
 tsneByPercentileMarkerExpression(pbmc, "IL32")
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 dashboard(pbmc, "IL32", "Test dashboard")
+feature(pbmc, "IL32")
 }
 \author{
 Selin Jessa
