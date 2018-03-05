@@ -3,7 +3,29 @@
 
 
 
-tsne <- function(seurat, label = TRUE, point_size = 0.6, alpha = 0.8) {
+#' tsne
+#'
+#' Plot a coloured, labelled tSNE plot for a datasets, akin to Seurat::TSNEPlot()
+#'
+#' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
+#' @param label Logical, whether to plot cluster labels. Default: TRUE
+#' @param point_size Numeric, size of points in scatter plot. Default: 0.6
+#' @param alpha Numeric, fixed alpha value for points: Default: 0.8
+#' @param legend Logical, whether to plot legend.
+#' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
+#' labels repelled from the center, on a slightly transparent white background and
+#' with an arrow pointing to the cluster center. If FALSE, simply plot the
+#' cluster label at the cluster center. Default: TRUE.
+#'
+#' @return A ggplot2 object
+#' @export
+#'
+#' @author Selin Jessa
+#'
+#' @examples
+#' tsne(pbmc)
+tsne <- function(seurat, label = TRUE, point_size = 0.6, alpha = 0.8,
+                 legend = FALSE, label_repel = TRUE) {
 
     # Assuming that the order of the levels is correct in the seurat object,
     # this should find the colours of the original clusters, and whatever they've been renamed,
@@ -49,7 +71,9 @@ tsne <- function(seurat, label = TRUE, point_size = 0.6, alpha = 0.8) {
 
     }
 
-    gg + theme_min()
+    gg <- gg + theme_min()
+
+    if (!legend) gg <- gg + noLegend()
 
     return(gg)
 
