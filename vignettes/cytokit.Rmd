@@ -24,14 +24,22 @@ library(cytokit)
 
 # One-sample plots
 
+Basic t-SNE of a dataset (like `Seurat::TSNEPlot()`):
+
+```{r tsne, fig.width = 6, fig.height = 4}
+
+tsne(pbmc)
+tsne(pbmc, label_repel = FALSE)
+
+```
+
 Plot a t-SNE coloured by mean marker expression
 
-```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = FALSE, eval = FALSE}
+```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = TRUE, eval = TRUE}
 
 tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
 
 ```
-
 
 Violin plot for a set of genes (like `Seurat::VlnPlot()`)
 
@@ -88,6 +96,16 @@ Notes:
 - Known issue: the dashboard plots throw a big warning related to the unicode symbols.
 Do warning = FALSE in the chunk options to not print it.
 
+
+Feature plot, akin to `Seurat::FeaturePlot()`
+```{r feature, fig.width = 4, fig.height = 4, warning = FALSE}
+
+tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label_repel = FALSE, palette = "redgrey", alpha = FALSE, point_size = 0.1, legend = FALSE)
+
+# This function is a shortcut for the above
+feature(pbmc, c("IL32", "CD2"))
+
+```
 
 # Two-sample plots
 

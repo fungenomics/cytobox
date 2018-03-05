@@ -1,6 +1,91 @@
 # Functions for general plotting
 
 
+
+
+#' tsne
+#'
+#' Plot a coloured, labelled tSNE plot for a datasets, akin to Seurat::TSNEPlot()
+#'
+#' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
+#' @param label Logical, whether to plot cluster labels. Default: TRUE
+#' @param point_size Numeric, size of points in scatter plot. Default: 0.6
+#' @param alpha Numeric, fixed alpha value for points: Default: 0.8
+#' @param legend Logical, whether to plot legend.
+#' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
+#' labels repelled from the center, on a slightly transparent white background and
+#' with an arrow pointing to the cluster center. If FALSE, simply plot the
+#' cluster label at the cluster center. Default: TRUE.
+#'
+#' @return A ggplot2 object
+#' @export
+#'
+#' @author Selin Jessa
+#'
+#' @examples
+#' tsne(pbmc)
+tsne <- function(seurat, label = TRUE, point_size = 0.6, alpha = 0.8,
+                 legend = FALSE, label_repel = TRUE) {
+
+    # Assuming that the order of the levels is correct in the seurat object,
+    # this should find the colours of the original clusters, and whatever they've been renamed,
+    # if and only if the number of new cluster IDs is equal to the number of old ones
+    palette <- ggColors(length(levels(seurat@ident)))
+    names(palette) <- levels(seurat@ident)
+    centers <- clusterCenters(seurat)
+
+    embedding <- data.frame(Cell = seurat@cell.names,
+                            tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
+                            tSNE_2 = seurat@dr$tsne@cell.embeddings[, 2],
+                            Cluster = seurat@ident,
+                            stringsAsFactors = FALSE)
+
+    gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2)) +
+        geom_point(aes(colour = Cluster), size = point_size, alpha = alpha) +
+        scale_color_manual(values = palette)
+
+    if (label) {
+
+        if (label_repel) {
+
+            gg <- gg +
+                ggrepel::geom_label_repel(data = centers,
+                                          aes(x = mean_tSNE_1, y = mean_tSNE_2),
+                                          label = centers$Cluster,
+                                          segment.color = 'grey50',
+                                          fontface = 'bold',
+                                          alpha = 0.8,
+                                          segment.alpha = 0.8,
+                                          label.size = NA,
+                                          force = 2,
+                                          nudge_x = 5, nudge_y = 5,
+                                          segment.size = 0.5,
+                                          arrow = arrow(length = unit(0.01, 'npc')))
+
+        } else {
+
+            gg <- gg +
+                geom_text(data = centers, aes(x = mean_tSNE_1, y = mean_tSNE_2, label = Cluster))
+
+        }
+
+    }
+
+    gg <- gg + theme_min()
+
+    if (!legend) gg <- gg + noLegend()
+
+    return(gg)
+
+
+}
+
+
+
+
+
+
+
 #' tsneByMeanMarkerExpression
 #'
 #' Plot a low-dimensional embedding of the cells,
@@ -60,10 +145,6 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)
 #' @param genes String or character vector specifying gene(s) to use
 #' @param label Logical, whether to label clusters on the plot. Default: TRUE.
-#' @param reduction String specifying the dimensionality reduction to use,
-#' retrieves t-SNE by default. This should match the names of the elements of
-#' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
-#' Default: "tsne"
 #' @param title (Optional) string used as title for the plot.
 #' @param palette String, one of "viridis" or "blues", specifying which gradient
 #' palette to use. Default: viridis.
@@ -75,28 +156,41 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' by percentiles. Requires \code{label = TRUE}. Default: FALSE.
 #' Default: FALSE.
 #' @param verbose Logical, whether to print status updates. Default: FALSE.
+#' @param alpha Logical, whether to vary the alpha (point opacity) with percentile
+#' group to highlight cells in the top percentiles.
+#' If FALSE, sets a fixed opacity of 0.8. Default: TRUE.
+#' @param legend Logical, whether to plot the legend. Default: FALSE.
+#' @param point_size Numeric, size of points in scatterplot. Default: 1. (A smaller
+#' value around 0.5 is better for plots which will be viewed at small scale.)
+#' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
+#' labels repelled from the center, on a slightly transparent white background and
+#' with an arrow pointing to the cluster center. If FALSE, simply plot the
+#' cluster label at the cluster center. Default: TRUE.
 #'
 #' @export
 #'
 #' @return A ggplot object
 #'
 #' @author Selin Jessa
-#' @aliases dashboard
+#' @aliases dashboard feature
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
 #' tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 #' dashboard(pbmc, "IL32", "Test dashboard")
+#' feature(pbmc, "IL32")
 tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label = TRUE,
                                              reduction = "tsne",
-                                             title = NULL,
                                              palette = "viridis",
+                                             title = NULL,
+                                             alpha = TRUE,
+                                             legend = TRUE,
+                                             point_size = 1,
+                                             label_repel = TRUE,
                                              extra = FALSE,
                                              verbose = FALSE) {
 
     if (verbose) message("Computing percentiles...")
-
-
 
     # Get expression percentiles
     percentiles <- percentilesMarkerExpression(seurat, genes)
@@ -110,8 +204,6 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                           "> 94 & \u2264 96",
                           "> 96 & \u2264 98",
                           "> 98 & \u2264 100")
-    alpha_grad <- c(0.025, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
-    alpha_grad_labels <- color_grad_labels
 
     # TODO you can just set the alpha group to the gradient group,
     # and as its values, pass the discrete gradient by hand... saves some code
@@ -124,34 +216,75 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
     # Plot
     gg <- ggplot(percentiles,
-                 aes(x = percentiles[[vars[1]]], y = percentiles[[vars[2]]])) +
-        geom_point(aes(colour = factor(Gradient_group, levels = seq(1, 9)),
-                       alpha = factor(Gradient_group, levels = seq(1, 9))))
+                 aes(x = percentiles[[vars[1]]], y = percentiles[[vars[2]]]))
 
-    if (palette == "viridis") {
 
-        gg <- gg +
-            scale_color_manual(
-                values = viridis(9),
-                name = "Expression level percentile",
-                labels = color_grad_labels,
-                # Ensure all levels are displayed in the legend
-                drop = FALSE)
+    if (alpha) {
 
-    } else if (palette == "blues") {
+        alpha_grad <- c(0.025, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
+        alpha_grad_labels <- color_grad_labels
 
         gg <- gg +
-            scale_color_manual(
-                values = RColorBrewer::brewer.pal(n = 9, name = "Blues"),
-                name = "Expression level percentile",
-                labels = color_grad_labels,
-                drop = FALSE)
+            geom_point(aes(colour = factor(Gradient_group, levels = seq(1, 9)),
+                           alpha = factor(Gradient_group, levels = seq(1, 9))), size = point_size) +
+            scale_alpha_manual(values = alpha_grad, labels = alpha_grad_labels,
+                               name = "Expression level percentile", drop = FALSE)
+
+    } else {
+
+        gg <- gg +
+            geom_point(aes(colour = factor(Gradient_group, levels = seq(1, 9))),
+                       size = point_size, alpha = 0.8) # Some fixed alpha
+
     }
 
-    gg <- gg +
-        guides(colour = guide_legend(order = 1)) +
-        scale_alpha_manual(values = alpha_grad, labels = alpha_grad_labels,
-                           name = "Expression level percentile", drop = FALSE) +
+    if (length(palette) == 1) {
+
+        if (palette == "viridis") {
+
+            gg <- gg +
+                scale_color_manual(
+                    values = viridis(9),
+                    name = "Expression level percentile",
+                    labels = color_grad_labels,
+                    # Ensure all levels are displayed in the legend
+                    drop = FALSE)
+
+        } else if (palette == "blues") {
+
+            gg <- gg +
+                scale_color_manual(
+                    values = RColorBrewer::brewer.pal(n = 9, name = "Blues"),
+                    name = "Expression level percentile",
+                    labels = color_grad_labels,
+                    drop = FALSE)
+
+        } else if (palette == "redgrey") {
+
+            gg <- gg + scale_color_manual(
+                values = grDevices::colorRampPalette(c("gray83", "red"))(n = 9),
+                name = "Expression level percentile",
+                labels = color_grad_labels,
+                drop = FALSE)
+
+        } else {
+
+            stop("Please pass the palette as a character vector ",
+                 "or specify one of: viridis, blues, redgrey")
+
+        }
+
+    } else {
+
+        gg <- gg + scale_color_manual(
+            values = palette,
+            name = "Expression level percentile",
+            labels = color_grad_labels,
+            drop = FALSE)
+
+    }
+
+    gg <- gg + guides(colour = guide_legend(order = 1)) +
         xlab(vars[1]) + ylab(vars[2]) +
         theme_min()
 
@@ -166,19 +299,29 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
         centers <- clusterCenters(seurat)
 
-        gg <- gg +
-            ggrepel::geom_label_repel(data = centers,
-                             aes(x = mean_tSNE_1, y = mean_tSNE_2),
-                             label = centers$Cluster,
-                             segment.color = 'grey50',
-                             fontface = 'bold',
-                             alpha = 0.8,
-                             segment.alpha = 0.8,
-                             label.size = NA,
-                             force = 2,
-                             nudge_x = 5, nudge_y = 5,
-                             segment.size = 0.5,
-                             arrow = arrow(length = unit(0.01, 'npc')))
+        if (label_repel) {
+
+            gg <- gg +
+                ggrepel::geom_label_repel(data = centers,
+                                          aes(x = mean_tSNE_1, y = mean_tSNE_2),
+                                          label = centers$Cluster,
+                                          segment.color = 'grey50',
+                                          fontface = 'bold',
+                                          alpha = 0.8,
+                                          segment.alpha = 0.8,
+                                          label.size = NA,
+                                          force = 2,
+                                          nudge_x = 5, nudge_y = 5,
+                                          segment.size = 0.5,
+                                          arrow = arrow(length = unit(0.01, 'npc')))
+
+        } else {
+
+            gg <- gg +
+                geom_text(data = centers, aes(x = mean_tSNE_1, y = mean_tSNE_2, label = Cluster))
+
+        }
+
 
         if (extra) {
 
@@ -269,25 +412,23 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
             if (verbose) message("Combining plots...")
 
+            combined <- cowplot::plot_grid(p1, p2, gg, rel_widths = c(0.3, 0.2, 1), nrow = 1)
+
             if (!is.null(title)) {
 
-                p1 <- p1 + ggtitle(title)
-                p2 <- p2 + ggtitle("") # So that all plots are aligned
-                gg <- gg + ggtitle("")
+                plot_title <- cowplot::ggdraw() + cowplot::draw_label(title)
+                combined <- cowplot::plot_grid(plot_title, combined, ncol = 1, rel_heights = c(0.07, 1))
 
             }
 
-            combined <- cowplot::plot_grid(p1, p2, gg, rel_widths = c(0.3, 0.2, 1), nrow = 1)
             return(combined)
 
         }
 
     }
 
-    if (!is.null(title)) {
-
-        gg <- gg + ggtitle(title)
-    }
+    if (!legend) gg <- gg + noLegend()
+    if (!is.null(title)) gg <- gg + ggtitle(title)
 
     return(gg)
 
@@ -305,7 +446,39 @@ dashboard <- function(seurat, genes,
 
 }
 
+#' @export
+feature <- function(seurat, genes,
+                    statistic = "percentiles",
+                    label = TRUE,
+                    palette = "redgrey",
+                    label_repel = FALSE,
+                    legend = FALSE,
+                    title = NULL,
+                    reduction = "tsne",
+                    alpha = FALSE,
+                    point_size = 0.5) {
 
+    if (statistic == "percentiles")  {
+
+        tsneByPercentileMarkerExpression(seurat,
+                                         genes,
+                                         label = label,
+                                         palette = palette,
+                                         label_repel = label_repel,
+                                         title = title,
+                                         alpha = alpha,
+                                         legend = legend,
+                                         point_size = point_size)
+
+    } else if (statistic == "mean") {
+
+        tsneByMeanMarkerExpression(seurat,
+                                   genes,
+                                   reduction = reduction)
+
+    }
+
+}
 
 
 #' vln
