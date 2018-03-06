@@ -8,6 +8,12 @@
 #' Plot a coloured, labelled tSNE plot for a datasets, akin to Seurat::TSNEPlot()
 #'
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
+#' @param colours (Optional) Named character vector of colours for points. Names should
+#' correspond to cluster names (e.g. \code{levels(seurat@@ident)}), or to categorical
+#' values in the column of \code{seurat@@meta.data} specified in \code{colour_by}. Default:
+#' use default ggplot2 colours.
+#' @param colour_by (Optional) String, specifying the column in \code{seurat@@meta.data}
+#' by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@@ident}).
 #' @param label Logical, whether to plot cluster labels. Default: TRUE
 #' @param point_size Numeric, size of points in scatter plot. Default: 0.6
 #' @param alpha Numeric, fixed alpha value for points: Default: 0.8
@@ -24,15 +30,11 @@
 #'
 #' @examples
 #' tsne(pbmc)
-tsne <- function(seurat, label = TRUE, point_size = 0.6, alpha = 0.8,
+tsne <- function(seurat,
+                 colours = NULL,
+                 colour_by = NULL,
+                 label = TRUE, point_size = 0.6, alpha = 0.8,
                  legend = FALSE, label_repel = TRUE) {
-
-    # Assuming that the order of the levels is correct in the seurat object,
-    # this should find the colours of the original clusters, and whatever they've been renamed,
-    # if and only if the number of new cluster IDs is equal to the number of old ones
-    palette <- ggColors(length(levels(seurat@ident)))
-    names(palette) <- levels(seurat@ident)
-    centers <- clusterCenters(seurat)
 
     embedding <- data.frame(Cell = seurat@cell.names,
                             tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
@@ -40,11 +42,39 @@ tsne <- function(seurat, label = TRUE, point_size = 0.6, alpha = 0.8,
                             Cluster = seurat@ident,
                             stringsAsFactors = FALSE)
 
-    gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2)) +
-        geom_point(aes(colour = Cluster), size = point_size, alpha = alpha) +
-        scale_color_manual(values = palette)
+    gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
+
+    if (is.null(colour_by)) {
+
+        if (is.null(colours)) {
+
+            # Assuming that the order of the levels is correct in the seurat object,
+            # this should find the colours of the original clusters, and whatever they've been renamed,
+            # if and only if the number of new cluster IDs is equal to the number of old ones
+            colours <- ggColors(length(levels(seurat@ident)))
+            names(colours) <- levels(seurat@ident)
+
+        }
+
+        gg <- gg +
+            geom_point(aes(colour = Cluster), size = point_size, alpha = alpha) +
+            scale_color_manual(values = colours)
+
+    } else {
+
+        embedding[[colour_by]] <- seurat@meta.data[[colour_by]]
+
+        gg <- gg +
+            geom_point(aes_string(colour = colour_by), size = point_size, alpha = alpha)
+
+        if (!is.null(colours)) gg <- gg + scale_color_manual(values = colours)
+        # Otherwise default ggplot2 colours are used
+
+    }
 
     if (label) {
+
+        centers <- clusterCenters(seurat)
 
         if (label_repel) {
 
@@ -76,7 +106,6 @@ tsne <- function(seurat, label = TRUE, point_size = 0.6, alpha = 0.8,
     if (!legend) gg <- gg + noLegend()
 
     return(gg)
-
 
 }
 
@@ -495,7 +524,7 @@ feature <- function(seurat, genes,
 #' gene (akin to Seurat::VlnPlot)
 #' @param point_size Numeric value for point size, use -1 to hide points. Default: 0.4.
 #' @param adjust Bandwidth for density estimation, passed to \code{geom_violin}.
-#' See ggplot2 documentation for more info. Default: 0.1. NOTE/TODO: If vln() with
+#' See ggplot2 documentation for more info. Default: 1. NOTE/TODO: If vln() with
 #' facet = gene looks different from Seurat::VlnPlot, this is probably the culprit.
 #'
 #' @return A ggplot2 object
@@ -506,7 +535,7 @@ feature <- function(seurat, genes,
 #' vln(pbmc, c("IL32", "MS4A1"))
 #' vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
 #' vln(pbmc, c("IL32", "MS4A1"), point_size = -1, facet_by = "gene")
-vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 0.01) {
+vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 1) {
 
     exp <- fetchData(seurat, genes, return_cluster = TRUE) %>%
         tidyr::gather(Gene, Expression, 2:length(.))
@@ -537,6 +566,7 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 
 
     } else if (facet_by == "cluster") gg <- gg + facet_wrap(~ Cluster, scales = "free_y")
 
+    gg <- gg + rotateX()
     return(gg)
 
 }

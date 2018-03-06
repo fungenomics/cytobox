@@ -124,12 +124,10 @@ percentMarkerOverlap <- function(markers1, markers2, marker_col = "gene") {
 
         for (j in 0:(n_clust2 - 1)) {
 
-            n_olap <- length(intersect(markers1[markers1$cluster == i, marker_col],
-                                markers2[markers2$cluster == j, marker_col]))
-
-            olaps[[k]] <- min(n_olap / length(markers1[markers1$cluster == i, marker_col]),
-                              n_olap / length(markers2[markers2$cluster == j, marker_col]))
-
+            mk_1 <- markers1[markers1$cluster == i,][[marker_col]]
+            mk_2 <- markers2[markers2$cluster == j,][[marker_col]]
+            n_olap <- length(base::intersect(mk_1, mk_2))
+            olaps[[k]] <- min(n_olap / length(mk_1), n_olap / length(mk_2))
             k <- k + 1
 
         }
@@ -157,8 +155,8 @@ percentMarkerOverlap <- function(markers1, markers2, marker_col = "gene") {
 #' @param s1_name (Optional) string giving the name or ID of sample 1 (used for axis labels)
 #' @param s2_name (Optional) string giving the name or ID of sample 2 (used for axis labels)
 #' @param marker_col String specifying the column in the markers data frames which
-#' specifies the cluster. By default, Seurat calls this "gene" (the default here); in the pipeline,
-#' it may be called "external_gene_name".
+#' specifies the cluster. By default, Seurat calls this "gene"; in the pipeline,
+#' it may be called "external_gene_name" (the default here).
 #'
 #' @export
 #' @author Selin Jessa
@@ -168,9 +166,9 @@ percentMarkerOverlap <- function(markers1, markers2, marker_col = "gene") {
 #' heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc)
 heatmapPercentMarkerOverlap <- function(markers1, markers2,
                                         s1_name = NULL, s2_name = NULL,
-                                        marker_col = "gene") {
+                                        marker_col = "external_gene_name") {
 
-    min_olap <- percentMarkerOverlap(markers1, markers2)
+    min_olap <- percentMarkerOverlap(markers1, markers2, marker_col = marker_col)
 
     # Get nice ordering
     olap_srt <- min_olap %>% arrange(desc(marker_overlap))
@@ -180,12 +178,11 @@ heatmapPercentMarkerOverlap <- function(markers1, markers2,
                s2_cluster = factor(s2_cluster, levels = unique(olap_srt$s2_cluster))) %>%
         ggplot(aes(x = s2_cluster, y = cluster)) +
         geom_raster(aes(fill = marker_overlap)) +
-        scale_fill_gradientn(colors = viridis::viridis(100)) +
+        scale_fill_gradientn(colors = viridis::viridis(100), limits = c(0, 1)) +
         geom_text(aes(label = round(marker_overlap, 2)), colour = "white", size = 3) +
         scale_x_discrete(position = "top") +
         theme_min() +
-        theme(panel.border = element_blank()) +
-        ggtitle("Min % overlap in cluster gene markers, sorted by % overlap")
+        theme(panel.border = element_blank())
 
     if ((!is.null(s1_name)) & (!is.null(s2_name))) {
 

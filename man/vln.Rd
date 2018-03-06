@@ -4,7 +4,7 @@
 \alias{vln}
 \title{vln}
 \usage{
-vln(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 0.01)
+vln(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 1)
 }
 \arguments{
 \item{seurat}{Seurat object}
@@ -19,7 +19,7 @@ gene (akin to Seurat::VlnPlot)}
 \item{point_size}{Numeric value for point size, use -1 to hide points. Default: 0.4.}
 
 \item{adjust}{Bandwidth for density estimation, passed to \code{geom_violin}.
-See ggplot2 documentation for more info. Default: 0.1. NOTE/TODO: If vln() with
+See ggplot2 documentation for more info. Default: 1. NOTE/TODO: If vln() with
 facet = gene looks different from Seurat::VlnPlot, this is probably the culprit.}
 }
 \value{
