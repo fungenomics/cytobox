@@ -5,7 +5,7 @@
 \title{heatmapPercentMarkerOverlap}
 \usage{
 heatmapPercentMarkerOverlap(markers1, markers2, s1_name = NULL,
-  s2_name = NULL, marker_col = "gene")
+  s2_name = NULL, marker_col = "external_gene_name")
 }
 \arguments{
 \item{markers1}{Data frame of markers for one dataset as returned by Seurat::FindAllMarkers()}
@@ -17,8 +17,8 @@ heatmapPercentMarkerOverlap(markers1, markers2, s1_name = NULL,
 \item{s2_name}{(Optional) string giving the name or ID of sample 2 (used for axis labels)}
 
 \item{marker_col}{String specifying the column in the markers data frames which
-specifies the cluster. By default, Seurat calls this "gene" (the default here); in the pipeline,
-it may be called "external_gene_name".}
+specifies the cluster. By default, Seurat calls this "gene"; in the pipeline,
+it may be called "external_gene_name" (the default here).}
 }
 \description{
 Generate a heatmap where rows correspond to clusters from one dataset and

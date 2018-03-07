@@ -9,7 +9,7 @@
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
   reduction = "tsne", palette = "viridis", title = NULL, alpha = TRUE,
   legend = TRUE, point_size = 1, label_repel = TRUE, extra = FALSE,
-  verbose = FALSE)
+  verbose = FALSE, hide_ticks = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -47,6 +47,8 @@ by percentiles. Requires \code{label = TRUE}. Default: FALSE.
 Default: FALSE.}
 
 \item{verbose}{Logical, whether to print status updates. Default: FALSE.}
+
+\item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
 }
 \value{
 A ggplot object

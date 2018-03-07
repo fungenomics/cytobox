@@ -7,7 +7,7 @@
 noLegend()
 }
 \value{
-A theme lement to hide legend
+A theme element to hide legend
 }
 \description{
 Remove the legend in a ggplot

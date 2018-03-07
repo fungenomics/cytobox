@@ -131,6 +131,7 @@ tsne <- function(seurat,
 #' Default: "tsne"
 #' @param title (Optional) String specifying the plot title
 #' @param legend Logical, whether or not to plot legend. Default: TRUE
+#' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
 #'
 #' @export
 #' @return A ggplot object
@@ -140,7 +141,9 @@ tsne <- function(seurat,
 # tsneByMeanMarkerExpression(pbmc, "IL32")
 # tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 tsneByMeanMarkerExpression <- function(seurat, genes,
-                                       reduction = "tsne", title = NULL, legend = TRUE) {
+                                       reduction = "tsne", title = NULL,
+                                       legend = TRUE,
+                                       hide_ticks = FALSE) {
 
     # Get mean expression for markers
     exp_df <- meanMarkerExpression(seurat, genes)
@@ -163,6 +166,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 
     if (!is.null(title)) gg <- gg + ggtitle(title)
     if (!legend) gg <- gg + noLegend()
+    if (hide_ticks) gg <- gg + noTicks()
 
     return(gg)
 
@@ -200,6 +204,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' labels repelled from the center, on a slightly transparent white background and
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
 #' cluster label at the cluster center. Default: TRUE.
+#' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
 #'
 #' @export
 #'
@@ -222,7 +227,8 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              point_size = 1,
                                              label_repel = TRUE,
                                              extra = FALSE,
-                                             verbose = FALSE) {
+                                             verbose = FALSE,
+                                             hide_ticks = FALSE) {
 
     if (verbose) message("Computing percentiles...")
 
@@ -463,6 +469,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
     if (!legend) gg <- gg + noLegend()
     if (!is.null(title)) gg <- gg + ggtitle(title)
+    if (hide_ticks) gg <- gg + noTicks()
 
     return(gg)
 
@@ -492,7 +499,8 @@ feature <- function(seurat, genes,
                     reduction = "tsne",
                     alpha = FALSE,
                     point_size = 0.5,
-                    ncol = 3) {
+                    ncol = 3,
+                    hide_ticks = FALSE) {
 
     if (statistic == "percentiles")  {
 
@@ -506,6 +514,8 @@ feature <- function(seurat, genes,
             if(length(genes_out$detected) == 0) stop("No genes specified were ",
                                                      "found in the data.")
 
+            if ((ncol == 3) & (length(genes_out$detected) < 3)) ncol <- 2
+
             cowplot::plot_grid(
                 plotlist = lapply(genes_out$detected,
                                   function(gene) tsneByPercentileMarkerExpression(seurat,
@@ -516,7 +526,8 @@ feature <- function(seurat, genes,
                                                                                   title = gene,
                                                                                   alpha = alpha,
                                                                                   legend = legend,
-                                                                                  point_size = point_size)),
+                                                                                  point_size = point_size,
+                                                                                  hide_ticks = hide_ticks)),
                 ncol = ncol)
 
         } else {
@@ -529,7 +540,8 @@ feature <- function(seurat, genes,
                                              title = title,
                                              alpha = alpha,
                                              legend = legend,
-                                             point_size = point_size)
+                                             point_size = point_size,
+                                             hide_ticks = hide_ticks)
 
         }
 
@@ -546,13 +558,16 @@ feature <- function(seurat, genes,
             if(length(genes_out$detected) == 0) stop("No genes specified were ",
                                                      "found in the data.")
 
+            if ((ncol == 3) & (length(genes_out$detected) < 3)) ncol <- 2
+
             cowplot::plot_grid(
                 plotlist = lapply(genes_out$detected,
                                   function(gene) tsneByMeanMarkerExpression(seurat,
                                                                             gene,
                                                                             reduction = reduction,
                                                                             title = gene,
-                                                                            legend = legend)),
+                                                                            legend = legend,
+                                                                            hide_ticks = hide_ticks)),
                 ncol = ncol)
 
         } else {
@@ -561,7 +576,8 @@ feature <- function(seurat, genes,
                                        genes,
                                        reduction = reduction,
                                        title = title,
-                                       legend = legend)
+                                       legend = legend,
+                                       hide_ticks = hide_ticks)
 
         }
     }
@@ -580,7 +596,7 @@ feature <- function(seurat, genes,
 #' genes will be on the x axis, and there will be one plot per cluster.
 #' If "gene", clusters will be on the x axis, and there will be one plot per
 #' gene (akin to Seurat::VlnPlot)
-#' @param point_size Numeric value for point size, use -1 to hide points. Default: 0.4.
+#' @param point_size Numeric value for point size, use -1 to hide points. Default: 0.1.
 #' @param adjust Bandwidth for density estimation, passed to \code{geom_violin}.
 #' See ggplot2 documentation for more info. Default: 1. NOTE/TODO: If vln() with
 #' facet = gene looks different from Seurat::VlnPlot, this is probably the culprit.
@@ -593,7 +609,7 @@ feature <- function(seurat, genes,
 #' vln(pbmc, c("IL32", "MS4A1"))
 #' vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
 #' vln(pbmc, c("IL32", "MS4A1"), point_size = -1, facet_by = "gene")
-vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 1) {
+vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 1) {
 
     exp <- fetchData(seurat, genes, return_cluster = TRUE) %>%
         tidyr::gather(Gene, Expression, 2:length(.))
