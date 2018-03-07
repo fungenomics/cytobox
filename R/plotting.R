@@ -129,6 +129,8 @@ tsne <- function(seurat,
 #' retrieves t-SNE by default. This should match the names of the elements of
 #' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
 #' Default: "tsne"
+#' @param title (Optional) String specifying the plot title
+#' @param legend Logical, whether or not to plot legend. Default: TRUE
 #'
 #' @export
 #' @return A ggplot object
@@ -138,7 +140,7 @@ tsne <- function(seurat,
 # tsneByMeanMarkerExpression(pbmc, "IL32")
 # tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 tsneByMeanMarkerExpression <- function(seurat, genes,
-                                       reduction = "tsne") {
+                                       reduction = "tsne", title = NULL, legend = TRUE) {
 
     # Get mean expression for markers
     exp_df <- meanMarkerExpression(seurat, genes)
@@ -158,6 +160,9 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
         viridis::scale_color_viridis() +
         xlab(vars[1]) + ylab(vars[2]) +
         theme_min()
+
+    if (!is.null(title)) gg <- gg + ggtitle(title)
+    if (!legend) gg <- gg + noLegend()
 
     return(gg)
 
@@ -227,12 +232,12 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
     color_grad_labels <- c("Undetected",
                            "> 0 & \u2264 50",
                            "> 50 & \u2264 70",
-                          "> 70 & \u2264 90",
-                          "> 90 & \u2264 92",
-                          "> 92 & \u2264 94",
-                          "> 94 & \u2264 96",
-                          "> 96 & \u2264 98",
-                          "> 98 & \u2264 100")
+                           "> 70 & \u2264 90",
+                           "> 90 & \u2264 92",
+                           "> 92 & \u2264 94",
+                           "> 94 & \u2264 96",
+                           "> 96 & \u2264 98",
+                           "> 98 & \u2264 100")
 
     # TODO you can just set the alpha group to the gradient group,
     # and as its values, pass the discrete gradient by hand... saves some code
@@ -477,6 +482,7 @@ dashboard <- function(seurat, genes,
 
 #' @export
 feature <- function(seurat, genes,
+                    per_gene = FALSE,
                     statistic = "percentiles",
                     label = TRUE,
                     palette = "redgrey",
@@ -485,28 +491,80 @@ feature <- function(seurat, genes,
                     title = NULL,
                     reduction = "tsne",
                     alpha = FALSE,
-                    point_size = 0.5) {
+                    point_size = 0.5,
+                    ncol = 3) {
 
     if (statistic == "percentiles")  {
 
-        tsneByPercentileMarkerExpression(seurat,
-                                         genes,
-                                         label = label,
-                                         palette = palette,
-                                         label_repel = label_repel,
-                                         title = title,
-                                         alpha = alpha,
-                                         legend = legend,
-                                         point_size = point_size)
+        if (per_gene) {
+
+            genes_out <- findGenes(seurat, genes)
+            if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
+                                                                 paste0(genes_out$undetected, collapse = ", "),
+                                                                 "] undetected in the data"))
+
+            if(length(genes_out$detected) == 0) stop("No genes specified were ",
+                                                     "found in the data.")
+
+            cowplot::plot_grid(
+                plotlist = lapply(genes_out$detected,
+                                  function(gene) tsneByPercentileMarkerExpression(seurat,
+                                                                                  gene,
+                                                                                  label = label,
+                                                                                  palette = palette,
+                                                                                  label_repel = label_repel,
+                                                                                  title = gene,
+                                                                                  alpha = alpha,
+                                                                                  legend = legend,
+                                                                                  point_size = point_size)),
+                ncol = ncol)
+
+        } else {
+
+            tsneByPercentileMarkerExpression(seurat,
+                                             genes,
+                                             label = label,
+                                             palette = palette,
+                                             label_repel = label_repel,
+                                             title = title,
+                                             alpha = alpha,
+                                             legend = legend,
+                                             point_size = point_size)
+
+        }
+
 
     } else if (statistic == "mean") {
 
-        tsneByMeanMarkerExpression(seurat,
-                                   genes,
-                                   reduction = reduction)
+        if (per_gene) {
 
+            genes_out <- findGenes(seurat, genes)
+            if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
+                                                                 paste0(genes_out$undetected, collapse = ", "),
+                                                                 "] undetected in the data"))
+
+            if(length(genes_out$detected) == 0) stop("No genes specified were ",
+                                                     "found in the data.")
+
+            cowplot::plot_grid(
+                plotlist = lapply(genes_out$detected,
+                                  function(gene) tsneByMeanMarkerExpression(seurat,
+                                                                            gene,
+                                                                            reduction = reduction,
+                                                                            title = gene,
+                                                                            legend = legend)),
+                ncol = ncol)
+
+        } else {
+
+            tsneByMeanMarkerExpression(seurat,
+                                       genes,
+                                       reduction = reduction,
+                                       title = title,
+                                       legend = legend)
+
+        }
     }
-
 }
 
 
