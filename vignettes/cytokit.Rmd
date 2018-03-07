@@ -1,7 +1,10 @@
 ---
 title: "cytokit examples"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+    rmarkdown::html_vignette:
+        toc: true
+        toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{cytokit examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,6 +27,8 @@ library(cytokit)
 
 # One-sample plots
 
+## t-SNE/PCA
+
 Basic t-SNE of a dataset (like `Seurat::TSNEPlot()`):
 
 ```{r tsne, fig.width = 6, fig.height = 4}
@@ -38,31 +43,6 @@ Plot a t-SNE coloured by mean marker expression
 ```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = TRUE, eval = TRUE}
 
 tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
-
-```
-
-Violin plot for a set of genes (like `Seurat::VlnPlot()`)
-
-```{r violin, fig.width = 5, fig.height = 3}
-
-vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
-
-# Inverted, one plot per cluster (the default)
-vln(pbmc, c("IL32", "MS4A1"), facet_by = "cluster")
-
-```
-
-
-Panel of tiny violin plots for a set of genes, as in Figure 5D in the drop-seq paper.
-See docs for default ordering method.
-
-```{r vlnPanel, fig.width = 7, fig.height = 2}
-
-# Use the first 15 genes in the data
-vlnGrid(pbmc, genes = head(rownames(pbmc@data), 15))
-
-# Specify order
-vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 1, 2, 3))
 
 ```
 
@@ -97,6 +77,8 @@ Notes:
 Do warning = FALSE in the chunk options to not print it.
 
 
+
+
 Feature plot, akin to `Seurat::FeaturePlot()`
 ```{r feature, fig.width = 4, fig.height = 4, warning = FALSE}
 
@@ -106,6 +88,48 @@ tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label_repel = FALSE, pa
 feature(pbmc, c("IL32", "CD2"))
 
 ```
+
+
+Feature plots for individual genes:
+
+
+```{r feature_indiv, fig.width = 12, fig.height = 4}
+
+feature(pbmc, c("IL32", "CD2", "MS4A1"), per_gene = TRUE)
+feature(pbmc, c("IL32", "CD2", "MS4A1"), per_gene = TRUE, statistic = "mean")
+
+```
+
+## Violins
+
+Violin plot for a set of genes (like `Seurat::VlnPlot()`)
+
+```{r violin, fig.width = 5, fig.height = 3}
+
+vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
+
+# Inverted, one plot per cluster (the default)
+vln(pbmc, c("IL32", "MS4A1"), facet_by = "cluster")
+
+```
+
+
+Panel of tiny violin plots for a set of genes, as in Figure 5D in the drop-seq paper.
+See docs for default ordering method.
+
+```{r vlnPanel, fig.width = 7, fig.height = 2}
+
+# Use the first 15 genes in the data
+vlnGrid(pbmc, genes = head(rownames(pbmc@data), 15))
+
+# Specify order
+vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 3, 2, 1))
+
+```
+
+
+
+
 
 # Two-sample plots
 

@@ -4,11 +4,19 @@
 \alias{tsne}
 \title{tsne}
 \usage{
-tsne(seurat, label = TRUE, point_size = 0.6, alpha = 0.8,
-  legend = FALSE, label_repel = TRUE)
+tsne(seurat, colours = NULL, colour_by = NULL, label = TRUE,
+  point_size = 0.6, alpha = 0.8, legend = FALSE, label_repel = TRUE)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
+
+\item{colours}{(Optional) Named character vector of colours for points. Names should
+correspond to cluster names (e.g. \code{levels(seurat@ident)}), or to categorical
+values in the column of \code{seurat@meta.data} specified in \code{colour_by}. Default:
+use default ggplot2 colours.}
+
+\item{colour_by}{(Optional) String, specifying the column in \code{seurat@meta.data}
+by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@ident}).}
 
 \item{label}{Logical, whether to plot cluster labels. Default: TRUE}
 
