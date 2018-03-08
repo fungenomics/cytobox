@@ -145,6 +145,7 @@ tsne <- function(seurat,
 #' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
 #' Default: "tsne"
 #' @param title (Optional) String specifying the plot title
+#' @param alpha Numeric, fixed alpha for points. Default: 0.6
 #' @param legend Logical, whether or not to plot legend. Default: TRUE
 #' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
 #'
@@ -157,6 +158,7 @@ tsne <- function(seurat,
 # tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 tsneByMeanMarkerExpression <- function(seurat, genes,
                                        reduction = "tsne", title = NULL,
+                                       alpha = 0.6,
                                        legend = TRUE,
                                        hide_ticks = FALSE) {
 
@@ -174,7 +176,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
     # Plot
     gg <- exp_df %>%
         ggplot(aes(x = exp_df[[vars[1]]], y = exp_df[[vars[2]]])) +
-        geom_point(aes(colour = Mean_marker_expression), size = rel(0.8), alpha = 0.6) +
+        geom_point(aes(colour = Mean_marker_expression), size = rel(0.8), alpha = alpha) +
         viridis::scale_color_viridis() +
         xlab(vars[1]) + ylab(vars[2]) +
         theme_min()
@@ -401,6 +403,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
             # Get the order of clusters, ranked by proportion of cells
             # in the top percentile group
             rank <- freq %>%
+                tidyr::complete(Cluster, Gradient_group, fill = list(n = 0, Proportion = 0, n_per_clust = 0)) %>%
                 arrange(Gradient_group, desc(Proportion)) %>%
                 group_by(Cluster) %>%
                 slice(1) %>%
@@ -512,7 +515,7 @@ feature <- function(seurat, genes,
                     legend = FALSE,
                     title = NULL,
                     reduction = "tsne",
-                    alpha = FALSE,
+                    alpha = ifelse(statistic == "percentiles", FALSE, 0.6),
                     point_size = 0.5,
                     ncol = 3,
                     hide_ticks = FALSE) {
