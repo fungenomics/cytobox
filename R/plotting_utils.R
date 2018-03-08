@@ -101,8 +101,6 @@ noLegend <- function() {
 #' @export
 #'
 #' @author Selin Jessa
-#'
-#' @examples
 noTicks <- function() {
 
     theme(axis.text.x = element_blank(),

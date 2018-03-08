@@ -4,19 +4,20 @@
 \alias{tsne}
 \title{tsne}
 \usage{
-tsne(seurat, colours = NULL, colour_by = NULL, label = TRUE,
-  point_size = 0.6, alpha = 0.8, legend = FALSE, label_repel = TRUE)
+tsne(seurat, colour_by = NULL, colours = NULL, label = TRUE,
+  point_size = 0.6, alpha = 0.8, legend = ifelse((is.null(colour_by)) &&
+  (label), FALSE, TRUE), label_repel = TRUE, title = NULL)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
+
+\item{colour_by}{(Optional) String, specifying the column in \code{seurat@meta.data}
+by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@ident}).}
 
 \item{colours}{(Optional) Named character vector of colours for points. Names should
 correspond to cluster names (e.g. \code{levels(seurat@ident)}), or to categorical
 values in the column of \code{seurat@meta.data} specified in \code{colour_by}. Default:
 use default ggplot2 colours.}
-
-\item{colour_by}{(Optional) String, specifying the column in \code{seurat@meta.data}
-by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@ident}).}
 
 \item{label}{Logical, whether to plot cluster labels. Default: TRUE}
 
@@ -24,12 +25,15 @@ by which to colour cells. Default: NULL, colour cells by cluster (in \code{seura
 
 \item{alpha}{Numeric, fixed alpha value for points: Default: 0.8}
 
-\item{legend}{Logical, whether to plot legend.}
+\item{legend}{Logical, whether to plot legend. Default: FALSE if \code{colour_by}
+is NULL and \code{label} is TRUE, true otherwise.}
 
 \item{label_repel}{Logical, if \code{label} is TRUE, whether to plot cluster
 labels repelled from the center, on a slightly transparent white background and
 with an arrow pointing to the cluster center. If FALSE, simply plot the
 cluster label at the cluster center. Default: TRUE.}
+
+\item{title}{(Optional) String specifying title.}
 }
 \value{
 A ggplot2 object

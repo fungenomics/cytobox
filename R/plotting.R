@@ -8,20 +8,22 @@
 #' Plot a coloured, labelled tSNE plot for a datasets, akin to Seurat::TSNEPlot()
 #'
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
+#' @param colour_by (Optional) String, specifying the column in \code{seurat@@meta.data}
+#' by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@@ident}).
 #' @param colours (Optional) Named character vector of colours for points. Names should
 #' correspond to cluster names (e.g. \code{levels(seurat@@ident)}), or to categorical
 #' values in the column of \code{seurat@@meta.data} specified in \code{colour_by}. Default:
 #' use default ggplot2 colours.
-#' @param colour_by (Optional) String, specifying the column in \code{seurat@@meta.data}
-#' by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@@ident}).
 #' @param label Logical, whether to plot cluster labels. Default: TRUE
 #' @param point_size Numeric, size of points in scatter plot. Default: 0.6
 #' @param alpha Numeric, fixed alpha value for points: Default: 0.8
-#' @param legend Logical, whether to plot legend.
+#' @param legend Logical, whether to plot legend. Default: FALSE if \code{colour_by}
+#' is NULL and \code{label} is TRUE, true otherwise.
 #' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
 #' labels repelled from the center, on a slightly transparent white background and
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
 #' cluster label at the cluster center. Default: TRUE.
+#' @param title (Optional) String specifying title.
 #'
 #' @return A ggplot2 object
 #' @export
@@ -31,20 +33,27 @@
 #' @examples
 #' tsne(pbmc)
 tsne <- function(seurat,
-                 colours = NULL,
                  colour_by = NULL,
+                 colours = NULL,
                  label = TRUE, point_size = 0.6, alpha = 0.8,
-                 legend = FALSE, label_repel = TRUE) {
+                 legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
+                 label_repel = TRUE,
+                 title = NULL) {
 
     embedding <- data.frame(Cell = seurat@cell.names,
                             tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
                             tSNE_2 = seurat@dr$tsne@cell.embeddings[, 2],
-                            Cluster = seurat@ident,
                             stringsAsFactors = FALSE)
 
-    gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
+    if(all(is.na(seurat@ident))) {
+        label <- FALSE
+        message("NOTE: identity of all cells is NA, setting 'label' to FALSE.")
+    }
 
     if (is.null(colour_by)) {
+
+        embedding$Cluster <- seurat@ident
+        gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
 
         if (is.null(colours)) {
 
@@ -63,6 +72,7 @@ tsne <- function(seurat,
     } else {
 
         embedding[[colour_by]] <- seurat@meta.data[[colour_by]]
+        gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
 
         gg <- gg +
             geom_point(aes_string(colour = colour_by), size = point_size, alpha = alpha)
@@ -104,6 +114,11 @@ tsne <- function(seurat,
     gg <- gg + theme_min()
 
     if (!legend) gg <- gg + noLegend()
+    else if (!is.null(colour_by)) {
+        if (colour_by == "orig.ident") gg <- gg + labs(colour = "Sample")
+    }
+
+    if (!is.null(title)) gg <- gg + ggtitle(title)
 
     return(gg)
 
@@ -578,7 +593,6 @@ feature <- function(seurat, genes,
                                        title = title,
                                        legend = legend,
                                        hide_ticks = hide_ticks)
-
         }
     }
 }
@@ -732,6 +746,7 @@ vlnGrid <- function(seurat, genes, order = "genes", scale = "width") {
     return(gg)
 
 }
+
 
 
 
