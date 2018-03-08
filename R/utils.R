@@ -61,6 +61,8 @@ addEmbedding <- function(seurat, df, reduction = "tsne") {
 #' Default: FALSE
 #' @param return_cluster Logical, whether or not to include a column with the cluster.
 #' Default: FALSE
+#' @param scaled Logical, whether to fetch scaled data from seurat@@scale.data.
+#' Default: FALSE.
 #'
 #' @return Expression matrix for genes specified
 #' @export
@@ -70,7 +72,8 @@ addEmbedding <- function(seurat, df, reduction = "tsne") {
 #' fetchData(pbmc, c("IL32", "MS4A1"))
 #' fetchData(pbmc, c("IL32"), c(1, 2))
 #' fetchData(pbmc, c("IL32", "MS4A1"), c(1, 2), return_cluster = TRUE, return_cell = TRUE)
-fetchData <- function(seurat, genes, clusters = NULL, return_cell = FALSE, return_cluster = FALSE) {
+fetchData <- function(seurat, genes, clusters = NULL,
+                      return_cell = FALSE, return_cluster = FALSE, scaled = FALSE) {
 
     genes_out <- findGenes(seurat, genes)
     if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
@@ -80,7 +83,8 @@ fetchData <- function(seurat, genes, clusters = NULL, return_cell = FALSE, retur
     if(length(genes_out$detected) == 0) stop("No genes specified were ",
                                              "found in the data.")
 
-    exp <- as.matrix(seurat@data)
+    if (scaled) exp <- as.matrix(seurat@scale.data)
+    else exp <- as.matrix(seurat@data)
 
     exp_filt <- as.data.frame(t(exp[which(rownames(exp) %in% genes_out$detected),]))
 

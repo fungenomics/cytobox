@@ -5,7 +5,7 @@
 \title{tsneByMeanMarkerExpression}
 \usage{
 tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", title = NULL,
-  legend = TRUE)
+  legend = TRUE, hide_ticks = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -21,6 +21,8 @@ Default: "tsne"}
 \item{title}{(Optional) String specifying the plot title}
 
 \item{legend}{Logical, whether or not to plot legend. Default: TRUE}
+
+\item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
 }
 \value{
 A ggplot object

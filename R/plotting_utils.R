@@ -71,7 +71,7 @@ rotateX <- function(angle = 90) {
 #'
 #' Remove the legend in a ggplot
 #'
-#' @return A theme lement to hide legend
+#' @return A theme element to hide legend
 #' @export
 #'
 #' @author Selin Jessa
@@ -88,6 +88,25 @@ rotateX <- function(angle = 90) {
 noLegend <- function() {
 
     theme(legend.position = "none")
+
+}
+
+
+
+#' noTicks
+#'
+#' Remove axis ticks and tick labels from a ggplot
+#'
+#' @return A theme element to remove ticks
+#' @export
+#'
+#' @author Selin Jessa
+noTicks <- function() {
+
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          axis.text.y = element_blank(),
+          axis.ticks.y = element_blank())
 
 }
 

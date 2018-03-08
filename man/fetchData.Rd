@@ -5,7 +5,7 @@
 \title{fetchData}
 \usage{
 fetchData(seurat, genes, clusters = NULL, return_cell = FALSE,
-  return_cluster = FALSE)
+  return_cluster = FALSE, scaled = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object}
@@ -20,6 +20,9 @@ Default: FALSE}
 
 \item{return_cluster}{Logical, whether or not to include a column with the cluster.
 Default: FALSE}
+
+\item{scaled}{Logical, whether to fetch scaled data from seurat@scale.data.
+Default: FALSE.}
 }
 \value{
 Expression matrix for genes specified

@@ -4,7 +4,7 @@
 \alias{vln}
 \title{vln}
 \usage{
-vln(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 1)
+vln(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 1)
 }
 \arguments{
 \item{seurat}{Seurat object}
@@ -16,7 +16,7 @@ genes will be on the x axis, and there will be one plot per cluster.
 If "gene", clusters will be on the x axis, and there will be one plot per
 gene (akin to Seurat::VlnPlot)}
 
-\item{point_size}{Numeric value for point size, use -1 to hide points. Default: 0.4.}
+\item{point_size}{Numeric value for point size, use -1 to hide points. Default: 0.1.}
 
 \item{adjust}{Bandwidth for density estimation, passed to \code{geom_violin}.
 See ggplot2 documentation for more info. Default: 1. NOTE/TODO: If vln() with

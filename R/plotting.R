@@ -8,20 +8,22 @@
 #' Plot a coloured, labelled tSNE plot for a datasets, akin to Seurat::TSNEPlot()
 #'
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
+#' @param colour_by (Optional) String, specifying the column in \code{seurat@@meta.data}
+#' by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@@ident}).
 #' @param colours (Optional) Named character vector of colours for points. Names should
 #' correspond to cluster names (e.g. \code{levels(seurat@@ident)}), or to categorical
 #' values in the column of \code{seurat@@meta.data} specified in \code{colour_by}. Default:
 #' use default ggplot2 colours.
-#' @param colour_by (Optional) String, specifying the column in \code{seurat@@meta.data}
-#' by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@@ident}).
 #' @param label Logical, whether to plot cluster labels. Default: TRUE
 #' @param point_size Numeric, size of points in scatter plot. Default: 0.6
 #' @param alpha Numeric, fixed alpha value for points: Default: 0.8
-#' @param legend Logical, whether to plot legend.
+#' @param legend Logical, whether to plot legend. Default: FALSE if \code{colour_by}
+#' is NULL and \code{label} is TRUE, true otherwise.
 #' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
 #' labels repelled from the center, on a slightly transparent white background and
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
 #' cluster label at the cluster center. Default: TRUE.
+#' @param title (Optional) String specifying title.
 #'
 #' @return A ggplot2 object
 #' @export
@@ -31,20 +33,27 @@
 #' @examples
 #' tsne(pbmc)
 tsne <- function(seurat,
-                 colours = NULL,
                  colour_by = NULL,
+                 colours = NULL,
                  label = TRUE, point_size = 0.6, alpha = 0.8,
-                 legend = FALSE, label_repel = TRUE) {
+                 legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
+                 label_repel = TRUE,
+                 title = NULL) {
 
     embedding <- data.frame(Cell = seurat@cell.names,
                             tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
                             tSNE_2 = seurat@dr$tsne@cell.embeddings[, 2],
-                            Cluster = seurat@ident,
                             stringsAsFactors = FALSE)
 
-    gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
+    if(all(is.na(seurat@ident))) {
+        label <- FALSE
+        message("NOTE: identity of all cells is NA, setting 'label' to FALSE.")
+    }
 
     if (is.null(colour_by)) {
+
+        embedding$Cluster <- seurat@ident
+        gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
 
         if (is.null(colours)) {
 
@@ -63,6 +72,7 @@ tsne <- function(seurat,
     } else {
 
         embedding[[colour_by]] <- seurat@meta.data[[colour_by]]
+        gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
 
         gg <- gg +
             geom_point(aes_string(colour = colour_by), size = point_size, alpha = alpha)
@@ -104,6 +114,11 @@ tsne <- function(seurat,
     gg <- gg + theme_min()
 
     if (!legend) gg <- gg + noLegend()
+    else if (!is.null(colour_by)) {
+        if (colour_by == "orig.ident") gg <- gg + labs(colour = "Sample")
+    }
+
+    if (!is.null(title)) gg <- gg + ggtitle(title)
 
     return(gg)
 
@@ -131,6 +146,7 @@ tsne <- function(seurat,
 #' Default: "tsne"
 #' @param title (Optional) String specifying the plot title
 #' @param legend Logical, whether or not to plot legend. Default: TRUE
+#' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
 #'
 #' @export
 #' @return A ggplot object
@@ -140,7 +156,9 @@ tsne <- function(seurat,
 # tsneByMeanMarkerExpression(pbmc, "IL32")
 # tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 tsneByMeanMarkerExpression <- function(seurat, genes,
-                                       reduction = "tsne", title = NULL, legend = TRUE) {
+                                       reduction = "tsne", title = NULL,
+                                       legend = TRUE,
+                                       hide_ticks = FALSE) {
 
     # Get mean expression for markers
     exp_df <- meanMarkerExpression(seurat, genes)
@@ -163,6 +181,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 
     if (!is.null(title)) gg <- gg + ggtitle(title)
     if (!legend) gg <- gg + noLegend()
+    if (hide_ticks) gg <- gg + noTicks()
 
     return(gg)
 
@@ -200,6 +219,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' labels repelled from the center, on a slightly transparent white background and
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
 #' cluster label at the cluster center. Default: TRUE.
+#' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
 #'
 #' @export
 #'
@@ -222,7 +242,8 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              point_size = 1,
                                              label_repel = TRUE,
                                              extra = FALSE,
-                                             verbose = FALSE) {
+                                             verbose = FALSE,
+                                             hide_ticks = FALSE) {
 
     if (verbose) message("Computing percentiles...")
 
@@ -463,6 +484,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
     if (!legend) gg <- gg + noLegend()
     if (!is.null(title)) gg <- gg + ggtitle(title)
+    if (hide_ticks) gg <- gg + noTicks()
 
     return(gg)
 
@@ -492,7 +514,8 @@ feature <- function(seurat, genes,
                     reduction = "tsne",
                     alpha = FALSE,
                     point_size = 0.5,
-                    ncol = 3) {
+                    ncol = 3,
+                    hide_ticks = FALSE) {
 
     if (statistic == "percentiles")  {
 
@@ -506,6 +529,8 @@ feature <- function(seurat, genes,
             if(length(genes_out$detected) == 0) stop("No genes specified were ",
                                                      "found in the data.")
 
+            if ((ncol == 3) & (length(genes_out$detected) < 3)) ncol <- 2
+
             cowplot::plot_grid(
                 plotlist = lapply(genes_out$detected,
                                   function(gene) tsneByPercentileMarkerExpression(seurat,
@@ -516,7 +541,8 @@ feature <- function(seurat, genes,
                                                                                   title = gene,
                                                                                   alpha = alpha,
                                                                                   legend = legend,
-                                                                                  point_size = point_size)),
+                                                                                  point_size = point_size,
+                                                                                  hide_ticks = hide_ticks)),
                 ncol = ncol)
 
         } else {
@@ -529,7 +555,8 @@ feature <- function(seurat, genes,
                                              title = title,
                                              alpha = alpha,
                                              legend = legend,
-                                             point_size = point_size)
+                                             point_size = point_size,
+                                             hide_ticks = hide_ticks)
 
         }
 
@@ -546,13 +573,16 @@ feature <- function(seurat, genes,
             if(length(genes_out$detected) == 0) stop("No genes specified were ",
                                                      "found in the data.")
 
+            if ((ncol == 3) & (length(genes_out$detected) < 3)) ncol <- 2
+
             cowplot::plot_grid(
                 plotlist = lapply(genes_out$detected,
                                   function(gene) tsneByMeanMarkerExpression(seurat,
                                                                             gene,
                                                                             reduction = reduction,
                                                                             title = gene,
-                                                                            legend = legend)),
+                                                                            legend = legend,
+                                                                            hide_ticks = hide_ticks)),
                 ncol = ncol)
 
         } else {
@@ -561,8 +591,8 @@ feature <- function(seurat, genes,
                                        genes,
                                        reduction = reduction,
                                        title = title,
-                                       legend = legend)
-
+                                       legend = legend,
+                                       hide_ticks = hide_ticks)
         }
     }
 }
@@ -580,7 +610,7 @@ feature <- function(seurat, genes,
 #' genes will be on the x axis, and there will be one plot per cluster.
 #' If "gene", clusters will be on the x axis, and there will be one plot per
 #' gene (akin to Seurat::VlnPlot)
-#' @param point_size Numeric value for point size, use -1 to hide points. Default: 0.4.
+#' @param point_size Numeric value for point size, use -1 to hide points. Default: 0.1.
 #' @param adjust Bandwidth for density estimation, passed to \code{geom_violin}.
 #' See ggplot2 documentation for more info. Default: 1. NOTE/TODO: If vln() with
 #' facet = gene looks different from Seurat::VlnPlot, this is probably the culprit.
@@ -593,7 +623,7 @@ feature <- function(seurat, genes,
 #' vln(pbmc, c("IL32", "MS4A1"))
 #' vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
 #' vln(pbmc, c("IL32", "MS4A1"), point_size = -1, facet_by = "gene")
-vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.4, adjust = 1) {
+vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 1) {
 
     exp <- fetchData(seurat, genes, return_cluster = TRUE) %>%
         tidyr::gather(Gene, Expression, 2:length(.))
@@ -716,6 +746,7 @@ vlnGrid <- function(seurat, genes, order = "genes", scale = "width") {
     return(gg)
 
 }
+
 
 
 
