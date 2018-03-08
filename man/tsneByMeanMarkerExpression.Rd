@@ -5,7 +5,7 @@
 \title{tsneByMeanMarkerExpression}
 \usage{
 tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", title = NULL,
-  legend = TRUE, hide_ticks = FALSE)
+  alpha = 0.6, legend = TRUE, hide_ticks = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -19,6 +19,8 @@ the list seurat@dr, so it will typically be one of "pca" or "tsne".
 Default: "tsne"}
 
 \item{title}{(Optional) String specifying the plot title}
+
+\item{alpha}{Numeric, fixed alpha for points. Default: 0.6}
 
 \item{legend}{Logical, whether or not to plot legend. Default: TRUE}
 
