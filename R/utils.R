@@ -45,6 +45,34 @@ addEmbedding <- function(seurat, df, reduction = "tsne") {
 
 
 
+#' findGenes
+#'
+#' Given a set of genes, find the ones which are detected in the sample,
+#' and which are not.
+#'
+#' @param seurat Seurat object
+#' @param genes Character vector of genes
+#'
+#' @return A named list with two elements: "detected" and "undetected"
+#' each storing character vectors with the genes in each category
+#' @export
+#'
+#' @author Selin Jessa
+#' @examples
+#' find_out <- findGenes(pbmc, c("IL32", "CD79B", "foo"))
+#' find_out$detected
+#' find_out$undetected
+findGenes <- function(seurat, genes) {
+
+    genes_detected <- genes[genes %in% rownames(seurat@data)]
+    genes_undetected <- setdiff(genes, genes_detected)
+
+    list(detected = genes_detected, undetected = genes_undetected)
+
+}
+
+
+
 
 
 #' fetchData
@@ -76,7 +104,7 @@ fetchData <- function(seurat, genes, clusters = NULL,
                       return_cell = FALSE, return_cluster = FALSE, scaled = FALSE) {
 
     genes_out <- findGenes(seurat, genes)
-    if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
+    if (length(genes_out$undetected > 0)) print(paste0("NOTE: [",
                                                          paste0(genes_out$undetected, collapse = ", "),
                                                          "] undetected in the data"))
 
@@ -115,31 +143,6 @@ fetchData <- function(seurat, genes, clusters = NULL,
 
 
 
-#' findGenes
-#'
-#' Given a set of genes, find the ones which are detected in the sample,
-#' and which are not.
-#'
-#' @param seurat Seurat object
-#' @param genes Character vector of genes
-#'
-#' @return A named list with two elements: "detected" and "undetected"
-#' each storing character vectors with the genes in each category
-#' @export
-#'
-#' @author Selin Jessa
-#' @examples
-#' find_out <- findGenes(pbmc, c("IL32", "CD79B", "foo"))
-#' find_out$detected
-#' find_out$undetected
-findGenes <- function(seurat, genes) {
-
-    genes_detected <- genes[genes %in% rownames(seurat@data)]
-    genes_undetected <- setdiff(genes, genes_detected)
-
-    list(detected = genes_detected, undetected = genes_undetected)
-
-}
 
 
 

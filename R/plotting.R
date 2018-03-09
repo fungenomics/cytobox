@@ -388,6 +388,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
             if (verbose) message("Computing frequencies...")
 
+            # Calculate the proportion of cells in each cluster in each percentile group
             freq <- df %>%
                 mutate(Gradient_group = factor(Gradient_group, levels = seq(9, 1)),
                        Cluster = factor(Cluster)) %>%
@@ -403,6 +404,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
             # Get the order of clusters, ranked by proportion of cells
             # in the top percentile group
             rank <- freq %>%
+                # Complete the dataframe, setting proportions to 0 when there are no cells in the cluster in a percentile group
                 tidyr::complete(Cluster, Gradient_group, fill = list(n = 0, Proportion = 0, n_per_clust = 0)) %>%
                 arrange(Gradient_group, desc(Proportion)) %>%
                 group_by(Cluster) %>%
@@ -517,7 +519,7 @@ feature <- function(seurat, genes,
                     reduction = "tsne",
                     alpha = ifelse(statistic == "percentiles", FALSE, 0.6),
                     point_size = 0.5,
-                    ncol = 3,
+                    ncol = ifelse(length(genes) %in% c(2, 4), 2, 3),
                     hide_ticks = FALSE) {
 
     if (statistic == "percentiles")  {
@@ -632,9 +634,6 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
         tidyr::gather(Gene, Expression, 2:length(.))
 
     genes_out <- findGenes(seurat, genes)
-    if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
-                                                         paste0(genes_out$undetected, collapse = ", "),
-                                                         "] undetected in the data"))
 
     if (facet_by == "gene") gg <- ggplot(exp, aes(x = Cluster, y = Expression, fill = Cluster))
     else if (facet_by == "cluster") gg <- ggplot(exp, aes(x = Gene, y = Expression, fill = Cluster))
@@ -652,7 +651,7 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
 
     if (facet_by == "gene") {
 
-        gg <- gg + facet_wrap(~ Gene, scales = "free_y", ncol = 2) +
+        gg <- gg + facet_wrap(~ Gene, ncol = 2) +
             theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
     } else if (facet_by == "cluster") gg <- gg + facet_wrap(~ Cluster, scales = "free_y")
