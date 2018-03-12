@@ -4,13 +4,14 @@
 #'
 #' @param seurat Seurat object.
 #' @param label Boolean to indicate whether labels should be plotted on main plot.
+#' @param label Boolean to indicate whether legend should be plotted.
 #' @param labels An data frame with 3 columns: "cluster", "label" and "colour". The "colour" column is optional. 
 #
 #' @return A ggplot2 object. A tSNE plot with labelled clusters
 #'
 #' @export
 #' @author Alexis Blanchet-Cohen
-labelTSNEClusters <- function(seurat, labels = NULL, label=TRUE) {
+labelTSNEClusters <- function(seurat, labels = NULL, label=TRUE, legend=TRUE) {
   # If labels are specified, replace old labels with new labels.
   if (!is.null(labels)) {
     old.cluster.ids <- levels(seurat@ident)
@@ -71,6 +72,12 @@ labelTSNEClusters <- function(seurat, labels = NULL, label=TRUE) {
       scale_fill_manual(values = colours, guide = FALSE)
 
   p1 <- p1 + ggmin::theme_min()
+  
+  # Remove legend, if legend is set to FALSE.
+  if(legend==FALSE) {
+      p1 <- p1 + guides(colour=FALSE)
+  }
+
   return(p1)
 
 }
