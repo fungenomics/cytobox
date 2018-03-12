@@ -4,7 +4,7 @@
 \alias{labelTSNEClusters}
 \title{labelTSNEClusters}
 \usage{
-labelTSNEClusters(seurat, labels = NULL, label = TRUE)
+labelTSNEClusters(seurat, labels = NULL, label = TRUE, legend = TRUE)
 }
 \arguments{
 \item{seurat}{Seurat object.}
@@ -12,6 +12,8 @@ labelTSNEClusters(seurat, labels = NULL, label = TRUE)
 \item{labels}{An data frame with 3 columns: "cluster", "label" and "colour". The "colour" column is optional.}
 
 \item{label}{Boolean to indicate whether labels should be plotted on main plot.}
+
+\item{label}{Boolean to indicate whether legend should be plotted.}
 }
 \value{
 A ggplot2 object. A tSNE plot with labelled clusters
