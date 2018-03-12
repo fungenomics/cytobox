@@ -25,7 +25,7 @@ labelTSNEClusters <- function(seurat, labels = NULL, label=TRUE) {
   names(colours) <- levels(seurat@ident)
 
   # If colours are specified, replace Seurat colours with specified colours.
-  if (!is.null(labels) & colour %in% colnames(labels)) {
+  if (!is.null(labels) & "colour" %in% colnames(labels)) {
     colours.dd <- data.frame(label=names(colours), colour=unname(colours))
     colours.dd <- left_join(labels, colours.dd, by="label")
     colours.dd <- mutate(colours.dd, colour.merged=ifelse(is.na(colour.x), colour.y, colour.x))
