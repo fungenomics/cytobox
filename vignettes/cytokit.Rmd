@@ -85,8 +85,9 @@ Feature plot, akin to `Seurat::FeaturePlot()`
 
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label_repel = FALSE, palette = "redgrey", alpha = FALSE, point_size = 0.1, legend = FALSE)
 
-# This function is a shortcut for the above
-feature(pbmc, c("IL32", "CD2"))
+# This function is a shortcut for the above, except by default it makes one plot
+# per gene (set per_gene = FALSE like below to have one plot with the summary statistic)
+feature(pbmc, c("IL32", "CD2"), per_gene = FALSE)
 
 ```
 

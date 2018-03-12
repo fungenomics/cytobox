@@ -509,7 +509,7 @@ dashboard <- function(seurat, genes,
 
 #' @export
 feature <- function(seurat, genes,
-                    per_gene = FALSE,
+                    per_gene = TRUE,
                     statistic = "percentiles",
                     label = TRUE,
                     palette = "redgrey",
@@ -521,6 +521,11 @@ feature <- function(seurat, genes,
                     point_size = 0.5,
                     ncol = ifelse(length(genes) %in% c(2, 4), 2, 3),
                     hide_ticks = FALSE) {
+
+    if ((length(genes) >= 20) & per_gene) message("NOTE: you have input a lot of genes! ",
+                                                  "This function by default generates ",
+                                                  "one plot per gene. Set per_gene = FALSE ",
+                                                  "to plot a summary statistic of all genes.")
 
     if (statistic == "percentiles")  {
 
