@@ -23,6 +23,7 @@
 #' labels repelled from the center, on a slightly transparent white background and
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
 #' cluster label at the cluster center. Default: TRUE.
+#' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param title (Optional) String specifying title.
 #'
 #' @return A ggplot2 object
@@ -38,6 +39,7 @@ tsne <- function(seurat,
                  label = TRUE, point_size = 0.6, alpha = 0.8,
                  legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
                  label_repel = TRUE,
+                 label_size = 4,
                  title = NULL) {
 
     embedding <- data.frame(Cell = seurat@cell.names,
@@ -85,29 +87,7 @@ tsne <- function(seurat,
     if (label) {
 
         centers <- clusterCenters(seurat)
-
-        if (label_repel) {
-
-            gg <- gg +
-                ggrepel::geom_label_repel(data = centers,
-                                          aes(x = mean_tSNE_1, y = mean_tSNE_2),
-                                          label = centers$Cluster,
-                                          segment.color = 'grey50',
-                                          fontface = 'bold',
-                                          alpha = 0.8,
-                                          segment.alpha = 0.8,
-                                          label.size = NA,
-                                          force = 2,
-                                          nudge_x = 5, nudge_y = 5,
-                                          segment.size = 0.5,
-                                          arrow = arrow(length = unit(0.01, 'npc')))
-
-        } else {
-
-            gg <- gg +
-                geom_text(data = centers, aes(x = mean_tSNE_1, y = mean_tSNE_2, label = Cluster))
-
-        }
+        gg <- gg + addLabels(centers, label_repel, label_size)
 
     }
 
@@ -221,6 +201,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' labels repelled from the center, on a slightly transparent white background and
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
 #' cluster label at the cluster center. Default: TRUE.
+#' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
 #'
 #' @export
@@ -243,6 +224,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              legend = TRUE,
                                              point_size = 1,
                                              label_repel = TRUE,
+                                             label_size = 4,
                                              extra = FALSE,
                                              verbose = FALSE,
                                              hide_ticks = FALSE) {
@@ -355,30 +337,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
         }
 
         centers <- clusterCenters(seurat)
-
-        if (label_repel) {
-
-            gg <- gg +
-                ggrepel::geom_label_repel(data = centers,
-                                          aes(x = mean_tSNE_1, y = mean_tSNE_2),
-                                          label = centers$Cluster,
-                                          segment.color = 'grey50',
-                                          fontface = 'bold',
-                                          alpha = 0.8,
-                                          segment.alpha = 0.8,
-                                          label.size = NA,
-                                          force = 2,
-                                          nudge_x = 5, nudge_y = 5,
-                                          segment.size = 0.5,
-                                          arrow = arrow(length = unit(0.01, 'npc')))
-
-        } else {
-
-            gg <- gg +
-                geom_text(data = centers, aes(x = mean_tSNE_1, y = mean_tSNE_2, label = Cluster))
-
-        }
-
+        gg <- gg + addLabels(centers, label_repel, label_size)
 
         if (extra) {
 
@@ -484,7 +443,6 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
             return(combined)
 
         }
-
     }
 
     if (!legend) gg <- gg + noLegend()
