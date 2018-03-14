@@ -111,6 +111,48 @@ noTicks <- function() {
 }
 
 
+#' addLabels
+#'
+#' Add cluster labels to a tSNE ggplot2 plot
+#'
+#' @param centers Data frame with at least three columns: "mean_tSNE_1", "mean_tSNE_2",
+#' and "Cluster", as returned by \code{\link{clusterCenters}}
+#' @param label_repel Logical, whether to plot cluster
+#' labels repelled from the center, on a slightly transparent white background and
+#' with an arrow pointing to the cluster center. If FALSE, simply plot the
+#' cluster label at the cluster center. Default: TRUE.
+#' @param label_size Numeric, controls the size of text labels. Default: 4.
+#'
+#' @auth Selin Jessa
+#' @export
+addLabels <- function(centers, label_repel = FALSE, label_size = 4) {
+
+    if (label_repel) {
+
+        ggrepel::geom_label_repel(data = centers,
+                                      aes(x = mean_tSNE_1, y = mean_tSNE_2),
+                                      label = centers$Cluster,
+                                      segment.color = 'grey50',
+                                      fontface = 'bold',
+                                      alpha = 0.8,
+                                      segment.alpha = 0.8,
+                                      label.size = NA,
+                                      force = 2,
+                                      nudge_x = 5, nudge_y = 5,
+                                      segment.size = 0.5,
+                                      arrow = arrow(length = unit(0.01, 'npc')))
+
+    } else {
+
+        geom_text(data = centers,
+                  aes(x = mean_tSNE_1, y = mean_tSNE_2, label = Cluster),
+                  size = label_size)
+
+    }
+
+}
+
+
 #' theme_min
 #'
 #' A clean theme for ggplot2
