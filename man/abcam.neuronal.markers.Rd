@@ -3,7 +3,7 @@
 \docType{data}
 \name{abcam.neuronal.markers}
 \alias{abcam.neuronal.markers}
-\title{A dataset containing the abcam neuronal marker genes  
+\title{A dataframe containing the abcam neuronal marker genes  
 abcam.neuronal.markers}
 \format{A data frame.}
 \source{
@@ -13,7 +13,7 @@ abcam.neuronal.markers}
 abcam.neuronal.markers
 }
 \description{
-A dataset containing the abcam neuronal marker genes  
+A dataframe containing the abcam neuronal marker genes  
 abcam.neuronal.markers
 }
 \keyword{datasets}
