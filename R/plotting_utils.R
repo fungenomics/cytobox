@@ -132,6 +132,7 @@ addLabels <- function(centers, label_repel = FALSE, label_size = 4) {
         ggrepel::geom_label_repel(data = centers,
                                       aes(x = mean_tSNE_1, y = mean_tSNE_2),
                                       label = centers$Cluster,
+                                      size = label_size,
                                       segment.color = 'grey50',
                                       fontface = 'bold',
                                       alpha = 0.8,
