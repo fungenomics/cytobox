@@ -20,3 +20,6 @@ cluster label at the cluster center. Default: TRUE.}
 \description{
 Add cluster labels to a tSNE ggplot2 plot
 }
+\author{
+Selin Jessa
+}

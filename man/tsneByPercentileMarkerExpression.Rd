@@ -19,8 +19,10 @@ i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 
 \item{label}{Logical, whether to label clusters on the plot. Default: TRUE.}
 
-\item{palette}{String, one of "viridis" or "blues", specifying which gradient
-palette to use. Default: viridis.}
+\item{palette}{String or character vector. If a string,
+one of "viridis", "blues", or "redgrey", specifying which gradient
+palette to use. Otherwise, a character vector of colours (from low to high)
+to interpolate to create the scael. Default: viridis.}
 
 \item{title}{(Optional) string used as title for the plot.}
 

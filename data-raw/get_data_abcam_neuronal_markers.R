@@ -7,4 +7,4 @@ library(usethis)
 
 abcam.neuronal.markers <- fread("../../../analyses/njabado/single_cell/abcam_neural_markers/abcam_neuronal_markers.txt", data.table = FALSE)
 
-usethis::use_data(abcam.neuronal.markers)
+usethis::use_data(abcam.neuronal.markers, overwrite=TRUE)

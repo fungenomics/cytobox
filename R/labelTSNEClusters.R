@@ -53,7 +53,7 @@ labelTSNEClusters <- function(seurat, labels = NULL, labelsOnPlot=TRUE, legend=T
     p1 <- p1 +
       geom_point(aes(colour = Cluster), size = rel(0.8))
 
-    if (label) {
+    if (labelsOnPlot) {
 
       p1 <- p1 +
           ggrepel::geom_label_repel(data = centers,
