@@ -106,7 +106,7 @@ fetchData <- function(seurat, genes, clusters = NULL,
     genes_out <- findGenes(seurat, genes)
     if (length(genes_out$undetected > 0)) print(paste0("NOTE: [",
                                                          paste0(genes_out$undetected, collapse = ", "),
-                                                         "] undetected in the data"))
+                                                         "] undetected in ", seurat@project.name))
 
     if(length(genes_out$detected) == 0) stop("No genes specified were ",
                                              "found in the data.")
