@@ -750,9 +750,15 @@ vlnGrid <- function(seurat, genes, order = "genes", scale = "width") {
 
     expr$Marker <- factor(expr$Marker, levels = genes_out$detected)
 
+    # Set colours to the levels of the clusters, so that they are preserved
+    # even if an order was specified
+    colours <- ggColours(length(levels(seurat@ident)))
+    names(colours) <- levels(seurat@ident)
+
     gg <- expr %>%
         ggplot(aes(x = Cluster, y = Expression)) +
         geom_violin(aes(fill = Cluster), scale = scale, size = 0.5) +
+        scale_fill_manual(values = colours) +
         facet_wrap(~ Marker, ncol = length(unique(expr$Marker))) +
         theme_min() +
         coord_flip() +
