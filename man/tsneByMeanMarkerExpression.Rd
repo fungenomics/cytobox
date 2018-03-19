@@ -4,8 +4,9 @@
 \alias{tsneByMeanMarkerExpression}
 \title{tsneByMeanMarkerExpression}
 \usage{
-tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", title = NULL,
-  alpha = 0.6, legend = TRUE, hide_ticks = FALSE)
+tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne",
+  palette = "viridis", title = NULL, alpha = 0.6, legend = TRUE,
+  hide_ticks = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -17,6 +18,11 @@ i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 retrieves t-SNE by default. This should match the names of the elements of
 the list seurat@dr, so it will typically be one of "pca" or "tsne".
 Default: "tsne"}
+
+\item{palette}{String or character vector. If a string,
+one of "viridis", "blues", or "redgrey", specifying which gradient
+palette to use. Otherwise, a character vector of colours (from low to high)
+to interpolate to create the scael. Default: viridis.}
 
 \item{title}{(Optional) String specifying the plot title}
 

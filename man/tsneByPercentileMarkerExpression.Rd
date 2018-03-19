@@ -8,8 +8,8 @@
 \usage{
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
   reduction = "tsne", palette = "viridis", title = NULL, alpha = TRUE,
-  legend = TRUE, point_size = 1, label_repel = TRUE, extra = FALSE,
-  verbose = FALSE, hide_ticks = FALSE)
+  legend = TRUE, point_size = 1, label_repel = TRUE, label_size = 4,
+  extra = FALSE, verbose = FALSE, hide_ticks = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -19,8 +19,10 @@ i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 
 \item{label}{Logical, whether to label clusters on the plot. Default: TRUE.}
 
-\item{palette}{String, one of "viridis" or "blues", specifying which gradient
-palette to use. Default: viridis.}
+\item{palette}{String or character vector. If a string,
+one of "viridis", "blues", or "redgrey", specifying which gradient
+palette to use. Otherwise, a character vector of colours (from low to high)
+to interpolate to create the scael. Default: viridis.}
 
 \item{title}{(Optional) string used as title for the plot.}
 
@@ -37,6 +39,8 @@ value around 0.5 is better for plots which will be viewed at small scale.)}
 labels repelled from the center, on a slightly transparent white background and
 with an arrow pointing to the cluster center. If FALSE, simply plot the
 cluster label at the cluster center. Default: TRUE.}
+
+\item{label_size}{Numeric, controls the size of text labels. Default: 4.}
 
 \item{extra}{Logical, plot a detailed three-panel plot, where the first
 is a proportional bar plot of cells in each cluster in each percentile
