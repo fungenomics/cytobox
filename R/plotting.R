@@ -25,6 +25,7 @@
 #' cluster label at the cluster center. Default: TRUE.
 #' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param title (Optional) String specifying title.
+#' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
 #'
 #' @return A ggplot2 object
 #' @export
@@ -40,6 +41,7 @@ tsne <- function(seurat,
                  legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
                  label_repel = TRUE,
                  label_size = 4,
+                 hide_ticks = FALSE,
                  title = NULL) {
 
     embedding <- data.frame(Cell = seurat@cell.names,
@@ -47,7 +49,7 @@ tsne <- function(seurat,
                             tSNE_2 = seurat@dr$tsne@cell.embeddings[, 2],
                             stringsAsFactors = FALSE)
 
-    if(all(is.na(seurat@ident))) {
+    if (label && all(is.na(seurat@ident))) {
         label <- FALSE
         message("NOTE: identity of all cells is NA, setting 'label' to FALSE.")
     }
@@ -91,7 +93,7 @@ tsne <- function(seurat,
 
     }
 
-    gg <- gg + theme_min()
+    gg <- gg + theme_min() + xlab("tSNE 1") + ylab("tSNE 2")
 
     if (!legend) gg <- gg + noLegend()
     else if (!is.null(colour_by)) {
@@ -99,6 +101,7 @@ tsne <- function(seurat,
     }
 
     if (!is.null(title)) gg <- gg + ggtitle(title)
+    if (hide_ticks) gg <- gg + noTicks()
 
     return(gg)
 
@@ -124,6 +127,10 @@ tsne <- function(seurat,
 #' retrieves t-SNE by default. This should match the names of the elements of
 #' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
 #' Default: "tsne"
+#' @param palette String or character vector. If a string,
+#' one of "viridis", "blues", or "redgrey", specifying which gradient
+#' palette to use. Otherwise, a character vector of colours (from low to high)
+#' to interpolate to create the scael. Default: viridis.
 #' @param title (Optional) String specifying the plot title
 #' @param alpha Numeric, fixed alpha for points. Default: 0.6
 #' @param legend Logical, whether or not to plot legend. Default: TRUE
@@ -137,7 +144,9 @@ tsne <- function(seurat,
 # tsneByMeanMarkerExpression(pbmc, "IL32")
 # tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 tsneByMeanMarkerExpression <- function(seurat, genes,
-                                       reduction = "tsne", title = NULL,
+                                       reduction = "tsne",
+                                       palette = "viridis",
+                                       title = NULL,
                                        alpha = 0.6,
                                        legend = TRUE,
                                        hide_ticks = FALSE) {
@@ -156,9 +165,50 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
     # Plot
     gg <- exp_df %>%
         ggplot(aes(x = exp_df[[vars[1]]], y = exp_df[[vars[2]]])) +
-        geom_point(aes(colour = Mean_marker_expression), size = rel(0.8), alpha = alpha) +
-        viridis::scale_color_viridis() +
-        xlab(vars[1]) + ylab(vars[2]) +
+        geom_point(aes(colour = Mean_marker_expression), size = rel(0.8), alpha = alpha)
+
+    if (length(palette) == 1) {
+
+        if (palette == "viridis") {
+
+            gg <- gg + viridis::scale_color_viridis()
+
+        } else if (palette == "blues") {
+
+            gg <- gg + scale_colour_gradientn(
+                colours = RColorBrewer::brewer.pal(n = 8, name = "Blues"))
+
+        } else if (palette == "redgrey") {
+
+            # NOTE: palette chosen is not the default gradient from gray -> red
+            # but sets a midpoint at a lighter colour
+            gg <- gg + scale_color_gradientn(
+                colours = grDevices::colorRampPalette(c("gray83", "#E09797", "red"))(n = 200))
+
+        } else {
+
+            stop("Please pass the palette as a character vector ",
+                 "or specify one of: viridis, blues, redgrey")
+
+        }
+
+    } else if (length(palette) == 2) {
+
+        gg <- gg + scale_color_gradient(low = palette[1], high = palette[2])
+
+    } else {
+
+        gg <- gg + scale_color_gradientn(colours = palette)
+
+    }
+
+
+    axes <- gsub("_", " ", vars)
+
+    gg <- gg +
+        xlab(axes[1]) +
+        ylab(axes[2]) +
+        labs(colour = "Expression") +
         theme_min()
 
     if (!is.null(title)) gg <- gg + ggtitle(title)
@@ -181,8 +231,10 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' @param genes String or character vector specifying gene(s) to use
 #' @param label Logical, whether to label clusters on the plot. Default: TRUE.
 #' @param title (Optional) string used as title for the plot.
-#' @param palette String, one of "viridis" or "blues", specifying which gradient
-#' palette to use. Default: viridis.
+#' @param palette String or character vector. If a string,
+#' one of "viridis", "blues", or "redgrey", specifying which gradient
+#' palette to use. Otherwise, a character vector of colours (from low to high)
+#' to interpolate to create the scael. Default: viridis.
 #' @param extra Logical, plot a detailed three-panel plot, where the first
 #' is a proportional bar plot of cells in each cluster in each percentile
 #' group, the second is a ridge plot showing density in each cluster of the mean
@@ -323,8 +375,9 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
     }
 
+    axes <- gsub("_", " ", vars)
     gg <- gg + guides(colour = guide_legend(order = 1)) +
-        xlab(vars[1]) + ylab(vars[2]) +
+        xlab(axes[1]) + ylab(axes[2]) +
         theme_min()
 
     if (label) {
@@ -548,6 +601,7 @@ feature <- function(seurat, genes,
                                   function(gene) tsneByMeanMarkerExpression(seurat,
                                                                             gene,
                                                                             reduction = reduction,
+                                                                            palette = palette,
                                                                             title = gene,
                                                                             legend = legend,
                                                                             hide_ticks = hide_ticks)),
@@ -558,6 +612,7 @@ feature <- function(seurat, genes,
             tsneByMeanMarkerExpression(seurat,
                                        genes,
                                        reduction = reduction,
+                                       palette = palette,
                                        title = title,
                                        legend = legend,
                                        hide_ticks = hide_ticks)

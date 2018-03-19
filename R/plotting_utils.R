@@ -123,7 +123,7 @@ noTicks <- function() {
 #' cluster label at the cluster center. Default: TRUE.
 #' @param label_size Numeric, controls the size of text labels. Default: 4.
 #'
-#' @auth Selin Jessa
+#' @author Selin Jessa
 #' @export
 addLabels <- function(centers, label_repel = FALSE, label_size = 4) {
 
