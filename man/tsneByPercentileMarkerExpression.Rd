@@ -9,7 +9,8 @@
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
   reduction = "tsne", palette = "viridis", title = NULL, alpha = TRUE,
   legend = TRUE, point_size = 1, label_repel = TRUE, label_size = 4,
-  extra = FALSE, verbose = FALSE, hide_ticks = FALSE)
+  extra = FALSE, verbose = FALSE, hide_ticks = FALSE,
+  label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -53,6 +54,11 @@ Default: FALSE.}
 \item{verbose}{Logical, whether to print status updates. Default: FALSE.}
 
 \item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
+
+\item{label_short}{(Optional/Experimental!!) Logical, if TRUE, assumes clusters
+(at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
+numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
 }
 \value{
 A ggplot object
