@@ -4,7 +4,8 @@
 \alias{addLabels}
 \title{addLabels}
 \usage{
-addLabels(centers, label_repel = FALSE, label_size = 4)
+addLabels(centers, label_repel = FALSE, label_size = 4,
+  label_short = FALSE)
 }
 \arguments{
 \item{centers}{Data frame with at least three columns: "mean_tSNE_1", "mean_tSNE_2",
@@ -16,6 +17,11 @@ with an arrow pointing to the cluster center. If FALSE, simply plot the
 cluster label at the cluster center. Default: TRUE.}
 
 \item{label_size}{Numeric, controls the size of text labels. Default: 4.}
+
+\item{label_short}{(Optional/Experimental!!) Logical, if TRUE, assumes clusters
+(at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
+numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
 }
 \description{
 Add cluster labels to a tSNE ggplot2 plot

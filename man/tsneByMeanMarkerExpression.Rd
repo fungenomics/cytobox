@@ -4,9 +4,10 @@
 \alias{tsneByMeanMarkerExpression}
 \title{tsneByMeanMarkerExpression}
 \usage{
-tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne",
-  palette = "viridis", title = NULL, alpha = 0.6, legend = TRUE,
-  hide_ticks = FALSE)
+tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", label = TRUE,
+  palette = "viridis", title = NULL, alpha = 0.6, label_repel = TRUE,
+  label_size = 4, legend = TRUE, hide_ticks = FALSE,
+  label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -19,6 +20,8 @@ retrieves t-SNE by default. This should match the names of the elements of
 the list seurat@dr, so it will typically be one of "pca" or "tsne".
 Default: "tsne"}
 
+\item{label}{Logical, whether to label clusters on the plot. Default: TRUE.}
+
 \item{palette}{String or character vector. If a string,
 one of "viridis", "blues", or "redgrey", specifying which gradient
 palette to use. Otherwise, a character vector of colours (from low to high)
@@ -28,9 +31,21 @@ to interpolate to create the scael. Default: viridis.}
 
 \item{alpha}{Numeric, fixed alpha for points. Default: 0.6}
 
+\item{label_repel}{Logical, if \code{label} is TRUE, whether to plot cluster
+labels repelled from the center, on a slightly transparent white background and
+with an arrow pointing to the cluster center. If FALSE, simply plot the
+cluster label at the cluster center. Default: TRUE.}
+
+\item{label_size}{Numeric, controls the size of text labels. Default: 4.}
+
 \item{legend}{Logical, whether or not to plot legend. Default: TRUE}
 
 \item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
+
+\item{label_short}{(Optional/Experimental!!) Logical, if TRUE, assumes clusters
+(at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
+numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
 }
 \value{
 A ggplot object

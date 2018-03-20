@@ -127,6 +127,9 @@ vlnGrid(pbmc, genes = head(rownames(pbmc@data), 15))
 # Specify order
 vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 3, 2, 1))
 
+# Plot a subset of clusters
+vlnGrid(pbmc, head(rownames(pbmc@data), 15), subset_clusters = c(0, 1))
+
 ```
 
 
