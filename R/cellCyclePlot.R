@@ -13,7 +13,7 @@
 #' @author Alexis Blanchet-Cohen
 cellCyclePlot <- function(seurat, species="m_musculus", facets=TRUE, legend=FALSE) {
 
-  data("cell.cycle.genes.whitfield.2002.rda")
+  data("cell.cycle.genes.whitfield.2002")
   cell.cycle.genes <- cell.cycle.genes.whitfield.2002
   if(species=="m_musculus") {
     cell.cycle.genes$gene.symbol <- cell.cycle.genes.whitfield.2002$mmusculus.gene.symbol
@@ -37,7 +37,7 @@ cellCyclePlot <- function(seurat, species="m_musculus", facets=TRUE, legend=FALS
 
   cell.cycle.scores.tidy <- as.data.frame(t(cell.cycle.scores))
   cell.cycle.scores.tidy <- tibble::rownames_to_column(cell.cycle.scores.tidy, "cell") 
-  cell.cycle.scores.tidy <- add_column(cell.cycle.scores.tidy, cluster=seurat@ident, .after="cell")
+  cell.cycle.scores.tidy <- tibble::add_column(cell.cycle.scores.tidy, cluster=seurat@ident, .after="cell")
 
   # Plots
   p <- ggplot(cell.cycle.scores.tidy, aes(x=g1.s.scores, y=g2.m.scores)) + 
