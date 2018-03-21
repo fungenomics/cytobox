@@ -552,7 +552,7 @@ feature <- function(seurat, genes,
 
             if ((ncol == 3) & (length(genes_out$detected) < 3)) ncol <- 2
 
-            cowplot::plot_grid(
+            plots <- cowplot::plot_grid(
                 plotlist = lapply(genes_out$detected,
                                   function(gene) tsneByPercentileMarkerExpression(seurat,
                                                                                   gene,
@@ -565,6 +565,15 @@ feature <- function(seurat, genes,
                                                                                   point_size = point_size,
                                                                                   hide_ticks = hide_ticks)),
                 ncol = ncol)
+
+            if (is.null(title)) return(plots)
+            else {
+
+                plot_title <- cowplot::ggdraw() + cowplot::draw_label(title, hjust = 0, size = 12)
+                cowplot::plot_grid(plot_title, plots, ncol = 1, rel_heights = c(0.05, 1))
+
+            }
+
 
         } else {
 
@@ -596,7 +605,7 @@ feature <- function(seurat, genes,
 
             if ((ncol == 3) & (length(genes_out$detected) < 3)) ncol <- 2
 
-            cowplot::plot_grid(
+            plots <- cowplot::plot_grid(
                 plotlist = lapply(genes_out$detected,
                                   function(gene) tsneByMeanMarkerExpression(seurat,
                                                                             gene,
@@ -606,6 +615,14 @@ feature <- function(seurat, genes,
                                                                             legend = legend,
                                                                             hide_ticks = hide_ticks)),
                 ncol = ncol)
+
+            if (is.null(title)) return(plots)
+            else {
+
+                plot_title <- cowplot::ggdraw() + cowplot::draw_label(title, hjust = 0, size = 12)
+                cowplot::plot_grid(plot_title, plots, ncol = 1, rel_heights = c(0.05, 1))
+
+            }
 
         } else {
 
