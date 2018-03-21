@@ -119,11 +119,12 @@ fetchData <- function(seurat, genes, clusters = NULL,
 
             print(paste0("NOTE: [",
                          paste0(genes_out$undetected, collapse = ", "),
-                         "] are undetected in ", seurat@project.name))
+                         "] undetected in ", seurat@project.name))
 
         }
+    }
 
-    } else if (n_undetected == 0) stop("No genes specified were ",
+    if (length(genes_out$detected) == 0) stop("No genes specified were ",
                                              "found in the data.")
 
     if (scaled) exp <- as.matrix(seurat@scale.data)
