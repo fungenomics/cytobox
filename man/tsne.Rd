@@ -7,7 +7,7 @@
 tsne(seurat, colour_by = NULL, colours = NULL, label = TRUE,
   point_size = 0.6, alpha = 0.8, legend = ifelse((is.null(colour_by)) &&
   (label), FALSE, TRUE), label_repel = TRUE, label_size = 4,
-  hide_ticks = FALSE, title = NULL)
+  hide_ticks = FALSE, title = NULL, label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
@@ -39,6 +39,11 @@ cluster label at the cluster center. Default: TRUE.}
 \item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
 
 \item{title}{(Optional) String specifying title.}
+
+\item{label_short}{(Optional/Experimental!!) Logical, if TRUE, assumes clusters
+(at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
+numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
 }
 \value{
 A ggplot2 object

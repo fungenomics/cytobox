@@ -26,6 +26,10 @@
 #' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param title (Optional) String specifying title.
 #' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
+#' @param label_short (Optional/Experimental!!) Logical, if TRUE, assumes clusters
+#' (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
+#' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+#' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
 #'
 #' @return A ggplot2 object
 #' @export
@@ -42,7 +46,8 @@ tsne <- function(seurat,
                  label_repel = TRUE,
                  label_size = 4,
                  hide_ticks = FALSE,
-                 title = NULL) {
+                 title = NULL,
+                 label_short = FALSE) {
 
     embedding <- data.frame(Cell = seurat@cell.names,
                             tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
@@ -89,7 +94,7 @@ tsne <- function(seurat,
     if (label) {
 
         centers <- clusterCenters(seurat)
-        gg <- gg + addLabels(centers, label_repel, label_size)
+        gg <- gg + addLabels(centers, label_repel, label_size, label_short)
 
     }
 
@@ -127,14 +132,24 @@ tsne <- function(seurat,
 #' retrieves t-SNE by default. This should match the names of the elements of
 #' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
 #' Default: "tsne"
+#' @param label Logical, whether to label clusters on the plot. Default: TRUE.
 #' @param palette String or character vector. If a string,
 #' one of "viridis", "blues", or "redgrey", specifying which gradient
 #' palette to use. Otherwise, a character vector of colours (from low to high)
 #' to interpolate to create the scael. Default: viridis.
 #' @param title (Optional) String specifying the plot title
 #' @param alpha Numeric, fixed alpha for points. Default: 0.6
+#' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
+#' labels repelled from the center, on a slightly transparent white background and
+#' with an arrow pointing to the cluster center. If FALSE, simply plot the
+#' cluster label at the cluster center. Default: TRUE.
+#' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param legend Logical, whether or not to plot legend. Default: TRUE
 #' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
+#' @param label_short (Optional/Experimental!!) Logical, if TRUE, assumes clusters
+#' (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
+#' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+#' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
 #'
 #' @export
 #' @return A ggplot object
@@ -145,11 +160,15 @@ tsne <- function(seurat,
 # tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 tsneByMeanMarkerExpression <- function(seurat, genes,
                                        reduction = "tsne",
+                                       label = TRUE,
                                        palette = "viridis",
                                        title = NULL,
                                        alpha = 0.6,
+                                       label_repel = TRUE,
+                                       label_size = 4,
                                        legend = TRUE,
-                                       hide_ticks = FALSE) {
+                                       hide_ticks = FALSE,
+                                       label_short = FALSE) {
 
     # Get mean expression for markers
     exp_df <- meanMarkerExpression(seurat, genes)
@@ -202,6 +221,19 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 
     }
 
+    if (label) {
+
+        if (reduction == "pca") {
+
+            message("Plotting labels is currently only available for reduction = 'tsne';",
+                    " returning plot without labels.")
+            return(gg)
+        }
+
+        centers <- clusterCenters(seurat)
+        gg <- gg + addLabels(centers, label_repel, label_size, label_short)
+
+    }
 
     axes <- gsub("_", " ", vars)
 
@@ -255,6 +287,10 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' cluster label at the cluster center. Default: TRUE.
 #' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
+#' @param label_short (Optional/Experimental!!) Logical, if TRUE, assumes clusters
+#' (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
+#' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+#' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
 #'
 #' @export
 #'
@@ -279,7 +315,8 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label_size = 4,
                                              extra = FALSE,
                                              verbose = FALSE,
-                                             hide_ticks = FALSE) {
+                                             hide_ticks = FALSE,
+                                             label_short = FALSE) {
 
     if (verbose) message("Computing percentiles...")
 
@@ -390,7 +427,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
         }
 
         centers <- clusterCenters(seurat)
-        gg <- gg + addLabels(centers, label_repel, label_size)
+        gg <- gg + addLabels(centers, label_repel, label_size, label_short)
 
         if (extra) {
 
@@ -525,6 +562,8 @@ feature <- function(seurat, genes,
                     label = TRUE,
                     palette = "redgrey",
                     label_repel = FALSE,
+                    label_size = 4,
+                    label_short = FALSE,
                     legend = FALSE,
                     title = NULL,
                     reduction = "tsne",
@@ -559,6 +598,8 @@ feature <- function(seurat, genes,
                                                                                   label = label,
                                                                                   palette = palette,
                                                                                   label_repel = label_repel,
+                                                                                  label_size = label_size,
+                                                                                  label_short = label_short,
                                                                                   title = gene,
                                                                                   alpha = alpha,
                                                                                   legend = legend,
@@ -582,6 +623,8 @@ feature <- function(seurat, genes,
                                              label = label,
                                              palette = palette,
                                              label_repel = label_repel,
+                                             label_size = label_size,
+                                             label_short = label_short,
                                              title = title,
                                              alpha = alpha,
                                              legend = legend,
@@ -613,6 +656,10 @@ feature <- function(seurat, genes,
                                                                             palette = palette,
                                                                             title = gene,
                                                                             legend = legend,
+                                                                            label = label,
+                                                                            label_short = label_short,
+                                                                            label_repel = label_repel,
+                                                                            label_size = label_size,
                                                                             hide_ticks = hide_ticks)),
                 ncol = ncol)
 
@@ -632,6 +679,10 @@ feature <- function(seurat, genes,
                                        palette = palette,
                                        title = title,
                                        legend = legend,
+                                       label = label,
+                                       label_repel = label_repel,
+                                       label_size = label_size,
+                                       label_short = label_short,
                                        hide_ticks = hide_ticks)
         }
     }
@@ -712,6 +763,7 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
 #' in which they're provided. Passing a vector will cause clusters to be plot
 #' in that order. Default: "genes". *We take the median of cells with non-zero
 #' expression values.
+#' @param subset_clusters (Optional) Vector of clusters to include on the plot.
 #' @param width String, one of "width", "area", or "count". From the ggplot2
 #' documentation of \code{geom_violin}: "if "area" (default), all violins have
 #' the same area (before trimming the tails). If "count", areas are scaled
@@ -728,11 +780,22 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
 #' vlnGrid(pbmc, head(rownames(pbmc@data), 15))
 #'
 #' # Specify order
-#' vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 1, 2, 3))
-vlnGrid <- function(seurat, genes, order = "genes", scale = "width") {
+#' vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 3, 2, 1))
+#'
+#' # Plot only a subset of clusters
+#' vlnGrid(pbmc, head(rownames(pbmc@data), 15), subset_clusters = c(0, 1))
+vlnGrid <- function(seurat, genes,
+                    subset_clusters = NULL,
+                    order = "genes",
+                    scale = "width",
+                    title = NULL) {
 
-    expr <- fetchData(seurat, genes, return_cell = TRUE, return_cluster = TRUE) %>%
+    expr <- cytokit::fetchData(seurat, genes, return_cell = TRUE, return_cluster = TRUE) %>%
         tidyr::gather(Marker, Expression, 3:length(.))
+
+    # return(expr)
+
+    if (!is.null(subset_clusters)) expr <- filter(expr, Cluster %in% subset_clusters)
 
     genes_out <- findGenes(seurat, genes)
     if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
@@ -756,11 +819,20 @@ vlnGrid <- function(seurat, genes, order = "genes", scale = "width") {
 
             expr$Cluster <- factor(expr$Cluster, levels = rev(cluster_order))
 
-        } else stop("Please set order = 'genes', or provide an ordering which includes all clusters.")
+        } else stop("Please set order = 'genes', or provide an ordering of clusters.")
 
     } else {
 
-        if(length(order) != length(unique(seurat@ident))) stop("Please provide an ordering which includes all clusters.")
+        if ((is.null(subset_clusters)) && (length(order) != length(unique(seurat@ident)))) {
+
+            stop("Please provide an ordering which includes all clusters.")
+
+        } else if ((!is.null(subset_clusters)) && (length(order) != length(subset_clusters))) {
+
+            stop("Please provide an ordering which includes all clusters passed to ",
+                 "the 'subset_clusters' argument.")
+        }
+
         expr$Cluster <- factor(expr$Cluster, levels = rev(order))
 
     }
@@ -785,6 +857,8 @@ vlnGrid <- function(seurat, genes, order = "genes", scale = "width") {
                        axis.line.x = element_blank(),
                        legend.position = "none",
                        strip.text.x = element_text(angle = 30, size = 8))
+
+    if (!is.null(title)) gg <- gg + ggtitle(title)
 
     return(gg)
 

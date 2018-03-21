@@ -4,13 +4,16 @@
 \alias{vlnGrid}
 \title{vlnGrid}
 \usage{
-vlnGrid(seurat, genes, order = "genes", scale = "width")
+vlnGrid(seurat, genes, subset_clusters = NULL, order = "genes",
+  scale = "width", title = NULL)
 }
 \arguments{
 \item{seurat}{Seurat object}
 
 \item{genes}{Genes to plot violins for, in the order in which they should be
 plotted.}
+
+\item{subset_clusters}{(Optional) Vector of clusters to include on the plot.}
 
 \item{order}{Either "genes", or a vector containing the clusters in the order
 they should be plotted (from top to bottom). If "genes", clusters will be sorted
@@ -37,7 +40,10 @@ Figure 5D in the Drop-seq paper by Macosko et al.
 vlnGrid(pbmc, head(rownames(pbmc@data), 15))
 
 # Specify order
-vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 1, 2, 3))
+vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 3, 2, 1))
+
+# Plot only a subset of clusters
+vlnGrid(pbmc, head(rownames(pbmc@data), 15), subset_clusters = c(0, 1))
 }
 \author{
 Selin Jessa

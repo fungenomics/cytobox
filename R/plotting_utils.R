@@ -122,10 +122,18 @@ noTicks <- function() {
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
 #' cluster label at the cluster center. Default: TRUE.
 #' @param label_size Numeric, controls the size of text labels. Default: 4.
+#' @param label_short (Optional/Experimental!!) Logical, if TRUE, assumes clusters
+#' (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
+#' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+#' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
+#'
 #'
 #' @author Selin Jessa
 #' @export
-addLabels <- function(centers, label_repel = FALSE, label_size = 4) {
+addLabels <- function(centers, label_repel = FALSE, label_size = 4, label_short = FALSE) {
+
+    if (label_short) centers <- suppressWarnings(
+        tidyr::separate(centers, Cluster, into = c("Cluster", "Cluster_long"), extra = "drop"))
 
     if (label_repel) {
 
