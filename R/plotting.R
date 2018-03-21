@@ -798,9 +798,6 @@ vlnGrid <- function(seurat, genes,
     if (!is.null(subset_clusters)) expr <- filter(expr, Cluster %in% subset_clusters)
 
     genes_out <- findGenes(seurat, genes)
-    if (length(genes_out$undetected > 0)) message(paste0("NOTE: [",
-                                                         paste0(genes_out$undetected, collapse = ", "),
-                                                         "] undetected in the data"))
 
     if (length(order) == 1) {
 

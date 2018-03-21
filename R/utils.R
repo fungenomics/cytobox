@@ -104,11 +104,26 @@ fetchData <- function(seurat, genes, clusters = NULL,
                       return_cell = FALSE, return_cluster = FALSE, scaled = FALSE) {
 
     genes_out <- findGenes(seurat, genes)
-    if (length(genes_out$undetected > 0)) print(paste0("NOTE: [",
-                                                         paste0(genes_out$undetected, collapse = ", "),
-                                                         "] undetected in ", seurat@project.name))
 
-    if(length(genes_out$detected) == 0) stop("No genes specified were ",
+    n_undetected <- length(genes_out$undetected)
+
+    if (n_undetected > 0) {
+
+        if (n_undetected > 10) {
+
+            print(paste0("NOTE: [",
+                         paste0(head(genes_out$undetected, 10), collapse = ", "),
+                         "] and ", n_undetected - 10, " other genes are undetected in ", seurat@project.name))
+
+        } else {
+
+            print(paste0("NOTE: [",
+                         paste0(genes_out$undetected, collapse = ", "),
+                         "] are undetected in ", seurat@project.name))
+
+        }
+
+    } else if (n_undetected == 0) stop("No genes specified were ",
                                              "found in the data.")
 
     if (scaled) exp <- as.matrix(seurat@scale.data)
