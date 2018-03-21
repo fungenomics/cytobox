@@ -35,7 +35,7 @@ cellCyclePlot <- function(seurat, facets=TRUE, species="m_musculus") {
   rownames(cell.cycle.scores) <- gsub("expression.data.", "", rownames(cell.cycle.scores))
 
   cell.cycle.scores.tidy <- as.data.frame(t(cell.cycle.scores))
-  cell.cycle.scores.tidy <- rownames_to_column(cell.cycle.scores.tidy, "cell") 
+  cell.cycle.scores.tidy <- tibble::rownames_to_column(cell.cycle.scores.tidy, "cell") 
   cell.cycle.scores.tidy <- add_column(cell.cycle.scores.tidy, cluster=seurat@ident, .after="cell")
 
   # Plots
