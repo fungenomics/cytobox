@@ -13,7 +13,7 @@
 #' @author Alexis Blanchet-Cohen
 cellCyclePlot <- function(seurat, species="m_musculus", facets=TRUE, legend=FALSE) {
 
-  load("data/cell.cycle.genes.whitfield.2002.rda")
+  data("cell.cycle.genes.whitfield.2002.rda")
   cell.cycle.genes <- cell.cycle.genes.whitfield.2002
   if(species=="m_musculus") {
     cell.cycle.genes$gene.symbol <- cell.cycle.genes.whitfield.2002$mmusculus.gene.symbol
