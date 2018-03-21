@@ -2,6 +2,7 @@
 
 export(addEmbedding)
 export(addLabels)
+export(cellCyclePlot)
 export(clusterCenters)
 export(convertName)
 export(dashboard)
