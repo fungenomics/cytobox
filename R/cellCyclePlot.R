@@ -3,16 +3,17 @@
 #' cellCyclePlot
 #'
 #' @param seurat Seurat object.
-#' @param facets Boolean to indicate whether a facet should be used for each cluster., or if all the clusters should be plotted together. 
 #' @param species m_musculus or h_sapiens.
+#' @param facets Boolean to indicate whether a facet should be used for each cluster., or if all the clusters should be plotted together. 
+#' @param legend Boolean to indicate whether legend should be included.
 #
 #' @return A ggplot2 object. A tSNE plot with the cell cycle plots
 #'
 #' @export
 #' @author Alexis Blanchet-Cohen
-cellCyclePlot <- function(seurat, facets=TRUE, species="m_musculus") {
+cellCyclePlot <- function(seurat, species="m_musculus", facets=TRUE, legend=FALSE) {
 
-  data("cell.cycle.genes.whitfield.2002")
+  load("data/cell.cycle.genes.whitfield.2002.Rda")
   cell.cycle.genes <- cell.cycle.genes.whitfield.2002
   if(species=="m_musculus") {
     cell.cycle.genes$gene.symbol <- cell.cycle.genes.whitfield.2002$mmusculus.gene.symbol
@@ -44,6 +45,10 @@ cellCyclePlot <- function(seurat, facets=TRUE, species="m_musculus") {
 
   if(facets) {
   p <- p + facet_grid(~cluster) }
+
+  if(legend==FALSE) {
+    p <- p + theme(legend.position="none")
+  }
 
   return(p)
 }

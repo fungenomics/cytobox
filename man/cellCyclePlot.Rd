@@ -4,14 +4,17 @@
 \alias{cellCyclePlot}
 \title{cellCyclePlot}
 \usage{
-cellCyclePlot(seurat, facets = TRUE, species = "m_musculus")
+cellCyclePlot(seurat, species = "m_musculus", facets = TRUE,
+  legend = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object.}
 
+\item{species}{m_musculus or h_sapiens.}
+
 \item{facets}{Boolean to indicate whether a facet should be used for each cluster., or if all the clusters should be plotted together.}
 
-\item{species}{m_musculus or h_sapiens.}
+\item{legend}{Boolean to indicate whether legend should be included.}
 }
 \value{
 A ggplot2 object. A tSNE plot with the cell cycle plots
