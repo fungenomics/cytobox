@@ -95,7 +95,6 @@ tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend="percen
 
     # Percentiles in legend
     if(legend == "percentiles") {
-    cairo_pdf(file.path(outputDirectory, paste0(paste(genes, collapse="_"), "_distribution_umis_with_percentiles_in_legend.pdf")), width=10)
     p <- ggplot(coordinates.expression.data, aes(tSNE_1, tSNE_2)) +
         geom_point(aes(colour = factor(gradient.colors.category), alpha=gradient.alpha.category)) +
 	scale_color_manual(values=gradient.colors, 
@@ -115,7 +114,6 @@ tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend="percen
 
       # Expression values in legend
       if (legend == "values") {
-      cairo_pdf(file.path(outputDirectory, paste0(paste(genes, collapse="_"), "_distribution_umis_with_expression_values_in_legend.pdf")), width=10)
       p <- ggplot(coordinates.expression.data, aes(tSNE_1, tSNE_2)) +
 	geom_point(aes(colour = factor(gradient.colors.category), alpha=gradient.alpha.category)) +
 	scale_color_manual(values=gradient.colors, 
@@ -134,7 +132,6 @@ tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend="percen
     } 
     if (legend== "none") {
       # No legend
-      cairo_pdf(file.path(outputDirectory, paste0(paste(genes, collapse="_"), "_distribution_umis_with_expression_values_no_legend.pdf")), width=10)
       p <- ggplot(coordinates.expression.data, aes(tSNE_1, tSNE_2)) +
 	geom_point(aes(colour = factor(gradient.colors.category), alpha=gradient.alpha.category)) +
 	scale_color_manual(values=gradient.colors) +
