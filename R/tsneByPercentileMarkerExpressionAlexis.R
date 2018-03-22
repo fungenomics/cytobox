@@ -4,13 +4,13 @@
 #'
 #' @param seurat Seurat object.
 #' @param genes Genes to plot.
-#' @param legend Boolean to indicate whether legend should be included.
+#' @param legend "percentiles", "expression" or "none"
 #
 #' @return A ggplot2 object. A tSNE plot with the cell cycle plots
 #'
 #' @export
 #' @author Alexis Blanchet-Cohen
-tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend=TRUE){
+tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend="percentiles"){
     # tSNE plots coordinates
     coordinates <- seurat@dr$tsne@cell.embeddings
 
@@ -94,6 +94,7 @@ tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend=TRUE){
     category.9.max <- filter(coordinates.expression.data, gradient.colors.category ==9) %>% slice(n()) %>% .$sum.genes
 
     # Percentiles in legend
+    if(legend == "percentiles") {
     cairo_pdf(file.path(outputDirectory, paste0(paste(genes, collapse="_"), "_distribution_umis_with_percentiles_in_legend.pdf")), width=10)
     p <- ggplot(coordinates.expression.data, aes(tSNE_1, tSNE_2)) +
         geom_point(aes(colour = factor(gradient.colors.category), alpha=gradient.alpha.category)) +
@@ -110,11 +111,10 @@ tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend=TRUE){
 	theme_bw() +
 	theme(plot.title = element_text(hjust = 0.5), legend.text.align = 0,
 	      panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-      show(p)
-      dev.off()
+    }
 
       # Expression values in legend
-      if (legend == TRUE) {
+      if (legend == "values") {
       cairo_pdf(file.path(outputDirectory, paste0(paste(genes, collapse="_"), "_distribution_umis_with_expression_values_in_legend.pdf")), width=10)
       p <- ggplot(coordinates.expression.data, aes(tSNE_1, tSNE_2)) +
 	geom_point(aes(colour = factor(gradient.colors.category), alpha=gradient.alpha.category)) +
@@ -131,7 +131,8 @@ tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend=TRUE){
 	theme_bw() +
 	theme(plot.title = element_text(hjust = 0.5), legend.text.align = 0,
 	      panel.grid.major = element_blank(), panel.grid.minor = element_blank())
-    } else {
+    } 
+    if (legend== "none") {
       # No legend
       cairo_pdf(file.path(outputDirectory, paste0(paste(genes, collapse="_"), "_distribution_umis_with_expression_values_no_legend.pdf")), width=10)
       p <- ggplot(coordinates.expression.data, aes(tSNE_1, tSNE_2)) +

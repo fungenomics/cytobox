@@ -4,14 +4,14 @@
 \alias{tsneByPercentileMarkerExpressionAlexis}
 \title{cellCyclePlot}
 \usage{
-tsneByPercentileMarkerExpressionAlexis(seurat, genes, legend = TRUE)
+tsneByPercentileMarkerExpressionAlexis(seurat, genes, legend = "percentiles")
 }
 \arguments{
 \item{seurat}{Seurat object.}
 
 \item{genes}{Genes to plot.}
 
-\item{legend}{Boolean to indicate whether legend should be included.}
+\item{legend}{"percentiles", "expression" or "none"}
 }
 \value{
 A ggplot2 object. A tSNE plot with the cell cycle plots
