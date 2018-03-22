@@ -31,7 +31,7 @@ tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend=TRUE){
     coordinates.expression.data.not.zero$percentile <- ecdf(coordinates.expression.data.not.zero$sum.genes)(coordinates.expression.data.not.zero$sum.genes) * 100
     coordinates.expression.data <- rbind(coordinates.expression.data.zero, coordinates.expression.data.not.zero)
     # Add color columns
-    gradient.colors <- brewer.pal(n=9, name="Blues")
+    gradient.colors <- RColorBrewer::brewer.pal(n=9, name="Blues")
     coordinates.expression.data$gradient.colors.category <- 1
     coordinates.expression.data$gradient.colors.category <- ifelse(coordinates.expression.data$percentile > 0 & coordinates.expression.data$percentile <= 50,
 						       2, coordinates.expression.data$gradient.colors.category)
