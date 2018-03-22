@@ -16,7 +16,7 @@ tsneByPercentileMarkerExpressionAlexis <- function(seurat, genes, legend=TRUE){
 
     # Seurat normalized gene expression data
     expression.matrix <- as.data.frame(as.matrix(seurat@data))
-    expression.matrix <- rownames_to_column(expression.matrix, "gene_name")
+    expression.matrix <- tibble::rownames_to_column(expression.matrix, "gene_name")
     # Keep only genes of interest.
     expression.matrix.filtered <- filter(expression.matrix, gene_name %in% genes)
     # Sum genes (No change if only one gene given).
