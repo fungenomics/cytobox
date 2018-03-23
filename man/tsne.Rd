@@ -4,10 +4,11 @@
 \alias{tsne}
 \title{tsne}
 \usage{
-tsne(seurat, colour_by = NULL, colours = NULL, label = TRUE,
-  point_size = 0.6, alpha = 0.8, legend = ifelse((is.null(colour_by)) &&
-  (label), FALSE, TRUE), label_repel = TRUE, label_size = 4,
-  hide_ticks = FALSE, title = NULL, label_short = FALSE)
+tsne(seurat, colour_by = NULL, colours = NULL,
+  colour_by_type = "discrete", label = TRUE, point_size = 0.6,
+  alpha = 0.8, legend = ifelse((is.null(colour_by)) && (label), FALSE,
+  TRUE), label_repel = TRUE, label_size = 4, hide_ticks = FALSE,
+  title = NULL, label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
@@ -15,10 +16,19 @@ tsne(seurat, colour_by = NULL, colours = NULL, label = TRUE,
 \item{colour_by}{(Optional) String, specifying the column in \code{seurat@meta.data}
 by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@ident}).}
 
-\item{colours}{(Optional) Named character vector of colours for points. Names should
-correspond to cluster names (e.g. \code{levels(seurat@ident)}), or to categorical
-values in the column of \code{seurat@meta.data} specified in \code{colour_by}. Default:
-use default ggplot2 colours.}
+\item{colours}{(Optional) Character vector of colours for points. If \code{colour_by}
+is NULL, cells will be coloured by cluster; this should be a named character vector of colours for points. Names should
+correspond to cluster names (e.g. \code{levels(seurat@ident)}). If
+specifying \code{colour_by}, and the variable is discrete, this should be a named vector corresponding to categorical
+values in the column of \code{seurat@meta.data} specified. Otherwise, if the variable
+is continuous, pass the gradient to use, or a few colours (from low to high) from which a gradient
+should be created, and specify \code{colour_by_type = "continuous"}. The default is to
+use ggplot2 colours.}
+
+\item{colour_by_type}{(Optional) String, one of "discrete" or "continuous".
+If specifying \code{colour_by} and providing colours to the \code{colours}
+argument, specify whether the \code{colour_by} variable is discrete or continuous.
+Default: discrete.}
 
 \item{label}{Logical, whether to plot cluster labels. Default: TRUE}
 
