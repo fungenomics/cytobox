@@ -5,7 +5,7 @@
 \title{tsneByMeanMarkerExpression}
 \usage{
 tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", label = TRUE,
-  palette = "viridis", title = NULL, alpha = 0.6, label_repel = TRUE,
+  palette = "redgrey", title = NULL, alpha = 0.6, label_repel = TRUE,
   label_size = 4, legend = TRUE, hide_ticks = FALSE,
   label_short = FALSE)
 }
@@ -25,7 +25,7 @@ Default: "tsne"}
 \item{palette}{String or character vector. If a string,
 one of "viridis", "blues", or "redgrey", specifying which gradient
 palette to use. Otherwise, a character vector of colours (from low to high)
-to interpolate to create the scael. Default: viridis.}
+to interpolate to create the scael. Default: redgrey.}
 
 \item{title}{(Optional) String specifying the plot title}
 

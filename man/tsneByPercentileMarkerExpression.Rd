@@ -7,7 +7,7 @@
 \title{tsneByPercentileMarkerExpression}
 \usage{
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
-  reduction = "tsne", palette = "viridis", title = NULL, alpha = TRUE,
+  reduction = "tsne", palette = "blues", title = NULL, alpha = TRUE,
   legend = TRUE, point_size = 1, label_repel = TRUE, label_size = 4,
   extra = FALSE, verbose = FALSE, hide_ticks = FALSE,
   label_short = FALSE)
@@ -23,7 +23,7 @@ i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)}
 \item{palette}{String or character vector. If a string,
 one of "viridis", "blues", or "redgrey", specifying which gradient
 palette to use. Otherwise, a character vector of colours (from low to high)
-to interpolate to create the scael. Default: viridis.}
+to interpolate to create the scael. Default: "blues".}
 
 \item{title}{(Optional) string used as title for the plot.}
 

@@ -4,16 +4,17 @@
 #'
 #' @param seurat Seurat object.
 #' @param species m_musculus or h_sapiens.
-#' @param facets Boolean to indicate whether a facet should be used for each cluster., or if all the clusters should be plotted together. 
+#' @param facets Boolean to indicate whether a facet should be used for each cluster., or if all the clusters should be plotted together.
 #' @param legend Boolean to indicate whether legend should be included.
 #
 #' @return A ggplot2 object. A tSNE plot with the cell cycle plots
 #'
 #' @export
 #' @author Alexis Blanchet-Cohen
-cellCyclePlot <- function(seurat, species="m_musculus", facets=TRUE, legend=FALSE) {
+cellCyclePlot <- function(seurat, species="m_musculus", facets=TRUE, legend=FALSE,
+                          return_scores = FALSE) {
 
-  data("cell.cycle.genes.whitfield.2002")
+  # data("cell.cycle.genes.whitfield.2002")
   cell.cycle.genes <- cell.cycle.genes.whitfield.2002
   if(species=="m_musculus") {
     cell.cycle.genes$gene.symbol <- cell.cycle.genes.whitfield.2002$mmusculus.gene.symbol
@@ -36,11 +37,13 @@ cellCyclePlot <- function(seurat, species="m_musculus", facets=TRUE, legend=FALS
   rownames(cell.cycle.scores) <- gsub("expression.data.", "", rownames(cell.cycle.scores))
 
   cell.cycle.scores.tidy <- as.data.frame(t(cell.cycle.scores))
-  cell.cycle.scores.tidy <- tibble::rownames_to_column(cell.cycle.scores.tidy, "cell") 
+  cell.cycle.scores.tidy <- tibble::rownames_to_column(cell.cycle.scores.tidy, "cell")
   cell.cycle.scores.tidy <- tibble::add_column(cell.cycle.scores.tidy, cluster=seurat@ident, .after="cell")
 
+  if (return_scores) return(cell.cycle.scores.tidy)
+
   # Plots
-  p <- ggplot(cell.cycle.scores.tidy, aes(x=g1.s.scores, y=g2.m.scores)) + 
+  p <- ggplot(cell.cycle.scores.tidy, aes(x=g1.s.scores, y=g2.m.scores)) +
     geom_point(aes(color=cluster)) + xlab("G1/S score") + ylab("G2/M score")
 
   if(facets) {

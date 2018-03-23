@@ -136,7 +136,7 @@ tsne <- function(seurat,
 #' @param palette String or character vector. If a string,
 #' one of "viridis", "blues", or "redgrey", specifying which gradient
 #' palette to use. Otherwise, a character vector of colours (from low to high)
-#' to interpolate to create the scael. Default: viridis.
+#' to interpolate to create the scael. Default: redgrey.
 #' @param title (Optional) String specifying the plot title
 #' @param alpha Numeric, fixed alpha for points. Default: 0.6
 #' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
@@ -161,7 +161,7 @@ tsne <- function(seurat,
 tsneByMeanMarkerExpression <- function(seurat, genes,
                                        reduction = "tsne",
                                        label = TRUE,
-                                       palette = "viridis",
+                                       palette = "redgrey",
                                        title = NULL,
                                        alpha = 0.6,
                                        label_repel = TRUE,
@@ -266,7 +266,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' @param palette String or character vector. If a string,
 #' one of "viridis", "blues", or "redgrey", specifying which gradient
 #' palette to use. Otherwise, a character vector of colours (from low to high)
-#' to interpolate to create the scael. Default: viridis.
+#' to interpolate to create the scael. Default: "blues".
 #' @param extra Logical, plot a detailed three-panel plot, where the first
 #' is a proportional bar plot of cells in each cluster in each percentile
 #' group, the second is a ridge plot showing density in each cluster of the mean
@@ -306,7 +306,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label = TRUE,
                                              reduction = "tsne",
-                                             palette = "viridis",
+                                             palette = "blues",
                                              title = NULL,
                                              alpha = TRUE,
                                              legend = TRUE,

@@ -5,7 +5,7 @@
 \title{cellCyclePlot}
 \usage{
 cellCyclePlot(seurat, species = "m_musculus", facets = TRUE,
-  legend = FALSE)
+  legend = FALSE, return_scores = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object.}
