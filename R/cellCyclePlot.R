@@ -14,8 +14,7 @@
 cellCyclePlot <- function(seurat, species="m_musculus", facets=TRUE, legend=FALSE,
                           return_scores = FALSE) {
 
-  # data("cell.cycle.genes.whitfield.2002")
-  cell.cycle.genes <- cell.cycle.genes.whitfield.2002
+  cell.cycle.genes <- cytokit::cell.cycle.genes.whitfield.2002
   if(species=="m_musculus") {
     cell.cycle.genes$gene.symbol <- cell.cycle.genes.whitfield.2002$mmusculus.gene.symbol
   } else {
