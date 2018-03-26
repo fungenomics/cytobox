@@ -8,9 +8,9 @@
 \usage{
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
   reduction = "tsne", palette = "blues", title = NULL, alpha = TRUE,
-  legend = TRUE, point_size = 1, label_repel = TRUE, label_size = 4,
-  extra = FALSE, verbose = FALSE, hide_ticks = FALSE,
-  label_short = FALSE)
+  legend = TRUE, legend_options = "percentiles", point_size = 1,
+  label_repel = TRUE, label_size = 4, extra = FALSE, verbose = FALSE,
+  hide_ticks = FALSE, label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -32,6 +32,8 @@ group to highlight cells in the top percentiles.
 If FALSE, sets a fixed opacity of 0.8. Default: TRUE.}
 
 \item{legend}{Logical, whether to plot the legend. Default: FALSE.}
+
+\item{legend_options}{String, "percentiles" or "values". Default: "percentiles".}
 
 \item{point_size}{Numeric, size of points in scatterplot. Default: 1. (A smaller
 value around 0.5 is better for plots which will be viewed at small scale.)}

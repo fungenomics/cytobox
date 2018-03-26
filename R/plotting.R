@@ -292,6 +292,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' group to highlight cells in the top percentiles.
 #' If FALSE, sets a fixed opacity of 0.8. Default: TRUE.
 #' @param legend Logical, whether to plot the legend. Default: FALSE.
+#' @param legend_options String, "percentiles" or "values". Default: "percentiles".
 #' @param point_size Numeric, size of points in scatterplot. Default: 1. (A smaller
 #' value around 0.5 is better for plots which will be viewed at small scale.)
 #' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
@@ -323,6 +324,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              title = NULL,
                                              alpha = TRUE,
                                              legend = TRUE,
+                                             legend_options = "percentiles",
                                              point_size = 1,
                                              label_repel = TRUE,
                                              label_size = 4,
@@ -336,15 +338,22 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
     # Get expression percentiles
     percentiles <- percentilesMarkerExpression(seurat, genes)
 
-    color_grad_labels <- c("Undetected",
-                           "> 0 & \u2264 50",
-                           "> 50 & \u2264 70",
-                           "> 70 & \u2264 90",
-                           "> 90 & \u2264 92",
-                           "> 92 & \u2264 94",
-                           "> 94 & \u2264 96",
-                           "> 96 & \u2264 98",
-                           "> 98 & \u2264 100")
+    if (legend_options=="percentiles") {
+        color_grad_labels <- c("Undetected",
+                               "> 0 & \u2264 50",
+                               "> 50 & \u2264 70",
+                               "> 70 & \u2264 90",
+                               "> 90 & \u2264 92",
+                               "> 92 & \u2264 94",
+                               "> 94 & \u2264 96",
+                               "> 96 & \u2264 98",
+                               "> 98 & \u2264 100")} else if (legend_options=="values") {
+	# If legend_options is set to values, compute the values corresponding to the percentiles.
+	# Cell.type corresponds to the values. This variable should probably be renamed.
+        labels.min <- group_by(percentiles, Gradient_group) %>% summarize(minValue=min(Cell.type)) %>% .$minValue
+        labels.max <- group_by(percentiles, Gradient_group) %>% summarize(maxValue=max(Cell.type)) %>% .$maxValue
+        color_grad_labels <- c("Undetected", paste0("> ", round(labels.min[2:length(labels.min)], digits=2), " & \u2264 ", round(labels.max[2:length(labels.max)], digits=2)))
+    }
 
     # TODO you can just set the alpha group to the gradient group,
     # and as its values, pass the discrete gradient by hand... saves some code
