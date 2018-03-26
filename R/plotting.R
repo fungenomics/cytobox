@@ -352,7 +352,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 	# Cell.type corresponds to the values. This variable should probably be renamed.
         labels.min <- group_by(percentiles, Gradient_group) %>% summarize(minValue=min(Cell.type)) %>% .$minValue
         labels.max <- group_by(percentiles, Gradient_group) %>% summarize(maxValue=max(Cell.type)) %>% .$maxValue
-        color_grad_labels <- c("Undetected", paste0("> ", round(labels.min[2:length(labels.min)], digits=2), " & \u2264 ", round(labels.max[2:length(labels.max)], digits=2)))
+        color_grad_labels <- c("Undetected", paste0("> ", round(labels.min[2:length(labels.min)], digits=2), " & \\u2264 ", round(labels.max[2:length(labels.max)], digits=2)))
     }
 
     # TODO you can just set the alpha group to the gradient group,
