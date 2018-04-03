@@ -2,7 +2,7 @@
 
 # cytokit: README
 Internal Kleinman Lab toolkit for analyzing single cell RNA-seq data.
-Link to vignette: [https://rawgit.com/sjessa/cytokit/dev-selin/vignettes/cytokit.html](https://rawgit.com/sjessa/cytokit/dev-selin/vignettes/cytokit.html)
+<!---Link to vignette: [https://rawgit.com/sjessa/cytokit/master/vignettes/cytokit.html](https://rawgit.com/sjessa/cytokit/master/vignettes/cytokit.html) -->
 
 
 ## Installation
@@ -46,7 +46,7 @@ Access the barebones vignette from within R for a list of examples:
 browseVignettes("cytokit")
 ```
 
-Or checkout the version saved in the repository (not necessarily up to date!) here: https://rawgit.com/sjessa/cytokit/dev-selin/vignettes/cytokit.html
+<!---Or checkout the version saved in the repository (not necessarily up to date!) here: https://rawgit.com/sjessa/cytokit/master/vignettes/cytokit.html-->
 
 You can look up the documentation for any `cytokit` function from the R console,
 these also contain an example or two for many functions:
