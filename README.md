@@ -58,7 +58,7 @@ Some functions will specify the author in the documentation, whom you could cont
 
 ## Versioning
 
-### Semantic versioning
+#### Semantic versioning
 
 `cytokit` uses a semantic versioning scheme, where package versions are of the form x.y.z:
 
@@ -66,7 +66,7 @@ Some functions will specify the author in the documentation, whom you could cont
 - The minor version y is udpated for minor but important changes like addition of new functions
 - The major version z is updated for major changes, which may introduce backwards incompatibiility
 
-### Keeping track of cytokit versions in your work
+#### Keeping track of cytokit versions in your work
 
 If you use R Markdown, it's a great idea to include the following function as the last chunk in your
 documents, which will print a list of all packages loaded, and their versions.
