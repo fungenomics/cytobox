@@ -5,7 +5,8 @@
 \alias{markerViolinPlot}
 \title{pairwiseVln}
 \usage{
-pairwiseVln(seurat1, markers, seurat2, s1_name, s2_name, marker_col = "gene")
+pairwiseVln(seurat1, markers, seurat2, sample_names = c(seurat1@project.name,
+  seurat2@project.name), marker_col = "gene")
 }
 \arguments{
 \item{seurat1}{Seurat object for which to plot expression}
@@ -14,9 +15,9 @@ pairwiseVln(seurat1, markers, seurat2, s1_name, s2_name, marker_col = "gene")
 
 \item{seurat2}{Seurat object from which cluster markers (\code{markers}) were defined}
 
-\item{s1_name}{String, sample name for \code{seurat1}}
-
-\item{s2_name}{String, sample name for \code{seurat2}}
+\item{sample_names}{(Optional) Character vector giving the names or ID of
+the two samples, used for axis labels, etc.
+Default: c(seurat1@project.name, seurat2@project.name)}
 
 \item{marker_col}{String specifying the column in the \code{markers} data frames which
 specifies the cluster. By default, Seurat calls this "gene" (the default here);
@@ -31,7 +32,7 @@ dataset 1 is the sample whose expression values will be plot, and dataset 2
 is the sample whose cluster markers are used.
 }
 \examples{
-pairwiseVln(pbmc, markers_pbmc, pbmc, "Test1", "Test2")
+pairwiseVln(pbmc, markers_pbmc, pbmc)
 }
 \author{
 adapted from Alexis Blanchet-Cohen

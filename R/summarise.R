@@ -64,14 +64,14 @@ percentilesMarkerExpression <- function(seurat, genes) {
     # Add color columns
     exp <- exp %>%
         dplyr::mutate(Gradient_group = case_when(
-            percentile > 0  & percentile <= 50  ~ 2,
-            percentile > 50 & percentile <= 70  ~ 3,
-            percentile > 70 & percentile <= 90  ~ 4,
-            percentile > 90 & percentile <= 92  ~ 5,
-            percentile > 92 & percentile <= 94  ~ 6,
-            percentile > 94 & percentile <= 96  ~ 7,
-            percentile > 96 & percentile <= 98  ~ 8,
-            percentile > 98 & percentile <= 100 ~ 9,
+            between(percentile, 0, 50)  ~ 2,
+            bewteen(percentile, 50, 70)  ~ 3,
+            between(percentile, 70, 90)  ~ 4,
+            between(percentile, 90, 92)  ~ 5,
+            between(percentile, 92, 94)  ~ 6,
+            between(percentile, 94, 96)  ~ 7,
+            between(percentile, 96, 98)  ~ 8,
+            between(percentile, 98, 100) ~ 9,
             TRUE ~ 1)) %>%
         dplyr::select(Cell, Cell.type = cell.type, Percentile = percentile,
                       Gradient_group)

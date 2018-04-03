@@ -1,8 +1,8 @@
 Package: cytokit
 Type: Package
 Title: A toolkit for analyzing single cell RNA-seq data
-Description: Shared functions for processing, interrogating, and visualizing single cell RNA-seq data.
-Version: 0.1
+Description: A toolkit for processing, interrogating, and visualizing single cell RNA-seq data.
+Version: 0.2.0
 Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role = c("aut", "cre")),
             person("Alexis", "Blanchet-Cohen", email = "alexis.blanchet-cohen@mail.mcgill.ca", role=c("aut")))
 Encoding: UTF-8
@@ -16,7 +16,7 @@ Imports:
     viridis (>= 0.4.1),
     magrittr (>= 1.5),
     tibble,
-    rlang,
+    rlang (>= 0.1.2),
     purrr,
     glue,
     tidyr,

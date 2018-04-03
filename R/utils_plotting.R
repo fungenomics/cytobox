@@ -2,7 +2,7 @@
 
 
 
-#' ggColours
+#' Get default ggplot2/Seurat colours
 #'
 #' Get evenly spaced colours from around the colour wheel, which are the default
 #' colours assigned to clusters by Seurat. The output of this function can be
@@ -39,8 +39,82 @@ ggColors <- ggColours
 
 
 
-#' rotateX
+
+#' Get a vector of cluster colours, optionally highlighting select clusters
 #'
+#' Given a seurat object, get a named character vector of cluster colours, where
+#' names are cluster names (coresponding to \code{levels(seurat@@ident)}), and
+#' values are hex codes of the colours, either the default colours from Seurat,
+#' or colours you specify. This is trivial to make this yourself,
+#' so this is used as a utility function for retaining the colours of
+#' clusters you want to highlight, and setting the colours of all other clusters
+#' to grey, or another default, non-intrusive colour.
+#'
+#' @param seurat Seurat object
+#' @param clusters Vector of one or more clusters to highlight, matching the levels at
+#' \code{levels(seurat@@ident)}. If "none", returns \code{default_colour}
+#' for every clusters. Default: all clusters, obtained from \code{levels(seurat@@ident)}.
+#' @param original_colours  (Optional) Vector of colours to use. Either one colour
+#' per cluster, in the order of \code{levels(seurat@@ident)}, or one colour per
+#' cluster passed to \code{clusters}, in the other they were provided.
+#' Default: default ggplot2 colours used by Seurat.
+#' @param default_colour Colour to use for non-highlighted clusters
+#' Default: gray80 (light grey).
+#'
+#' @return Named character vector
+#' @export
+#' @author Selin Jessa
+#' @examples
+#'
+#' # Trivial: get named character vector with default colours
+#' getClusterColours(pbmc)
+#'
+#' # Highlight clusters 2 and 3
+#' getClusterColours(pbmc, clusters = c(2, 3))
+#'
+#' # Highlight clusters 2 and 3, set all other cluster colours to white
+#' getClusterColours(pbmc, clusters = c(2, 3), default_colour = "white")
+getClusterColours <- function(seurat, clusters = NULL,
+                              original_colours = NULL, default_colour = "gray80") {
+
+    # Handle clusters argument
+    if (is.numeric(clusters)) clusters <- clusters + 1
+    if (is.null(clusters)) clusters <- levels(seurat@ident)
+
+    n_clust <- length(levels(seurat@ident))
+
+    highlight_colours <- rep(default_colour, n_clust)
+    names(highlight_colours) <- levels(seurat@ident)
+
+    if (length(clusters) == 1) {
+        if (clusters == "none") return(highlight_colours)
+    }
+
+    # Check if enough orig colours provided
+    if (!is.null(original_colours) && length(original_colours) != length(levels(seurat@ident))) {
+
+        if (length(original_colours) != length(clusters)) {
+
+            stop("Not enough 'original_colours'! Please provide as many colours ",
+                 "as clusters in the dataset, or one per cluster specified in the ",
+                 "'clusters' argument.")
+
+        } else highlight_colours[clusters] <- original_colours
+
+    } else if (is.null(original_colours)) {
+
+        original_colours <- ggColours(n_clust)
+        names(original_colours) <- levels(seurat@ident)
+        highlight_colours[clusters] <- original_colours[clusters]
+
+    }
+
+    return(highlight_colours)
+
+}
+
+
+
 #' Rotate the x axis labels in a ggplot
 #'
 #' @param angle Integer, value in degrees to rotate labels. Default: 90.
@@ -67,8 +141,6 @@ rotateX <- function(angle = 90) {
 
 
 
-#' noLegend
-#'
 #' Remove the legend in a ggplot
 #'
 #' @return A theme element to hide legend
@@ -93,8 +165,6 @@ noLegend <- function() {
 
 
 
-#' noTicks
-#'
 #' Remove axis ticks and tick labels from a ggplot
 #'
 #' @return A theme element to remove ticks
@@ -111,8 +181,6 @@ noTicks <- function() {
 }
 
 
-#' addLabels
-#'
 #' Add cluster labels to a tSNE ggplot2 plot
 #'
 #' @param centers Data frame with at least three columns: "mean_tSNE_1", "mean_tSNE_2",
@@ -162,9 +230,8 @@ addLabels <- function(centers, label_repel = FALSE, label_size = 4, label_short 
 }
 
 
-#' theme_min
+#' Apply a clean theme to a ggplot2 object
 #'
-#' A clean theme for ggplot2
 #' @references https://github.com/sjessa/ggmin
 #'
 #' @importFrom ggplot2 theme_light theme

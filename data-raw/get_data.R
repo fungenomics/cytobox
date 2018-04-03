@@ -4,6 +4,7 @@
 
 pbmc <- Seurat::pbmc_small
 markers_pbmc <- Seurat::FindAllMarkers(pbmc)
+pbmc@project.name <- "pbmc"
 
 usethis::use_data(pbmc)
 usethis::use_data(markers_pbmc)

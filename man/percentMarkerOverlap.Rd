@@ -4,12 +4,14 @@
 \alias{percentMarkerOverlap}
 \title{percentMarkerOverlap}
 \usage{
-percentMarkerOverlap(markers1, markers2, marker_col = "gene")
+percentMarkerOverlap(markers1, markers2, mode = "min", marker_col = "gene")
 }
 \arguments{
 \item{markers1}{Data frame of markers for one dataset as returned by Seurat::FindAllMarkers()}
 
 \item{markers2}{Data frame of markers for second dataset as returned by Seurat::FindAllMarkers()}
+
+\item{mode}{"s1", "s2", "min", "max"}
 
 \item{marker_col}{String specifying the column in the markers data frames which
 specifies the cluster. By default, Seurat calls this "gene" (the default here);

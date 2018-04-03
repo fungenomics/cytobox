@@ -4,6 +4,3 @@ language: r
 cache: packages
 sudo: false
 warnings_are_errors: false
-
-r_github_packages:
-  - tidyverse/ggplot2

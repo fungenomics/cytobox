@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_utils.R
 \name{addLabels}
 \alias{addLabels}
-\title{addLabels}
+\title{Add cluster labels to a tSNE ggplot2 plot}
 \usage{
 addLabels(centers, label_repel = FALSE, label_size = 4,
   label_short = FALSE)

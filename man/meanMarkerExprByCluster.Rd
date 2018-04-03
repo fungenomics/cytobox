@@ -15,6 +15,9 @@ for each cluster
 Compute the mean expression of markers for each cluster in one dataset,
 in each cluster of another dataset. Used for \code{\link{markerViolinPlot}}
 }
+\examples{
+meanMarkerExprByCluster(pbmc, markers_pbmc, "gene")
+}
 \author{
 Selin Jessa
 }
