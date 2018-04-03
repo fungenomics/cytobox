@@ -26,7 +26,9 @@ Load the package
 library(cytokit)
 ```
 
-# One-sample plots
+
+
+# Basic visualizations
 
 ## t-SNE/PCA
 
@@ -39,6 +41,43 @@ tsne(pbmc, label_repel = FALSE)
 
 ```
 
+Colour the cells by a column in `seurat@meta.data` containing a continuous variable,
+e.g. the number of UMIs:
+
+```{r tsne_nUMI, fig.width = 6, fig.height = 4}
+tsne(pbmc, colour_by = "nUMI", colour_by_type = "continuous", colours = viridis::magma(100))
+```
+
+Colour the cells by a column in `seurat@meta.data` containing a discrete variable,
+e.g. here, the resolution 1.0 cluster assignments:
+
+```{r tsne_res.1, fig.width = 6, fig.height = 4}
+tsne(pbmc, colour_by = "res.1", colour_by_type = "discrete",
+     # Getting some colours from a Color Brewer palette
+     colours = RColorBrewer::brewer.pal(length(unique(pbmc@meta.data$res.1)), "Dark2"))
+```
+
+
+## Highlight cluster in t-SNE space
+
+```{r highlight, fig.width = 6, fig.height = 4}
+
+# Highlight cluster 3 on the tSNE plot
+highlight(pbmc, 3)
+
+# Pass additional arguments to cytokit::tsne
+highlight(pbmc, c(2, 3), label = FALSE, title = "Test highlight")
+
+# Change default colour
+highlight(pbmc, c(2, 3), default_colour = "lightblue")
+
+# Specify the colours to highlight the clusters with
+highlight(pbmc, c(2, 3), c("red", "blue"))
+
+```
+
+# Computed visualizations
+
 Plot a t-SNE coloured by mean marker expression
 
 ```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = TRUE, eval = TRUE}
@@ -50,17 +89,20 @@ tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
 
 Plot a t-SNE coloured by percentiles marker expression
 
-```{r tsneByPercentilesMarkerExpression, fig.width = 6, fig.height = 4}
+```{r tsneByPercentilesMarkerExpression, fig.width = 6, fig.height = 6}
 
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"))
 
 # No labels
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label = FALSE)
 
+# Use values in legend instead
+tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label = FALSE,
+                                 legend_options = "values")
 
 ```
 
-Dashboard plot, which gives a bit more distrubtional information than tSNE:
+Dashboard plot, which gives a bit more distributional information than tSNE:
 
 ```{r dashboard, fig.width = 8, fig.height = 4, warning = FALSE}
 
@@ -79,11 +121,11 @@ Do warning = FALSE in the chunk options to not print it.
 
 
 
-
 Feature plot, akin to `Seurat::FeaturePlot()`
+
 ```{r feature, fig.width = 4, fig.height = 4, warning = FALSE}
 
-tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label_repel = FALSE, palette = "redgrey", alpha = FALSE, point_size = 0.1, legend = FALSE)
+tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label_repel = FALSE, palette = "redgrey", alpha = FALSE, point_size = 1, legend = FALSE)
 
 # This function is a shortcut for the above, except by default it makes one plot
 # per gene (set per_gene = FALSE like below to have one plot with the summary statistic)
@@ -106,7 +148,7 @@ feature(pbmc, c("IL32", "CD2", "MS4A1"), per_gene = TRUE, statistic = "mean")
 
 Violin plot for a set of genes (like `Seurat::VlnPlot()`)
 
-```{r violin, fig.width = 5, fig.height = 3}
+```{r vln, fig.width = 5, fig.height = 3}
 
 vln(pbmc, c("IL32", "MS4A1"), facet_by = "gene")
 
@@ -115,11 +157,12 @@ vln(pbmc, c("IL32", "MS4A1"), facet_by = "cluster")
 
 ```
 
+## Violin grid
 
 Panel of tiny violin plots for a set of genes, as in Figure 5D in the drop-seq paper.
 See docs for default ordering method.
 
-```{r vlnPanel, fig.width = 7, fig.height = 2}
+```{r vlnGrid, fig.width = 7, fig.height = 2}
 
 # Use the first 15 genes in the data
 vlnGrid(pbmc, genes = head(rownames(pbmc@data), 15))
@@ -140,31 +183,78 @@ vlnGrid(pbmc, head(rownames(pbmc@data), 15), subset_clusters = c(0, 1))
 
 Pariwise violin plot
 
-```{r markerViolinPlot, fig.width = 6, fig.height = 4}
+```{r pariwiseVln, fig.width = 6, fig.height = 4}
 
-pairwiseVln(pbmc, markers_pbmc, pbmc, "PBMC1", "PBMC2")
+pairwiseVln(pbmc, markers_pbmc, pbmc, sample_names = c("PBMC1", "PBMC2"))
 
 ```
 
+## Heatmaps of marker overlap
 
-Heatmap of minimum % overlap of gene markers between clusters from two different samples:
-(here, comparing one dataset to itself)
+We may be interested in shared markers between clusters in two samples.
+When calculating this value, we can use as the denominator of the equation either the number
+of markers in sample 1 or the number of markers in sample 2. This function provides
+a few options for what to plot in the heatmap, in the `mode` argument:
+
+- "s1": Plot the percentage of sample 1 markers which are also markers in sample 2
+- "s2": Plot the percentage of sample 2 markers which are also markers in sample 1
+- "min": Plot the minimum of the above percentages
+- "max": Plot the maximum of the above percentages
+- "both": Plot two heatmaps, one with the percentage of sample 1 markers which are also markers in sample 2, and one the percentage of sample 2 markers which are also markers in sample 1
+
+By default, the function plots the minimum (here, comparing one dataset to itself):
 
 ```{r heatmapPercentMarkerOverlap, fig.width = 5, fig.height = 4}
 
-heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc, s1_name = "PBMC", s2_name = "PBMC")
+heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc,
+                            sample_names = c("PBMC1", "PBMC2"),
+                            # The default for this argument is set to the column name
+                            # of output of our pipeline, which is 'external_gene_name'
+                            marker_col = "gene")
+
+# Change the palette: give a set of colours to interpolate, from low to high
+heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc,
+                            sample_names = c("PBMC1", "PBMC2"),
+                            marker_col = "gene",
+                            palette = c("white", "red"))
+
+# You can use RColorBrewer palettes like this
+heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc,
+                            sample_names = c("PBMC1", "PBMC2"),
+                            marker_col = "gene",
+                            palette = RColorBrewer::brewer.pal(8, "OrRd"))
+
+# Plot the max instead
+heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc, mode = "max",
+                            sample_names = c("PBMC1", "PBMC2"),
+                            marker_col = "gene")
+
+```
+
+Plot both:
+
+```{r heatmap_both, fig.width = 10, fig.height = 4}
+
+heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc, marker_col = "gene", mode = "both")
 
 ```
 
 
-# Helper functions
+# Utilities
 
-Subset data by gene and cluster
+Subset data by gene and cluster:
 
 ```{r fetchData}
 
 head(fetchData(pbmc, "IL32", c(1, 2)))
 head(fetchData(pbmc, c("IL32", "MS4A1"), c(1, 2), return_cluster = TRUE, return_cell = TRUE))
+
+```
+
+`cytokit` tells you if you try to plot genes which are undetected in the data:
+```{r undetected}
+
+tsneByMeanMarkerExpression(pbmc, c("MS4A1", "foo"))
 
 ```
 

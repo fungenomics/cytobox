@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_utils.R
 \name{rotateX}
 \alias{rotateX}
-\title{rotateX}
+\title{Rotate the x axis labels in a ggplot}
 \usage{
 rotateX(angle = 90)
 }

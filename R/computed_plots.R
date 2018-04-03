@@ -1,137 +1,8 @@
-# Functions for general plotting
+# Functions for plotting the data with computed information
 
 
 
-
-#' tsne
-#'
-#' Plot a coloured, labelled tSNE plot for a datasets, akin to Seurat::TSNEPlot()
-#'
-#' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
-#' @param colour_by (Optional) String, specifying the column in \code{seurat@@meta.data}
-#' by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@@ident}).
-#' @param colours (Optional) Character vector of colours for points. If \code{colour_by}
-#' is NULL, cells will be coloured by cluster; this should be a named character vector of colours for points. Names should
-#' correspond to cluster names (e.g. \code{levels(seurat@@ident)}). If
-#' specifying \code{colour_by}, and the variable is discrete, this should be a named vector corresponding to categorical
-#' values in the column of \code{seurat@@meta.data} specified. Otherwise, if the variable
-#' is continuous, pass the gradient to use, or a few colours (from low to high) from which a gradient
-#' should be created, and specify \code{colour_by_type = "continuous"}. The default is to
-#' use ggplot2 colours.
-#' @param colour_by_type (Optional) String, one of "discrete" or "continuous".
-#' If specifying \code{colour_by} and providing colours to the \code{colours}
-#' argument, specify whether the \code{colour_by} variable is discrete or continuous.
-#' Default: discrete.
-#' @param label Logical, whether to plot cluster labels. Default: TRUE
-#' @param point_size Numeric, size of points in scatter plot. Default: 0.6
-#' @param alpha Numeric, fixed alpha value for points: Default: 0.8
-#' @param legend Logical, whether to plot legend. Default: FALSE if \code{colour_by}
-#' is NULL and \code{label} is TRUE, true otherwise.
-#' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
-#' labels repelled from the center, on a slightly transparent white background and
-#' with an arrow pointing to the cluster center. If FALSE, simply plot the
-#' cluster label at the cluster center. Default: TRUE.
-#' @param label_size Numeric, controls the size of text labels. Default: 4.
-#' @param title (Optional) String specifying title.
-#' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
-#' @param label_short (Optional/Experimental!!) Logical, if TRUE, assumes clusters
-#' (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
-#' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
-#' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
-#'
-#' @return A ggplot2 object
-#' @export
-#'
-#' @author Selin Jessa
-#'
-#' @examples
-#' tsne(pbmc)
-tsne <- function(seurat,
-                 colour_by = NULL,
-                 colours = NULL,
-                 colour_by_type = "discrete",
-                 label = TRUE, point_size = 0.6, alpha = 0.8,
-                 legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
-                 label_repel = TRUE,
-                 label_size = 4,
-                 hide_ticks = FALSE,
-                 title = NULL,
-                 label_short = FALSE) {
-
-    embedding <- data.frame(Cell = seurat@cell.names,
-                            tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
-                            tSNE_2 = seurat@dr$tsne@cell.embeddings[, 2],
-                            stringsAsFactors = FALSE)
-
-    if (label && all(is.na(seurat@ident))) {
-        label <- FALSE
-        message("NOTE: identity of all cells is NA, setting 'label' to FALSE.")
-    }
-
-    if (is.null(colour_by)) {
-
-        embedding$Cluster <- seurat@ident
-        gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
-
-        if (is.null(colours)) {
-
-            # Assuming that the order of the levels is correct in the seurat object,
-            # this should find the colours of the original clusters, and whatever they've been renamed,
-            # if and only if the number of new cluster IDs is equal to the number of old ones
-            colours <- ggColors(length(levels(seurat@ident)))
-            names(colours) <- levels(seurat@ident)
-
-        }
-
-        gg <- gg +
-            geom_point(aes(colour = Cluster), size = point_size, alpha = alpha) +
-            scale_color_manual(values = colours)
-
-    } else {
-
-        embedding[[colour_by]] <- seurat@meta.data[[colour_by]]
-        gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
-
-        gg <- gg +
-            geom_point(aes_string(colour = colour_by), size = point_size, alpha = alpha)
-
-
-        if (!is.null(colours)) { # Otherwise default ggplot2 colours are used
-
-            if (colour_by_type == "discrete") gg <- gg + scale_color_manual(values = colours)
-            else if (colour_by_type == "continuous") gg <- gg + scale_color_gradientn(colours = colours)
-        }
-
-    }
-
-    if (label) {
-
-        centers <- clusterCenters(seurat)
-        gg <- gg + addLabels(centers, label_repel, label_size, label_short)
-
-    }
-
-    gg <- gg + theme_min() + xlab("tSNE 1") + ylab("tSNE 2")
-
-    if (!legend) gg <- gg + noLegend()
-    else if (!is.null(colour_by)) {
-        if (colour_by == "orig.ident") gg <- gg + labs(colour = "Sample")
-    }
-
-    if (!is.null(title)) gg <- gg + ggtitle(title)
-    if (hide_ticks) gg <- gg + noTicks()
-
-    return(gg)
-
-}
-
-
-
-
-
-
-
-#' tsneByMeanMarkerExpression
+#' Colour cells in t-SNE space by gene expression
 #'
 #' Plot a low-dimensional embedding of the cells,
 #' coloured by expression of a gene, or mean expression of a group of marker
@@ -265,7 +136,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 }
 
 
-#' tsneByPercentileMarkerExpression
+#' Colour cells in t-SNE space by percentile gene expression
 #'
 #' Plot a low-dimensional embedding of the cells,
 #' coloured by expression percentile of a gene, of the total expression of a
@@ -340,14 +211,15 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
     if (legend_options=="percentiles") {
         color_grad_labels <- c("Undetected",
-                               "> 0 & \u2264 50",
-                               "> 50 & \u2264 70",
-                               "> 70 & \u2264 90",
-                               "> 90 & \u2264 92",
-                               "> 92 & \u2264 94",
-                               "> 94 & \u2264 96",
-                               "> 96 & \u2264 98",
-                               "> 98 & \u2264 100")} else if (legend_options=="values") {
+                               "> 0 & \\u2264 50",
+                               "> 50 & \\u2264 70",
+                               "> 70 & \\u2264 90",
+                               "> 90 & \\u2264 92",
+                               "> 92 & \\u2264 94",
+                               "> 94 & \\u2264 96",
+                               "> 96 & \\u2264 98",
+                               "> 98 & \\u2264 100")
+    } else if (legend_options=="values") {
 	# If legend_options is set to values, compute the values corresponding to the percentiles.
 	# Cell.type corresponds to the values. This variable should probably be renamed.
         labels.min <- group_by(percentiles, Gradient_group) %>% summarize(minValue=min(Cell.type)) %>% .$minValue
@@ -378,7 +250,8 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
             geom_point(aes(colour = factor(Gradient_group, levels = seq(1, 9)),
                            alpha = factor(Gradient_group, levels = seq(1, 9))), size = point_size) +
             scale_alpha_manual(values = alpha_grad, labels = alpha_grad_labels,
-                               name = "Expression level percentile", drop = FALSE)
+                               name = "Expression level percentile",
+                               drop = ifelse(legend_options == "percentiles", FALSE, TRUE))
 
     } else {
 
@@ -398,7 +271,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                     name = "Expression level percentile",
                     labels = color_grad_labels,
                     # Ensure all levels are displayed in the legend
-                    drop = FALSE)
+                    drop = ifelse(legend_options == "percentiles", FALSE, TRUE))
 
         } else if (palette == "blues") {
 
@@ -407,7 +280,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                     values = RColorBrewer::brewer.pal(n = 9, name = "Blues"),
                     name = "Expression level percentile",
                     labels = color_grad_labels,
-                    drop = FALSE)
+                    drop = ifelse(legend_options == "percentiles", FALSE, TRUE))
 
         } else if (palette == "redgrey") {
 
@@ -415,7 +288,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                 values = grDevices::colorRampPalette(c("gray83", "red"))(n = 9),
                 name = "Expression level percentile",
                 labels = color_grad_labels,
-                drop = FALSE)
+                drop = ifelse(legend_options == "percentiles", FALSE, TRUE))
 
         } else {
 
@@ -430,7 +303,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
             values = palette,
             name = "Expression level percentile",
             labels = color_grad_labels,
-            drop = FALSE)
+            drop = ifelse(legend_options == "percentiles", FALSE, TRUE))
 
     }
 
@@ -543,12 +416,12 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
             if (verbose) message("Combining plots...")
 
-            combined <- cowplot::plot_grid(p1, p2, gg, rel_widths = c(0.3, 0.2, 1), nrow = 1)
+            combined <- plot_grid(p1, p2, gg, rel_widths = c(0.3, 0.2, 1), nrow = 1)
 
             if (!is.null(title)) {
 
                 plot_title <- cowplot::ggdraw() + cowplot::draw_label(title)
-                combined <- cowplot::plot_grid(plot_title, combined, ncol = 1, rel_heights = c(0.07, 1))
+                combined <- plot_grid(plot_title, combined, ncol = 1, rel_heights = c(0.07, 1))
 
             }
 
@@ -613,7 +486,7 @@ feature <- function(seurat, genes,
 
             if ((ncol == 3) & (length(genes_out$detected) < 3)) ncol <- 2
 
-            plots <- cowplot::plot_grid(
+            plots <- plot_grid(
                 plotlist = lapply(genes_out$detected,
                                   function(gene) tsneByPercentileMarkerExpression(seurat,
                                                                                   gene,
@@ -633,7 +506,7 @@ feature <- function(seurat, genes,
             else {
 
                 plot_title <- cowplot::ggdraw() + cowplot::draw_label(title, hjust = 0, size = 12)
-                cowplot::plot_grid(plot_title, plots, ncol = 1, rel_heights = c(0.05, 1))
+                plot_grid(plot_title, plots, ncol = 1, rel_heights = c(0.05, 1))
 
             }
 
@@ -670,7 +543,7 @@ feature <- function(seurat, genes,
 
             if ((ncol == 3) & (length(genes_out$detected) < 3)) ncol <- 2
 
-            plots <- cowplot::plot_grid(
+            plots <- plot_grid(
                 plotlist = lapply(genes_out$detected,
                                   function(gene) tsneByMeanMarkerExpression(seurat,
                                                                             gene,
@@ -689,7 +562,7 @@ feature <- function(seurat, genes,
             else {
 
                 plot_title <- cowplot::ggdraw() + cowplot::draw_label(title, hjust = 0, size = 12)
-                cowplot::plot_grid(plot_title, plots, ncol = 1, rel_heights = c(0.05, 1))
+                plot_grid(plot_title, plots, ncol = 1, rel_heights = c(0.05, 1))
 
             }
 
@@ -711,7 +584,7 @@ feature <- function(seurat, genes,
 }
 
 
-#' vln
+#' Generate violin plots of gene expression in each cluster
 #'
 #' Similar to Seurat::VlnPlot() except it prints genes that are not found in the
 #' data, but continues plotting without error,
@@ -771,20 +644,20 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
 
 
 
-#' vlnGrid
+#' Generate a grid of tiny violins of gene expression in each cluster
 #'
 #' A grid of small violin plots, one plot per gene per cluster, similar to
 #' Figure 5D in the Drop-seq paper by Macosko et al.
 #'
 #' @param seurat Seurat object
-#' @param genes Genes to plot violins for, in the order in which they should be
-#' plotted.
+#' @param genes Genes to plot violins for, in the order (left to right)
+#' in which they should be  plotted.
 #' @param order Either "genes", or a vector containing the clusters in the order
 #' they should be plotted (from top to bottom). If "genes", clusters will be sorted
 #' in decreasing order of their median expression* of these genes, in the order
 #' in which they're provided. Passing a vector will cause clusters to be plot
 #' in that order. Default: "genes". *We take the median of cells with non-zero
-#' expression values.
+#' expression values (in \code{seurat@@data}).
 #' @param subset_clusters (Optional) Vector of clusters to include on the plot.
 #' @param width String, one of "width", "area", or "count". From the ggplot2
 #' documentation of \code{geom_violin}: "if "area" (default), all violins have

@@ -1,7 +1,8 @@
 [![Build Status](https://travis-ci.com/sjessa/cytokit.svg?token=ckZxkx4uN2RZSSwsdpLM&branch=master)](https://travis-ci.com/sjessa/cytokit)
 
-# cytokit
-Internal Kleinman Lab toolkit for analyzing single cell RNA-seq data
+# cytokit: README
+Internal Kleinman Lab toolkit for analyzing single cell RNA-seq data.
+Link to vignette: [https://rawgit.com/sjessa/cytokit/dev-selin/vignettes/cytokit.html](https://rawgit.com/sjessa/cytokit/dev-selin/vignettes/cytokit.html)
 
 
 ## Installation
@@ -32,25 +33,53 @@ can copy-paste it.
 
 #### Updating
 
+To update `cytokit`, re-run the install command in Step 3 above.
+
 If you don't know your old token, go to https://github.com/settings/tokens, click 'Edit' on
-your cytokit token, and click 'Regenerate', and repeat the install command in Step
-3 above with the new token.
+your cytokit token, click 'Regenerate' and re-run the command with the new token.
 
 ## Getting help
 
-Access the very barebones vignette from within R for a list of examples:
+Access the barebones vignette from within R for a list of examples:
 
 ```r
 browseVignettes("cytokit")
 ```
 
+Or checkout the version saved in the repository (not necessarily up to date!) here: https://rawgit.com/sjessa/cytokit/dev-selin/vignettes/cytokit.html
+
 You can look up the documentation for any `cytokit` function from the R console,
 these also contain an example or two for many functions:
 ```r
-?cytokit::ggColours
+?cytokit::tsne
 ```
 
 Some functions will specify the author in the documentation, whom you could contact directly :)
+
+## Versioning
+
+#### Semantic versioning
+
+`cytokit` uses a semantic versioning scheme, where package versions are of the form x.y.z:
+
+- The z version is updated for very minor changes like bug fixes
+- The minor version y is udpated for minor but important changes like addition of new functions
+- The major version z is updated for major changes, which may introduce backwards incompatibiility
+
+#### Keeping track of cytokit versions in your work
+
+If you use R Markdown, it's a great idea to include the following function as the last chunk in your
+documents, which will print a list of all packages loaded, and their versions.
+
+```r
+sessionInfo()
+```
+
+If you work with scripts, you could print the following to STDOUT/the log files:
+
+```r
+packageVersion("cytokit")
+```
 
 ## Contribution
 
@@ -72,7 +101,7 @@ git push -u origin dev-selin
 If the Travis build passes, there will be a green checkmark next to the 
 most recent commit on your branch. When the build has passed, create a pull request on the GitHub website and merge changes in your dev branch with the master branch.
 
-### From now on
+#### From now on
 
 From now on, to continue contributing to the package, switch to your branch and make your
 changes there, following the same edit/commit/push workflow. 
@@ -82,8 +111,9 @@ If changes have been made to master since first merge the latest changes from th
 git checkout master
 git pull
 git checkout dev-selin
-git merge master # Merge changes from master branch onto dev-selin
+# Apply all the changes from master to dev-selin, and set HEAD so that new work
+# will happen on top of those changes
+git rebase master
 ```
-
-
-(There is a more sophisticated way of doing this merge, called rebasing: https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
+ 
+For more on rebasing, see: https://www.atlassian.com/git/tutorials/merging-vs-rebasing

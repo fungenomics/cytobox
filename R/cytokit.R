@@ -40,3 +40,6 @@ NULL
 
 #' @importFrom stats median
 NULL
+
+#' @importFrom cowplot plot_grid
+NULL

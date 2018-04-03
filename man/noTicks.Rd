@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_utils.R
 \name{noTicks}
 \alias{noTicks}
-\title{noTicks}
+\title{Remove axis ticks and tick labels from a ggplot}
 \usage{
 noTicks()
 }

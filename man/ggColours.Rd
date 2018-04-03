@@ -3,7 +3,7 @@
 \name{ggColours}
 \alias{ggColours}
 \alias{ggColors}
-\title{ggColours}
+\title{Get default ggplot2/Seurat colours}
 \usage{
 ggColours(n)
 }

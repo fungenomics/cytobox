@@ -2,19 +2,26 @@
 % Please edit documentation in R/pairwise_comparisons.R
 \name{heatmapPercentMarkerOverlap}
 \alias{heatmapPercentMarkerOverlap}
-\title{heatmapPercentMarkerOverlap}
+\title{Compute a heatmap of marker overlap between samples}
 \usage{
-heatmapPercentMarkerOverlap(markers1, markers2, s1_name = NULL,
-  s2_name = NULL, marker_col = "external_gene_name")
+heatmapPercentMarkerOverlap(markers1, markers2, mode = "min",
+  sample_names = c("Sample 1", "Sample 2"), palette = NULL,
+  marker_col = "external_gene_name")
 }
 \arguments{
-\item{markers1}{Data frame of markers for one dataset as returned by Seurat::FindAllMarkers()}
+\item{markers1}{Data frame of markers for one dataset as returned by Seurat::FindAllMarkers()
+The clusters for this sample will be plot on the x axis.}
 
-\item{markers2}{Data frame of markers for second dataset as returned by Seurat::FindAllMarkers()}
+\item{markers2}{Data frame of markers for second dataset as returned by Seurat::FindAllMarkers()
+The clusters for this sample will be plot on the y axis.}
 
-\item{s1_name}{(Optional) string giving the name or ID of sample 1 (used for axis labels)}
+\item{mode}{String, one of "s1", "s2", "min", "max", or "both". Controls how to
+compute the marker overlaps. Default: "min". See Details for more info.}
 
-\item{s2_name}{(Optional) string giving the name or ID of sample 2 (used for axis labels)}
+\item{sample_names}{(Optional) Character vector giving the names or ID of
+the two samples, used for axis labels, etc. Default: c("Sample 1", "Sample 2")}
+
+\item{palette}{}
 
 \item{marker_col}{String specifying the column in the markers data frames which
 specifies the cluster. By default, Seurat calls this "gene"; in the pipeline,
@@ -22,13 +29,29 @@ it may be called "external_gene_name" (the default here).}
 }
 \description{
 Generate a heatmap where rows correspond to clusters from one dataset and
-columns correspond to the clusters from the second dataset. The value at [i, j]
-is the minimum of the percent overlap between markers for Cluster i in dataset 1
-and Cluster j in dataset 2.
+columns correspond to the clusters from the second dataset. The value at [\emph{i, j}]
+is overlap of markers between Cluster \emph{i} in dataset 1 and Cluster \emph{j} in dataset 2.
+See Details for how to control how the "overlap" is computed.
+}
+\details{
+When calculating the shared markers between clusters in two samples, we typically
+count the number of markers in both lists, but have two options for what to use
+as the denominator (either the number of markers in sample 1, or the number of
+markers in sample 2). This function provides a few options for what to plot in the heatmap,
+controlled by the `mode` argument:
+
+\itemize{
+  \item "s1": Plot the percentage of sample 1 markers which are also markers in sample 2
+  \item "s2": Plot the percentage of sample 2 markers which are also markers in sample 1
+  \item "min": Plot the minimum of the above percentages
+  \item "max": Plot the maximum of the above percentages
+  \item "both": Plot two heatmaps, one with the percentage of sample 1 markers which are also markers in sample 2,
+and one the percentage of sample 2 markers which are also markers in sample 1
+}
 }
 \examples{
-# Here, we compute the heatmap for one dataset (pbmc) with itself
-heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc)
+# Compute the heatmap for one dataset (pbmc) with itself
+heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc, marker_col = "gene")
 }
 \author{
 Selin Jessa

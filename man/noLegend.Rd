@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting_utils.R
 \name{noLegend}
 \alias{noLegend}
-\title{noLegend}
+\title{Remove the legend in a ggplot}
 \usage{
 noLegend()
 }

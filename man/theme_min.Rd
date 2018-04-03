@@ -2,12 +2,12 @@
 % Please edit documentation in R/plotting_utils.R
 \name{theme_min}
 \alias{theme_min}
-\title{theme_min}
+\title{Apply a clean theme to a ggplot2 object}
 \usage{
 theme_min(base_size = 11, base_family = "")
 }
 \description{
-A clean theme for ggplot2
+Apply a clean theme to a ggplot2 object
 }
 \references{
 https://github.com/sjessa/ggmin
