@@ -4,8 +4,18 @@
 \name{cytokit}
 \alias{cytokit}
 \alias{cytokit-package}
+\alias{cytokit-package}
 \title{cytokit: A toolkit for analyzing single cell RNA-seq data}
 \description{
 Shared Kleinman lab functions for processing, interrogating, and
 visualizing single cell RNA-seq data.
+}
+\author{
+\strong{Maintainer}: Selin Jessa \email{selin.jessa@mail.mcgill.ca}
+
+Authors:
+\itemize{
+  \item Alexis Blanchet-Cohen \email{alexis.blanchet-cohen@mail.mcgill.ca}
+}
+
 }

@@ -7,7 +7,7 @@
 #'
 #' @docType package
 #' @name cytokit
-NULL
+"_PACKAGE"
 
 #' @importClassesFrom Seurat seurat
 NULL
