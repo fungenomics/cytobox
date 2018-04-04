@@ -5,7 +5,7 @@
 \title{Highlight select clusters on a tSNE plot}
 \usage{
 highlight(seurat, clusters, original_colours = NULL,
-  default_colour = "gray80", ...)
+  default_colour = "gray80", label_all = FALSE, ...)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
@@ -21,7 +21,34 @@ Default: default ggplot2 colours used by Seurat.}
 \item{default_colour}{Colour to use for non-highlighted clusters. Default: gray80
 (light grey).}
 
-\item{...}{(Optional) Other arguments passed to \code{\link{tsne}}.}
+\item{label_all}{Logical, if labelling the tSNE (if \code{label == TRUE}), whether
+to label all the clusters, or only the ones being highlighted. Default: FALSE.}
+
+\item{...}{Arguments passed on to \code{tsne}
+\describe{
+  \item{colour_by}{(Optional) String, specifying the column in \code{seurat@meta.data}
+by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@ident}).}
+  \item{colour_by_type}{(Optional) String, one of "discrete" or "continuous".
+If specifying \code{colour_by} and providing colours to the \code{colours}
+argument, specify whether the \code{colour_by} variable is discrete or continuous.
+Default: discrete.}
+  \item{label}{Logical, whether to plot cluster labels. Default: TRUE}
+  \item{point_size}{Numeric, size of points in scatter plot. Default: 0.6}
+  \item{alpha}{Numeric, fixed alpha value for points: Default: 0.8}
+  \item{legend}{Logical, whether to plot legend. Default: FALSE if \code{colour_by}
+is NULL and \code{label} is TRUE, true otherwise.}
+  \item{label_repel}{Logical, if \code{label} is TRUE, whether to plot cluster
+labels repelled from the center, on a slightly transparent white background and
+with an arrow pointing to the cluster center. If FALSE, simply plot the
+cluster label at the cluster center. Default: TRUE.}
+  \item{label_size}{Numeric, controls the size of text labels. Default: 4.}
+  \item{title}{(Optional) String specifying title.}
+  \item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
+  \item{label_short}{(Optional/Experimental!!) Logical, if TRUE, assumes cluster
+names (at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
+numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
+and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
+}}
 }
 \value{
 A ggplot2 object

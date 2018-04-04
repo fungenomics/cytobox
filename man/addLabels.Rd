@@ -5,7 +5,7 @@
 \title{Add cluster labels to a tSNE ggplot2 plot}
 \usage{
 addLabels(centers, label_repel = FALSE, label_size = 4,
-  label_short = FALSE)
+  label_short = FALSE, clusters = NULL)
 }
 \arguments{
 \item{centers}{Data frame with at least three columns: "mean_tSNE_1", "mean_tSNE_2",
@@ -19,9 +19,12 @@ cluster label at the cluster center. Default: TRUE.}
 \item{label_size}{Numeric, controls the size of text labels. Default: 4.}
 
 \item{label_short}{(Optional/Experimental!!) Logical, if TRUE, assumes clusters
-(at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
+(at \code{seurat@ident}) consist of a prefix and a suffix separated by a non-alpha
 numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
+
+\item{clusters}{(Optional) Clusters for which labels should be plot (if only
+a subset of clusters should be labelled). Default: NULL (Label all clusters).}
 }
 \description{
 Add cluster labels to a tSNE ggplot2 plot

@@ -7,8 +7,8 @@
 tsne(seurat, colour_by = NULL, colours = NULL,
   colour_by_type = "discrete", label = TRUE, point_size = 0.6,
   alpha = 0.8, legend = ifelse((is.null(colour_by)) && (label), FALSE,
-  TRUE), label_repel = TRUE, label_size = 4, hide_ticks = FALSE,
-  title = NULL, label_short = FALSE)
+  TRUE), label_repel = TRUE, label_size = 4, clusters_to_label = NULL,
+  hide_ticks = FALSE, title = NULL, label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
@@ -46,6 +46,10 @@ with an arrow pointing to the cluster center. If FALSE, simply plot the
 cluster label at the cluster center. Default: TRUE.}
 
 \item{label_size}{Numeric, controls the size of text labels. Default: 4.}
+
+\item{clusters_to_label}{(Optional, mostly for internal use.) If \code{label} is TRUE,
+clusters for which labels should be plot (if only a subset of clusters should be labelled).
+Default: NULL (Label all clusters).}
 
 \item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
 
