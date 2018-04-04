@@ -659,6 +659,10 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
 #' in that order. Default: "genes". *We take the median of cells with non-zero
 #' expression values (in \code{seurat@@data}).
 #' @param subset_clusters (Optional) Vector of clusters to include on the plot.
+#' @param colours (Optional) Vector of colours to use. Either one colour
+#' per cluster, in the order of \code{levels(seurat@@ident)}, or one colour per
+#' cluster passed to \code{subset_clusters}, in the other they were provided.
+#' Default: default ggplot2 colours used by Seurat.
 #' @param width String, one of "width", "area", or "count". From the ggplot2
 #' documentation of \code{geom_violin}: "if "area" (default), all violins have
 #' the same area (before trimming the tails). If "count", areas are scaled
@@ -679,9 +683,14 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
 #'
 #' # Plot only a subset of clusters
 #' vlnGrid(pbmc, head(rownames(pbmc@data), 15), subset_clusters = c(0, 1))
+#'
+#' # Specify colours
+#' vlnGrid(pbmc, head(rownames(pbmc@data), 15), subset_clusters = c(0, 1),
+#'         colours = c("red", "blue"))
 vlnGrid <- function(seurat, genes,
                     subset_clusters = NULL,
                     order = "genes",
+                    colours = NULL,
                     scale = "width",
                     title = NULL) {
 
@@ -733,8 +742,24 @@ vlnGrid <- function(seurat, genes,
 
     # Set colours to the levels of the clusters, so that they are preserved
     # even if an order was specified
-    colours <- ggColours(length(levels(seurat@ident)))
-    names(colours) <- levels(seurat@ident)
+
+
+    if (!is.null(colours) && length(colours) != length(levels(seurat@ident))) {
+
+        if (length(colours) != length(subset_clusters)) {
+
+            stop("Not enough colours! Please provide as many colours ",
+                 "as clusters in the dataset, or one per cluster specified in the ",
+                 "'subset_clusters' argument.")
+
+        }
+
+    } else if (is.null(colours)) {
+
+        colours <- ggColours(length(levels(seurat@ident)))
+        names(colours) <- levels(seurat@ident)
+
+    }
 
     gg <- expr %>%
         ggplot(aes(x = Cluster, y = Expression)) +

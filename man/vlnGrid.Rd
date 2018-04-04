@@ -5,7 +5,7 @@
 \title{Generate a grid of tiny violins of gene expression in each cluster}
 \usage{
 vlnGrid(seurat, genes, subset_clusters = NULL, order = "genes",
-  scale = "width", title = NULL)
+  colours = NULL, scale = "width", title = NULL)
 }
 \arguments{
 \item{seurat}{Seurat object}
@@ -21,6 +21,11 @@ in decreasing order of their median expression* of these genes, in the order
 in which they're provided. Passing a vector will cause clusters to be plot
 in that order. Default: "genes". *We take the median of cells with non-zero
 expression values (in \code{seurat@data}).}
+
+\item{colours}{(Optional) Vector of colours to use. Either one colour
+per cluster, in the order of \code{levels(seurat@ident)}, or one colour per
+cluster passed to \code{subset_clusters}, in the other they were provided.
+Default: default ggplot2 colours used by Seurat.}
 
 \item{width}{String, one of "width", "area", or "count". From the ggplot2
 documentation of \code{geom_violin}: "if "area" (default), all violins have
@@ -44,6 +49,10 @@ vlnGrid(pbmc, head(rownames(pbmc@data), 15), order = c(0, 3, 2, 1))
 
 # Plot only a subset of clusters
 vlnGrid(pbmc, head(rownames(pbmc@data), 15), subset_clusters = c(0, 1))
+
+# Specify colours
+vlnGrid(pbmc, head(rownames(pbmc@data), 15), subset_clusters = c(0, 1),
+        colours = c("red", "blue"))
 }
 \author{
 Selin Jessa
