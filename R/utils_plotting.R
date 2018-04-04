@@ -101,6 +101,10 @@ getClusterColours <- function(seurat, clusters = NULL,
 
         } else highlight_colours[clusters] <- original_colours
 
+    } else if (length(original_colours) == length(levels(seurat@ident))) {
+
+        highlight_colours[clusters] <- original_colours[clusters]
+
     } else if (is.null(original_colours)) {
 
         original_colours <- ggColours(n_clust)
@@ -191,14 +195,18 @@ noTicks <- function() {
 #' cluster label at the cluster center. Default: TRUE.
 #' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param label_short (Optional/Experimental!!) Logical, if TRUE, assumes clusters
-#' (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
+#' (at \code{seurat@@ident}) consist of a prefix and a suffix separated by a non-alpha
 #' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 #' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
+#' @param clusters (Optional) Clusters for which labels should be plot (if only
+#' a subset of clusters should be labelled). Default: NULL (Label all clusters).
 #'
 #'
 #' @author Selin Jessa
 #' @export
-addLabels <- function(centers, label_repel = FALSE, label_size = 4, label_short = FALSE) {
+addLabels <- function(centers, label_repel = FALSE, label_size = 4, label_short = FALSE, clusters = NULL) {
+
+    if (!is.null(clusters)) centers <- filter(centers, Cluster %in% clusters)
 
     if (label_short) centers <- suppressWarnings(
         tidyr::separate(centers, Cluster, into = c("Cluster", "Cluster_long"), extra = "drop"))

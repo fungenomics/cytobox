@@ -38,6 +38,9 @@
 #' names (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
 #' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 #' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
+#' @param clusters_to_label (Optional, mostly for internal use.) If \code{label} is TRUE,
+#' clusters for which labels should be plot (if only a subset of clusters should be labelled).
+#' Default: NULL (Label all clusters).
 #'
 #' @return A ggplot2 object
 #' @export
@@ -63,6 +66,7 @@ tsne <- function(seurat,
                  legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
                  label_repel = TRUE,
                  label_size = 4,
+                 clusters_to_label = NULL,
                  hide_ticks = FALSE,
                  title = NULL,
                  label_short = FALSE) {
@@ -116,7 +120,11 @@ tsne <- function(seurat,
     if (label) {
 
         centers <- clusterCenters(seurat)
-        gg <- gg + addLabels(centers, label_repel, label_size, label_short)
+        gg <- gg + addLabels(centers = centers,
+                             label_repel = label_repel,
+                             label_size = label_size,
+                             label_short = label_short,
+                             clusters = clusters_to_label)
 
     }
 
@@ -152,8 +160,10 @@ tsne <- function(seurat,
 #' Default: default ggplot2 colours used by Seurat.
 #' @param default_colour Colour to use for non-highlighted clusters. Default: gray80
 #' (light grey).
-#' @param ... (Optional) Other arguments passed to \code{\link{tsne}}.
+#' @param label_all Logical, if labelling the tSNE (if \code{label == TRUE}), whether
+#' to label all the clusters, or only the ones being highlighted. Default: FALSE.
 #'
+#' @inheritDotParams tsne -seurat -clusters_to_label -colours
 #' @return A ggplot2 object
 #' @export
 #' @author Selin Jessa
@@ -170,14 +180,17 @@ tsne <- function(seurat,
 #'
 #' # Specify the colours to highlight the clusters with
 #' highlight(pbmc, c(2, 3), c("red", "blue"))
-highlight <- function(seurat, clusters, original_colours = NULL, default_colour = "gray80", ...) {
+highlight <- function(seurat, clusters,
+                      original_colours = NULL, default_colour = "gray80",
+                      label_all = FALSE, ...) {
 
     highlight_colours <- getClusterColours(seurat = seurat,
                                            clusters = clusters,
                                            original_colours = original_colours,
                                            default_colour = default_colour)
 
-    cytokit::tsne(seurat, colours = highlight_colours, ...)
+    if (label_all) cytokit::tsne(seurat, colours = highlight_colours, ...)
+    else cytokit::tsne(seurat, colours = highlight_colours, clusters_to_label = clusters, ...)
 
 }
 
