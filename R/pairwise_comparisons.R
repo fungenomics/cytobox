@@ -7,14 +7,29 @@
 #' Compute the mean expression of markers for each cluster in one dataset,
 #' in each cluster of another dataset. Used for \code{\link{markerViolinPlot}}
 #'
-#' @return Data frame where the first two columns are "Cell" and "Cluster",
+#' @param seurat Seurat object, whose expression values will be used
+#' @param markers Markers data frame, for the same or another Seurat object. The
+#' expression of markers in each cluster in this data frame will be calculated
+#' for each cluster in \code{seurat}.
+#'
+#' @return Data frame where the first two columns are "Cell" and "Cluster" (from
+#' \code{seurat}),
 #' and all remaining columns give the mean expression of markers identified
-#' for each cluster
+#' for each cluster in \code{markers}
 #'
 #' @export
 #' @author Selin Jessa
 #' @examples
+#'
+#' # Using the same sample's marker:
 #' meanMarkerExprByCluster(pbmc, markers_pbmc, "gene")
+#'
+#' # Change the name of the clusters in the markers df, as if it were
+#' # from a different sample where the clusters are A, B, C, D:
+#' markers2 <- markers_pbmc %>%
+#'     dplyr::mutate(cluster = recode(cluster, `0` = "A", `1` = "B", `2` = "C", `3` = "D"))
+#'
+#' meanMarkerExprByCluster(pbmc, markers2, "gene")
 meanMarkerExprByCluster <- function(seurat, markers, marker_col = "gene") {
 
     perCluster <- function(i) {
@@ -35,10 +50,12 @@ meanMarkerExprByCluster <- function(seurat, markers, marker_col = "gene") {
     }
 
     exp <- as.data.frame(as.matrix(seurat@data))
-    clusters <- levels(seurat@ident)
+    # Iterate over the clusters for which we have markers
+    clusters <- as.character(sort(unique(markers$cluster)))
 
     # Bind columns, each of which corresponds to a cluster
     purrr::map_dfc(clusters, perCluster) %>%
+        # Create a column with the clusters from the Seurat object
         tibble::add_column(Cluster = as.character(seurat@ident), .before = 1) %>%
         tibble::add_column(Cell = colnames(exp), .before = 1)
 

@@ -6,17 +6,34 @@
 \usage{
 meanMarkerExprByCluster(seurat, markers, marker_col = "gene")
 }
+\arguments{
+\item{seurat}{Seurat object, whose expression values will be used}
+
+\item{markers}{Markers data frame, for the same or another Seurat object. The
+expression of markers in each cluster in this data frame will be calculated
+for each cluster in \code{seurat}.}
+}
 \value{
-Data frame where the first two columns are "Cell" and "Cluster",
+Data frame where the first two columns are "Cell" and "Cluster" (from
+\code{seurat}),
 and all remaining columns give the mean expression of markers identified
-for each cluster
+for each cluster in \code{markers}
 }
 \description{
 Compute the mean expression of markers for each cluster in one dataset,
 in each cluster of another dataset. Used for \code{\link{markerViolinPlot}}
 }
 \examples{
+
+# Using the same sample's marker:
 meanMarkerExprByCluster(pbmc, markers_pbmc, "gene")
+
+# Change the name of the clusters in the markers df, as if it were
+# from a different sample where the clusters are A, B, C, D:
+markers2 <- markers_pbmc \%>\%
+    dplyr::mutate(cluster = recode(cluster, `0` = "A", `1` = "B", `2` = "C", `3` = "D"))
+
+meanMarkerExprByCluster(pbmc, markers2, "gene")
 }
 \author{
 Selin Jessa
