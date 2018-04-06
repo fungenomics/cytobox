@@ -48,6 +48,9 @@ cluster label at the cluster center. Default: TRUE.}
 names (at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
 numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
+  \item{na_color}{Colour (built-in or hex code) to use to plot points which have an NA value, for example
+in the variable specified in \code{colour_by}. Default: light gray ("gray80),
+change to "white" to purposely hide those cells.}
 }}
 }
 \value{

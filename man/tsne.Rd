@@ -8,7 +8,8 @@ tsne(seurat, colour_by = NULL, colours = NULL,
   colour_by_type = "discrete", label = TRUE, point_size = 0.6,
   alpha = 0.8, legend = ifelse((is.null(colour_by)) && (label), FALSE,
   TRUE), label_repel = TRUE, label_size = 4, clusters_to_label = NULL,
-  hide_ticks = FALSE, title = NULL, label_short = FALSE)
+  hide_ticks = FALSE, title = NULL, label_short = FALSE,
+  na_color = "gray80")
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
@@ -59,6 +60,10 @@ Default: NULL (Label all clusters).}
 names (at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
 numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
+
+\item{na_color}{Colour (built-in or hex code) to use to plot points which have an NA value, for example
+in the variable specified in \code{colour_by}. Default: light gray ("gray80),
+change to "white" to purposely hide those cells.}
 }
 \value{
 A ggplot2 object
