@@ -25,13 +25,15 @@ in each cluster of another dataset. Used for \code{\link{markerViolinPlot}}
 }
 \examples{
 
+library(dplyr)
+
 # Using the same sample's marker:
 meanMarkerExprByCluster(pbmc, markers_pbmc, "gene")
 
 # Change the name of the clusters in the markers df, as if it were
 # from a different sample where the clusters are A, B, C, D:
-markers2 <- markers_pbmc \%>\%
-    dplyr::mutate(cluster = recode(cluster, `0` = "A", `1` = "B", `2` = "C", `3` = "D"))
+markers2 <- mutate(markers_pbmc, cluster = recode(
+    cluster, `0` = "A", `1` = "B", `2` = "C", `3` = "D"))
 
 meanMarkerExprByCluster(pbmc, markers2, "gene")
 }

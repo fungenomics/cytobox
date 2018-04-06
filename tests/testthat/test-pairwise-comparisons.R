@@ -2,8 +2,9 @@ context("test-pairwise-comparisons.R")
 
 test_that("meanMarkerExprByCluster works", {
 
-    markers2 <- markers_pbmc %>%
-        dplyr::mutate(cluster = recode(cluster, `0` = "A", `1` = "B", `2` = "C", `3` = "D"))
+    markers2 <- dplyr::mutate(markers_pbmc,
+                              cluster = recode(cluster,
+                                               `0` = "A", `1` = "B", `2` = "C", `3` = "D"))
 
     df_out <- data.frame(Cell = c("ATGCCAGAACGACT", "CATGGCCTGTGCAT", "GAACCTGATGAACC"),
                          Cluster = c("0", "0", "0"),

@@ -21,7 +21,8 @@ compute the marker overlaps. Default: "min". See Details for more info.}
 \item{sample_names}{(Optional) Character vector giving the names or ID of
 the two samples, used for axis labels, etc. Default: c("Sample 1", "Sample 2")}
 
-\item{palette}{}
+\item{palette}{Character vector containing a gradient palette to use.
+Default: \code{\link{viridis::magma}}.}
 
 \item{marker_col}{String specifying the column in the markers data frames which
 specifies the cluster. By default, Seurat calls this "gene"; in the pipeline,

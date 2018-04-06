@@ -43,3 +43,6 @@ NULL
 
 #' @importFrom cowplot plot_grid
 NULL
+
+#' @importFrom utils head
+NULL
