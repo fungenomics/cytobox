@@ -41,6 +41,9 @@
 #' @param clusters_to_label (Optional, mostly for internal use.) If \code{label} is TRUE,
 #' clusters for which labels should be plot (if only a subset of clusters should be labelled).
 #' Default: NULL (Label all clusters).
+#' @param na_color Colour (built-in or hex code) to use to plot points which have an NA value, for example
+#' in the variable specified in \code{colour_by}. Default: light gray ("gray80),
+#' change to "white" to purposely hide those cells.
 #'
 #' @return A ggplot2 object
 #' @export
@@ -69,7 +72,8 @@ tsne <- function(seurat,
                  clusters_to_label = NULL,
                  hide_ticks = FALSE,
                  title = NULL,
-                 label_short = FALSE) {
+                 label_short = FALSE,
+                 na_color = "gray80") {
 
     embedding <- data.frame(Cell = seurat@cell.names,
                             tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
@@ -111,8 +115,8 @@ tsne <- function(seurat,
 
         if (!is.null(colours)) { # Otherwise default ggplot2 colours are used
 
-            if (colour_by_type == "discrete") gg <- gg + scale_color_manual(values = colours)
-            else if (colour_by_type == "continuous") gg <- gg + scale_color_gradientn(colours = colours)
+            if (colour_by_type == "discrete") gg <- gg + scale_color_manual(values = colours, na.value = na_color)
+            else if (colour_by_type == "continuous") gg <- gg + scale_color_gradientn(colours = colours, na.value = na_color)
         }
 
     }
@@ -189,8 +193,8 @@ highlight <- function(seurat, clusters,
                                            original_colours = original_colours,
                                            default_colour = default_colour)
 
-    if (label_all) cytokit::tsne(seurat, colours = highlight_colours, ...)
-    else cytokit::tsne(seurat, colours = highlight_colours, clusters_to_label = clusters, ...)
+    if (label_all) tsne(seurat, colours = highlight_colours, ...)
+    else tsne(seurat, colours = highlight_colours, clusters_to_label = clusters, ...)
 
 }
 
