@@ -62,7 +62,7 @@ Some functions will specify the author in the documentation, whom you could cont
 
 `cytokit` uses a semantic versioning scheme, where package versions are of the form x.y.z:
 
-- The z version is updated for very minor changes like bug fixes
+- The patch version z is updated for very minor changes like bug fixes
 - The minor version y is udpated for minor but important changes like addition of new functions
 - The major version z is updated for major changes, which may introduce backwards incompatibiility
 
