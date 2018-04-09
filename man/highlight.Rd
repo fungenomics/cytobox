@@ -48,9 +48,26 @@ cluster label at the cluster center. Default: TRUE.}
 names (at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
 numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
-  \item{na_color}{Colour (built-in or hex code) to use to plot points which have an NA value, for example
+  \item{cells}{Character vector of cell names if only a subset of cells should be
+plot (these should correspond to seurat@cell.names). Default: Plot all cells.
+See the \code{constrain_scale} argument for controlling the scales of the plot.}
+  \item{order_by}{String, corresponding to a column in seurat@meta.data, specifying
+a variable to control the order in which cells are plot. (Thus, you can manually
+specify the order, add it as a new column in seurat@meta.data, and pass that).
+If numeric, cells with high values are plot on top. If not, the column must
+be a factor, and cells will be ordered according to the levels, with cells
+in the first level plot on top. Default: if a numeric column is specified
+to \code{colour_by}, sort by that variable, otherwise, use the ordering of the cells
+in the Seurat object.}
+  \item{na_color}{String, specifying the colour (built-in or hex code) to use to
+plot points which have an NA value, for example
 in the variable specified in \code{colour_by}. Default: light gray ("gray80),
-change to "white" to purposely hide those cells.}
+change to "white" to purposely hide those cells. If you do not want to plot
+certain cells at all, pass names of cells to plot to the \code{cells} argument.}
+  \item{constrain_scale}{Logical, if plotting a subset of cells, whether to
+use the limits of the tSNE embedding computed on the whole dataset (useful
+for constraining scales across plots while only plotting specific cells).
+Default: TRUE}
 }}
 }
 \value{

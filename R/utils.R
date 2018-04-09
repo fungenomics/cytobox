@@ -133,7 +133,7 @@ fetchData <- function(seurat, genes, clusters = NULL,
     exp_filt <- as.data.frame(t(exp[which(rownames(exp) %in% genes_out$detected),]))
 
     # Keep all
-    if(is.null(clusters)) clusters <- unique(seurat@ident)
+    if(is.null(clusters)) clusters <- levels(seurat@ident)
     ident_idx <- which(seurat@ident %in% clusters)
 
     # Handle only one gene case, and properly return a data frame
