@@ -208,6 +208,8 @@ percentMarkerOverlap <- function(markers1, markers2, mode = "min", marker_col = 
 #' it may be called "external_gene_name" (the default here).
 #' @param palette Character vector containing a gradient palette to use.
 #' Default: \code{\link{viridis::magma}}.
+#' @param label_colour String specifying the colour of value of each cell
+#' printed in the heatmap. Default: "white"
 #'
 #' @export
 #' @author Selin Jessa
@@ -218,7 +220,8 @@ percentMarkerOverlap <- function(markers1, markers2, mode = "min", marker_col = 
 heatmapPercentMarkerOverlap <- function(markers1, markers2, mode = "min",
                                         sample_names = c("Sample 1", "Sample 2"),
                                         palette = NULL,
-                                        marker_col = "external_gene_name") {
+                                        marker_col = "external_gene_name",
+                                        label_colour = "white") {
 
     if (mode == "both") {
 
@@ -246,7 +249,7 @@ heatmapPercentMarkerOverlap <- function(markers1, markers2, mode = "min",
         ggplot(aes(x = s2_cluster, y = cluster)) +
         geom_raster(aes(fill = marker_overlap)) +
         scale_fill_gradientn(colors = pal, limits = c(0, 1)) +
-        geom_text(aes(label = round(marker_overlap, 2)), colour = "white", size = 3) +
+        geom_text(aes(label = round(marker_overlap, 2)), colour = label_colour, size = 3) +
         scale_x_discrete(position = "top") +
         theme_min() +
         theme(panel.border = element_blank()) +

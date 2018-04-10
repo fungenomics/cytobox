@@ -7,9 +7,10 @@
 tsne(seurat, colour_by = NULL, colours = NULL,
   colour_by_type = "discrete", label = TRUE, point_size = 0.6,
   alpha = 0.8, legend = ifelse((is.null(colour_by)) && (label), FALSE,
-  TRUE), label_repel = TRUE, label_size = 4, clusters_to_label = NULL,
-  hide_ticks = FALSE, title = NULL, label_short = FALSE,
-  na_color = "gray80")
+  TRUE), label_repel = TRUE, label_size = 4, cells = NULL,
+  order_by = NULL, clusters_to_label = NULL, hide_ticks = FALSE,
+  title = NULL, label_short = FALSE, na_color = "gray80",
+  constrain_scale = TRUE)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
@@ -48,7 +49,21 @@ cluster label at the cluster center. Default: TRUE.}
 
 \item{label_size}{Numeric, controls the size of text labels. Default: 4.}
 
-\item{clusters_to_label}{(Optional, mostly for internal use.) If \code{label} is TRUE,
+\item{cells}{Character vector of cell names if only a subset of cells should be
+plot (these should correspond to seurat@cell.names). Default: Plot all cells.
+See the argument \code{clusters_to_label} for only labelling certain clusters.
+See the \code{constrain_scale} argument for controlling the scales of the plot.}
+
+\item{order_by}{String, corresponding to a column in seurat@meta.data, specifying
+a variable to control the order in which cells are plot. (Thus, you can manually
+specify the order, add it as a new column in seurat@meta.data, and pass that).
+If numeric, cells with high values are plot on top. If not, the column must
+be a factor, and cells will be ordered according to the levels, with cells
+in the first level plot on top. Default: if a numeric column is specified
+to \code{colour_by}, sort by that variable, otherwise, use the ordering of the cells
+in the Seurat object.}
+
+\item{clusters_to_label}{(Optional.) If \code{label} is TRUE,
 clusters for which labels should be plot (if only a subset of clusters should be labelled).
 Default: NULL (Label all clusters).}
 
@@ -61,9 +76,16 @@ names (at seurat@ident) consist of a prefix and a suffix separated by a non-alph
 numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
 
-\item{na_color}{Colour (built-in or hex code) to use to plot points which have an NA value, for example
+\item{na_color}{String, specifying the colour (built-in or hex code) to use to
+plot points which have an NA value, for example
 in the variable specified in \code{colour_by}. Default: light gray ("gray80),
-change to "white" to purposely hide those cells.}
+change to "white" to purposely hide those cells. If you do not want to plot
+certain cells at all, pass names of cells to plot to the \code{cells} argument.}
+
+\item{constrain_scale}{Logical, if plotting a subset of cells, whether to
+use the limits of the tSNE embedding computed on the whole dataset (useful
+for constraining scales across plots while only plotting specific cells).
+Default: TRUE}
 }
 \value{
 A ggplot2 object

@@ -38,12 +38,30 @@
 #' names (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
 #' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 #' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
-#' @param clusters_to_label (Optional, mostly for internal use.) If \code{label} is TRUE,
+#' @param cells Character vector of cell names if only a subset of cells should be
+#' plot (these should correspond to seurat@@cell.names). Default: Plot all cells.
+#' See the argument \code{clusters_to_label} for only labelling certain clusters.
+#' See the \code{constrain_scale} argument for controlling the scales of the plot.
+#' @param order_by String, corresponding to a column in seurat@@meta.data, specifying
+#' a variable to control the order in which cells are plot. (Thus, you can manually
+#' specify the order, add it as a new column in seurat@@meta.data, and pass that).
+#' If numeric, cells with high values are plot on top. If not, the column must
+#' be a factor, and cells will be ordered according to the levels, with cells
+#' in the first level plot on top. Default: if a numeric column is specified
+#' to \code{colour_by}, sort by that variable, otherwise, use the ordering of the cells
+#' in the Seurat object.
+#' @param clusters_to_label (Optional.) If \code{label} is TRUE,
 #' clusters for which labels should be plot (if only a subset of clusters should be labelled).
 #' Default: NULL (Label all clusters).
-#' @param na_color Colour (built-in or hex code) to use to plot points which have an NA value, for example
+#' @param na_color String, specifying the colour (built-in or hex code) to use to
+#' plot points which have an NA value, for example
 #' in the variable specified in \code{colour_by}. Default: light gray ("gray80),
-#' change to "white" to purposely hide those cells.
+#' change to "white" to purposely hide those cells. If you do not want to plot
+#' certain cells at all, pass names of cells to plot to the \code{cells} argument.
+#' @param constrain_scale Logical, if plotting a subset of cells, whether to
+#' use the limits of the tSNE embedding computed on the whole dataset (useful
+#' for constraining scales across plots while only plotting specific cells).
+#' Default: TRUE
 #'
 #' @return A ggplot2 object
 #' @export
@@ -69,16 +87,47 @@ tsne <- function(seurat,
                  legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
                  label_repel = TRUE,
                  label_size = 4,
+                 cells = NULL,
+                 order_by = NULL,
                  clusters_to_label = NULL,
                  hide_ticks = FALSE,
                  title = NULL,
                  label_short = FALSE,
-                 na_color = "gray80") {
+                 na_color = "gray80",
+                 constrain_scale = TRUE) {
 
     embedding <- data.frame(Cell = seurat@cell.names,
                             tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
                             tSNE_2 = seurat@dr$tsne@cell.embeddings[, 2],
+                            Cluster = seurat@ident,
                             stringsAsFactors = FALSE)
+
+    if (!is.null(order_by)) {
+
+        # Check the variable is usable for sorting
+        if (!is.numeric(seurat@meta.data[[order_by]]) && !is.factor(seurat@meta.data[[order_by]])) {
+
+            stop("The variable specified in 'order_by' is neither numeric ",
+                 "nor a factor. If the column is of type character, consider ",
+                 "converting it to a factor. Otherwise, pass the name of a numeric column.")
+
+        }
+
+        embedding[[order_by]] <- seurat@meta.data[[order_by]]
+
+    } else if ((!is.null(colour_by)) && is.numeric(seurat@meta.data[[colour_by]])) {
+
+        # If order_by is not specified but colour_by is, and is numeric,
+        # by default, order the cells by that variable
+        order_by <- colour_by
+
+    }
+
+    if (!is.null(colour_by)) embedding[[colour_by]] <- seurat@meta.data[[colour_by]]
+    if (!is.null(cells)) embedding <- embedding %>% filter(Cell %in% cells)
+    if (!is.null(order_by)) embedding <- embedding %>% arrange_(order_by)
+
+    gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
 
     if (label && all(is.na(seurat@ident))) {
         label <- FALSE
@@ -86,9 +135,6 @@ tsne <- function(seurat,
     }
 
     if (is.null(colour_by)) {
-
-        embedding$Cluster <- seurat@ident
-        gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
 
         if (is.null(colours)) {
 
@@ -106,12 +152,8 @@ tsne <- function(seurat,
 
     } else {
 
-        embedding[[colour_by]] <- seurat@meta.data[[colour_by]]
-        gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
-
         gg <- gg +
             geom_point(aes_string(colour = colour_by), size = point_size, alpha = alpha)
-
 
         if (!is.null(colours)) { # Otherwise default ggplot2 colours are used
 
@@ -141,6 +183,7 @@ tsne <- function(seurat,
 
     if (!is.null(title)) gg <- gg + ggtitle(title)
     if (hide_ticks) gg <- gg + noTicks()
+    if (constrain_scale) gg <- gg + constrainScale(seurat, reduction = "tsne")
 
     return(gg)
 
@@ -153,7 +196,9 @@ tsne <- function(seurat,
 #'
 #' Plot the tSNE embedding for the dataset, with cells from select clusters coloured
 #' by either their original colours or provided colours, and cells from all
-#' other clusters in another (non-intrusive) colour.
+#' other clusters in another (non-intrusive) colour, or not at all. This is a
+#' thin wrapper for \code{\link{tsne}} which takes care of specifying cells and colours
+#' in order to highlight the desired clusters.
 #'
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
 #' @param clusters Vector of one or more clusters to highlight, matching the levels at
@@ -162,7 +207,8 @@ tsne <- function(seurat,
 #' per cluster, in the order of \code{levels(seurat@@ident)}, or one colour per
 #' cluster passed to \code{clusters}, in the other they were provided.
 #' Default: default ggplot2 colours used by Seurat.
-#' @param default_colour Colour to use for non-highlighted clusters. Default: gray80
+#' @param default_colour String, colour to use for non-highlighted clusters, or
+#' "none", if cells in those clusters should not be plot at all. Default: gray80
 #' (light grey).
 #' @param label_all Logical, if labelling the tSNE (if \code{label == TRUE}), whether
 #' to label all the clusters, or only the ones being highlighted. Default: FALSE.
@@ -184,6 +230,9 @@ tsne <- function(seurat,
 #'
 #' # Specify the colours to highlight the clusters with
 #' highlight(pbmc, c(2, 3), c("red", "blue"))
+#'
+#' # Don't plot cells in other clusters
+#' highlight(pbmc, c(2, 3), default_colour = "none")
 highlight <- function(seurat, clusters,
                       original_colours = NULL, default_colour = "gray80",
                       label_all = FALSE, ...) {
@@ -193,8 +242,18 @@ highlight <- function(seurat, clusters,
                                            original_colours = original_colours,
                                            default_colour = default_colour)
 
-    if (label_all) tsne(seurat, colours = highlight_colours, ...)
-    else tsne(seurat, colours = highlight_colours, clusters_to_label = clusters, ...)
+    if (label_all) tsne(seurat,colours = highlight_colours, ...)
+    else if (default_colour == "none") tsne(seurat,
+                                            colours = highlight_colours,
+                                            clusters_to_label = clusters,
+                                            # Don't plot cells from the non-
+                                            # highlighted clusterss
+                                            cells = whichCells(seurat, clusters),
+                                            ...)
+    else tsne(seurat,
+              colours = highlight_colours,
+              clusters_to_label = clusters,
+              ...)
 
 }
 

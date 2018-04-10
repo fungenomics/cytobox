@@ -238,6 +238,54 @@ addLabels <- function(centers, label_repel = FALSE, label_size = 4, label_short 
 }
 
 
+
+#' Get the limits of a the first two dimensions in a dimensionality reduction
+#'
+#' When plotting an embedding, we may want to plot specific cells, but
+#' constrain the scale to match plots of the whole dataset. Given a dim.
+#' reduction, this function extracts the x and y limits to use for plotting.
+#'
+#' @param seurat Seurat object for which a dimensionality reduction has been
+#' computed (e.g. PCA or tSNE)
+#' @param reduction String, corresponding to the dimensionality reduction to use.
+#' Default: "tsne".
+#'
+#' @return A list with two elements: "xlim", which is a character vector of
+#' the limits for the x-axis, and "ylim", correspondingly for the y-axis
+#' @export
+#' @author Selin Jessa
+#'
+#' @examples
+#' drLims(pbmc)
+drLims <- function(seurat, reduction = "tsne") {
+
+    dim1 <- seurat@dr[[reduction]]@cell.embeddings[,1]
+    dim2 <- seurat@dr[[reduction]]@cell.embeddings[,2]
+
+    return(list(xlim = c(min(dim1), max(dim1)),
+                ylim = c(min(dim2), max(dim2))))
+
+}
+
+
+
+
+#' Constrain the scale of the plot to the dimensionality reduction limits
+#'
+#' @inheritParams drLims
+#'
+#' @export
+#' @author Selin Jessa
+constrainScale <- function(seurat, reduction = "tsne")  {
+
+    limits <- drLims(seurat = seurat, reduction = reduction)
+    lims(x = limits$xlim, y = limits$ylim)
+
+
+}
+
+
+
 #' Apply a clean theme to a ggplot2 object
 #'
 #' @references https://github.com/sjessa/ggmin

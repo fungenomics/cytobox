@@ -26,7 +26,10 @@ Load the package
 library(cytokit)
 ```
 
-
+Here is a quick overview of some of the most useful functions
+available in `cytokit` for exploring single cell RNA-seq data
+stored in a Seurat package. It's not an exhaustive list of the functions,
+or all the options, so see the documentation for more details.
 
 # Basic visualizations
 
@@ -48,6 +51,23 @@ e.g. the number of UMIs:
 tsne(pbmc, colour_by = "nUMI", colour_by_type = "continuous", colours = viridis::magma(100))
 ```
 
+Only plot specified cells, say the cells in clusters 1 or 2,
+coloured by nUMI:
+
+```{r tsne_nUMI_select, fig.width = 6, fig.height = 4}
+cells_keep <- whichCells(pbmc, clusters = c(1, 2))
+cells_keep
+
+tsne(pbmc,
+     colour_by = "nUMI",
+     colour_by_type = "continuous",
+     colours = viridis::magma(100),
+     # Provide a vector of cell names
+     cells = cells_keep,
+     # Only label these two clusters
+     clusters_to_label = c(1, 2))
+```
+
 Colour the cells by a column in `seurat@meta.data` containing a discrete variable,
 e.g. here, the resolution 1.0 cluster assignments:
 
@@ -59,6 +79,12 @@ tsne(pbmc, colour_by = "res.1", colour_by_type = "discrete",
 
 
 ## Highlight cluster in t-SNE space
+
+The last example demonstrates how to only plot specific cells, using
+the string "none" - this is more effective than making the default
+colour "white", because it avoids cells coloured white being plot
+on top of cells we have coloured, which becomes important in
+areas of high density of cells.
 
 ```{r highlight, fig.width = 6, fig.height = 4}
 
@@ -73,6 +99,9 @@ highlight(pbmc, c(2, 3), default_colour = "lightblue")
 
 # Specify the colours to highlight the clusters with
 highlight(pbmc, c(2, 3), c("red", "blue"))
+
+# Don't plot cells in other clusters
+highlight(pbmc, c(2, 3), default_colour = "none")
 
 ```
 
@@ -89,7 +118,7 @@ tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"))
 
 Plot a t-SNE coloured by percentiles marker expression
 
-```{r tsneByPercentilesMarkerExpression, fig.width = 6, fig.height = 6}
+```{r tsneByPercentilesMarkerExpression, fig.width = 6, fig.height = 4}
 
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"))
 
@@ -104,7 +133,7 @@ tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label = FALSE,
 
 Dashboard plot, which gives a bit more distributional information than tSNE:
 
-```{r dashboard, fig.width = 8, fig.height = 4, warning = FALSE}
+```{r dashboard, fig.width = 8, fig.height = 5, warning = FALSE}
 
 tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), label = TRUE, extra = TRUE, verbose = TRUE)
 
@@ -141,6 +170,7 @@ Feature plots for individual genes:
 
 feature(pbmc, c("IL32", "CD2", "MS4A1"), per_gene = TRUE)
 feature(pbmc, c("IL32", "CD2", "MS4A1"), per_gene = TRUE, statistic = "mean")
+feature(pbmc, c("IL32", "CD2", "MS4A1"), per_gene = TRUE, statistic = "mean", hide_ticks = TRUE)
 
 ```
 
@@ -223,6 +253,13 @@ heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc,
                             sample_names = c("PBMC1", "PBMC2"),
                             marker_col = "gene",
                             palette = RColorBrewer::brewer.pal(8, "OrRd"))
+
+# Different label colour
+heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc,
+                            sample_names = c("PBMC1", "PBMC2"),
+                            marker_col = "gene",
+                            palette = RColorBrewer::brewer.pal(8, "OrRd"),
+                            label_colour = "black")
 
 # Plot the max instead
 heatmapPercentMarkerOverlap(markers_pbmc, markers_pbmc, mode = "max",

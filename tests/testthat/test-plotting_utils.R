@@ -9,3 +9,13 @@ test_that("getting cluster colours works", {
 
 
 })
+
+
+test_that("retrieval of correct dimensionality reduction limits", {
+
+    lims <- list(xlim = c(-21.29, 19.82),
+                 ylim = c(-55.73, 33.26))
+
+    expect_equal(drLims(pbmc), lims, tolerance = 1e-2)
+
+})
