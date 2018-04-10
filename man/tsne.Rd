@@ -51,6 +51,7 @@ cluster label at the cluster center. Default: TRUE.}
 
 \item{cells}{Character vector of cell names if only a subset of cells should be
 plot (these should correspond to seurat@cell.names). Default: Plot all cells.
+See the argument \code{clusters_to_label} for only labelling certain clusters.
 See the \code{constrain_scale} argument for controlling the scales of the plot.}
 
 \item{order_by}{String, corresponding to a column in seurat@meta.data, specifying
@@ -62,7 +63,7 @@ in the first level plot on top. Default: if a numeric column is specified
 to \code{colour_by}, sort by that variable, otherwise, use the ordering of the cells
 in the Seurat object.}
 
-\item{clusters_to_label}{(Optional, mostly for internal use.) If \code{label} is TRUE,
+\item{clusters_to_label}{(Optional.) If \code{label} is TRUE,
 clusters for which labels should be plot (if only a subset of clusters should be labelled).
 Default: NULL (Label all clusters).}
 

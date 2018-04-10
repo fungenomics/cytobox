@@ -40,6 +40,7 @@
 #' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
 #' @param cells Character vector of cell names if only a subset of cells should be
 #' plot (these should correspond to seurat@@cell.names). Default: Plot all cells.
+#' See the argument \code{clusters_to_label} for only labelling certain clusters.
 #' See the \code{constrain_scale} argument for controlling the scales of the plot.
 #' @param order_by String, corresponding to a column in seurat@@meta.data, specifying
 #' a variable to control the order in which cells are plot. (Thus, you can manually
@@ -49,7 +50,7 @@
 #' in the first level plot on top. Default: if a numeric column is specified
 #' to \code{colour_by}, sort by that variable, otherwise, use the ordering of the cells
 #' in the Seurat object.
-#' @param clusters_to_label (Optional, mostly for internal use.) If \code{label} is TRUE,
+#' @param clusters_to_label (Optional.) If \code{label} is TRUE,
 #' clusters for which labels should be plot (if only a subset of clusters should be labelled).
 #' Default: NULL (Label all clusters).
 #' @param na_color String, specifying the colour (built-in or hex code) to use to
@@ -195,11 +196,9 @@ tsne <- function(seurat,
 #'
 #' Plot the tSNE embedding for the dataset, with cells from select clusters coloured
 #' by either their original colours or provided colours, and cells from all
-#' other clusters in another (non-intrusive) colour. This is a
-#' wrapper for \code{\link{tsne}} which takes care of applying the colours
-#' in order to highlight the clusters.
-#' certain cells, pass a character vector of cell names to the \code{cells}
-#' argument which is passed on to \code{\link{tsne}}.
+#' other clusters in another (non-intrusive) colour, or not at all. This is a
+#' thin wrapper for \code{\link{tsne}} which takes care of specifying cells and colours
+#' in order to highlight the desired clusters.
 #'
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
 #' @param clusters Vector of one or more clusters to highlight, matching the levels at
@@ -208,7 +207,8 @@ tsne <- function(seurat,
 #' per cluster, in the order of \code{levels(seurat@@ident)}, or one colour per
 #' cluster passed to \code{clusters}, in the other they were provided.
 #' Default: default ggplot2 colours used by Seurat.
-#' @param default_colour Colour to use for non-highlighted clusters. Default: gray80
+#' @param default_colour String, colour to use for non-highlighted clusters, or
+#' "none", if cells in those clusters should not be plot at all. Default: gray80
 #' (light grey).
 #' @param label_all Logical, if labelling the tSNE (if \code{label == TRUE}), whether
 #' to label all the clusters, or only the ones being highlighted. Default: FALSE.
@@ -230,6 +230,9 @@ tsne <- function(seurat,
 #'
 #' # Specify the colours to highlight the clusters with
 #' highlight(pbmc, c(2, 3), c("red", "blue"))
+#'
+#' # Don't plot cells in other clusters
+#' highlight(pbmc, c(2, 3), default_colour = "none")
 highlight <- function(seurat, clusters,
                       original_colours = NULL, default_colour = "gray80",
                       label_all = FALSE, ...) {
@@ -239,8 +242,18 @@ highlight <- function(seurat, clusters,
                                            original_colours = original_colours,
                                            default_colour = default_colour)
 
-    if (label_all) tsne(seurat, colours = highlight_colours, ...)
-    else tsne(seurat, colours = highlight_colours, clusters_to_label = clusters, ...)
+    if (label_all) tsne(seurat,colours = highlight_colours, ...)
+    else if (default_colour == "none") tsne(seurat,
+                                            colours = highlight_colours,
+                                            clusters_to_label = clusters,
+                                            # Don't plot cells from the non-
+                                            # highlighted clusterss
+                                            cells = whichCells(seurat, clusters),
+                                            ...)
+    else tsne(seurat,
+              colours = highlight_colours,
+              clusters_to_label = clusters,
+              ...)
 
 }
 

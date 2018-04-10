@@ -6,7 +6,7 @@
 \usage{
 heatmapPercentMarkerOverlap(markers1, markers2, mode = "min",
   sample_names = c("Sample 1", "Sample 2"), palette = NULL,
-  marker_col = "external_gene_name")
+  marker_col = "external_gene_name", label_colour = "white")
 }
 \arguments{
 \item{markers1}{Data frame of markers for one dataset as returned by Seurat::FindAllMarkers()
@@ -27,6 +27,9 @@ Default: \code{\link{viridis::magma}}.}
 \item{marker_col}{String specifying the column in the markers data frames which
 specifies the cluster. By default, Seurat calls this "gene"; in the pipeline,
 it may be called "external_gene_name" (the default here).}
+
+\item{label_colour}{String specifying the colour of value of each cell
+printed in the heatmap. Default: "white"}
 }
 \description{
 Generate a heatmap where rows correspond to clusters from one dataset and

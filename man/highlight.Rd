@@ -18,7 +18,8 @@ per cluster, in the order of \code{levels(seurat@ident)}, or one colour per
 cluster passed to \code{clusters}, in the other they were provided.
 Default: default ggplot2 colours used by Seurat.}
 
-\item{default_colour}{Colour to use for non-highlighted clusters. Default: gray80
+\item{default_colour}{String, colour to use for non-highlighted clusters, or
+"none", if cells in those clusters should not be plot at all. Default: gray80
 (light grey).}
 
 \item{label_all}{Logical, if labelling the tSNE (if \code{label == TRUE}), whether
@@ -50,6 +51,7 @@ numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
   \item{cells}{Character vector of cell names if only a subset of cells should be
 plot (these should correspond to seurat@cell.names). Default: Plot all cells.
+See the argument \code{clusters_to_label} for only labelling certain clusters.
 See the \code{constrain_scale} argument for controlling the scales of the plot.}
   \item{order_by}{String, corresponding to a column in seurat@meta.data, specifying
 a variable to control the order in which cells are plot. (Thus, you can manually
@@ -76,7 +78,9 @@ A ggplot2 object
 \description{
 Plot the tSNE embedding for the dataset, with cells from select clusters coloured
 by either their original colours or provided colours, and cells from all
-other clusters in another (non-intrusive) colour.
+other clusters in another (non-intrusive) colour, or not at all. This is a
+thin wrapper for \code{\link{tsne}} which takes care of specifying cells and colours
+in order to highlight the desired clusters.
 }
 \examples{
 # Highlight cluster 3 on the tSNE plot
@@ -90,6 +94,9 @@ highlight(pbmc, c(2, 3), default_colour = "lightblue")
 
 # Specify the colours to highlight the clusters with
 highlight(pbmc, c(2, 3), c("red", "blue"))
+
+# Don't plot cells in other clusters
+highlight(pbmc, c(2, 3), default_colour = "none")
 }
 \author{
 Selin Jessa

@@ -160,7 +160,27 @@ fetchData <- function(seurat, genes, clusters = NULL,
 
 
 
+#' Retrieve cells in specified clusters
+#'
+#' Given a Seurat object and the names of specific clusters (corresponding
+#' to identities in \code{seurat@@ident}), return the names of cells
+#' in those clusters.
+#'
+#' @param seurat Seurat object
+#' @param clusters Vector specifying clusters for which cells should be retrieved.
+#' Elements should correspond to levels in \code{seurat@@ident}.
+#'
+#' @return Character vector of cell names
+#' @export
+#' @author Selin Jessa
+#'
+#' @examples
+#' whichCells(pbmc, clusters = c(0, 1))
+whichCells <- function(seurat, clusters) {
 
+    names(seurat@ident)[seurat@ident %in% clusters]
+
+}
 
 
 
