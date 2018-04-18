@@ -6,7 +6,7 @@
 \usage{
 tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", label = TRUE,
   palette = "redgrey", title = NULL, alpha = 0.6, label_repel = TRUE,
-  label_size = 4, legend = TRUE, hide_ticks = FALSE,
+  label_size = 4, legend = TRUE, hide_ticks = FALSE, limits = NULL,
   label_short = FALSE)
 }
 \arguments{
@@ -41,6 +41,10 @@ cluster label at the cluster center. Default: TRUE.}
 \item{legend}{Logical, whether or not to plot legend. Default: TRUE}
 
 \item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
+
+\item{limits}{(Optional) A numeric vector of length two providing the limits to
+use for the colour scale (documentation
+from \code{\link[ggplot2]{continous_scale}}. Default: 0 and max of the data.}
 
 \item{label_short}{(Optional/Experimental!!) Logical, if TRUE, assumes clusters
 (at seurat@ident) consist of a prefix and a suffix separated by a non-alpha

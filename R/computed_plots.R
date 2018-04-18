@@ -34,14 +34,18 @@
 #' (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
 #' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 #' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
+#' @param limits (Optional) A numeric vector of length two providing the limits to
+#' use for the colour scale (documentation
+#' from \code{\link[ggplot2]{continous_scale}}. Default: 0 and max of the data.
 #'
 #' @export
 #' @return A ggplot object
 #'
 #' @author Selin Jessa
-# @examples
-# tsneByMeanMarkerExpression(pbmc, "IL32")
-# tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+#' @examples
+#' tsneByMeanMarkerExpression(pbmc, "IL32")
+#' tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+#' tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 tsneByMeanMarkerExpression <- function(seurat, genes,
                                        reduction = "tsne",
                                        label = TRUE,
@@ -52,6 +56,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
                                        label_size = 4,
                                        legend = TRUE,
                                        hide_ticks = FALSE,
+                                       limits = NULL,
                                        label_short = FALSE) {
 
     # Get mean expression for markers
@@ -65,6 +70,9 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
     # Get the variable names
     vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
 
+    # Set limits: if not provided, use default min/max
+    if (is.null(limits)) limits <- c(NA, NA)
+
     # Plot
     gg <- exp_df %>%
         ggplot(aes(x = exp_df[[vars[1]]], y = exp_df[[vars[2]]])) +
@@ -74,19 +82,21 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 
         if (palette == "viridis") {
 
-            gg <- gg + viridis::scale_color_viridis()
+            gg <- gg + viridis::scale_color_viridis(limits = limits)
 
         } else if (palette == "blues") {
 
             gg <- gg + scale_colour_gradientn(
-                colours = RColorBrewer::brewer.pal(n = 8, name = "Blues"))
+                colours = RColorBrewer::brewer.pal(n = 8, name = "Blues"),
+                limits = limits)
 
         } else if (palette == "redgrey") {
 
             # NOTE: palette chosen is not the default gradient from gray -> red
             # but sets a midpoint at a lighter colour
             gg <- gg + scale_color_gradientn(
-                colours = grDevices::colorRampPalette(c("gray83", "#E09797", "red"))(n = 200))
+                colours = grDevices::colorRampPalette(c("gray83", "#E09797", "red"))(n = 200),
+                limits = limits)
 
         } else {
 
@@ -97,11 +107,11 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 
     } else if (length(palette) == 2) {
 
-        gg <- gg + scale_color_gradient(low = palette[1], high = palette[2])
+        gg <- gg + scale_color_gradient(low = palette[1], high = palette[2], limits = limits)
 
     } else {
 
-        gg <- gg + scale_color_gradientn(colours = palette)
+        gg <- gg + scale_color_gradientn(colours = palette, limits = limits)
 
     }
 
