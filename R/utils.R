@@ -111,13 +111,13 @@ fetchData <- function(seurat, genes, clusters = NULL,
 
         if (n_undetected > 10) {
 
-            print(paste0("NOTE: [",
+            message(paste0("NOTE: [",
                          paste0(head(genes_out$undetected, 10), collapse = ", "),
                          "] and ", n_undetected - 10, " other genes are undetected in ", seurat@project.name))
 
         } else {
 
-            print(paste0("NOTE: [",
+            message(paste0("NOTE: [",
                          paste0(genes_out$undetected, collapse = ", "),
                          "] undetected in ", seurat@project.name))
 
