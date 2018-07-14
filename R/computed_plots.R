@@ -657,7 +657,7 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
 #' Generate a grid of tiny violins of gene expression in each cluster
 #'
 #' A grid of small violin plots, one plot per gene per cluster, similar to
-#' Figure 5D in the Drop-seq paper by Macosko et al.
+#' Figure 5D in the Drop-seq paper by Macosko et al. Aka "fish plot".
 #'
 #' @param seurat Seurat object
 #' @param genes Genes to plot violins for, in the order (left to right)
@@ -674,10 +674,12 @@ vln <- function(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 
 #' cluster passed to \code{subset_clusters}, in the other they were provided.
 #' Default: default ggplot2 colours used by Seurat.
 #' @param width String, one of "width", "area", or "count". From the ggplot2
-#' documentation of \code{geom_violin}: "if "area" (default), all violins have
+#' documentation of \code{\link[ggplot2]{geom_violin}}: "if "area" (default), all violins have
 #' the same area (before trimming the tails). If "count", areas are scaled
 #' proportionally to the number of observations. If "width", all violins have
 #' the same maximum width." Default: "width".
+#' @param scales See \code{scales} parameter in \code{\link[ggplot2]{facet_wrap}}.
+#' Default: scales = "free_x", which allows every gene to have its own scale.
 #'
 #' @return A ggplot2 object
 #' @export
@@ -702,7 +704,8 @@ vlnGrid <- function(seurat, genes,
                     order = "genes",
                     colours = NULL,
                     scale = "width",
-                    title = NULL) {
+                    title = NULL,
+                    scales = "free_x") {
 
     expr <- cytokit::fetchData(seurat, genes, return_cell = TRUE, return_cluster = TRUE) %>%
         tidyr::gather(Marker, Expression, 3:length(.))
@@ -775,7 +778,8 @@ vlnGrid <- function(seurat, genes,
         ggplot(aes(x = Cluster, y = Expression)) +
         geom_violin(aes(fill = Cluster), scale = scale, size = 0.5) +
         scale_fill_manual(values = colours) +
-        facet_wrap(~ Marker, ncol = length(unique(expr$Marker))) +
+        facet_wrap(~ Marker, ncol = length(unique(expr$Marker)),
+                   scales = scales) +
         theme_min() +
         coord_flip() +
         ggplot2::theme(panel.border = element_blank(),

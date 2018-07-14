@@ -60,6 +60,11 @@ coloured by expression of a gene, or mean expression of a group of marker
 genes. Defaults to t-SNE space, but see the \code{reduction} argument for
 how to plot in PCA space instead.
 }
+\examples{
+tsneByMeanMarkerExpression(pbmc, "IL32")
+tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+}
 \author{
 Selin Jessa
 }

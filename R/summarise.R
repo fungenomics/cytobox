@@ -87,7 +87,8 @@ percentilesMarkerExpression <- function(seurat, genes) {
 #' clusterCenters
 #'
 #' Get centers of clusters given a Seurat object, to use for labelling
-#' in tSNE space.
+#' in tSNE space. The cluster center is defined as the median X and Y coordinate
+#' across cells in each cluster.
 #'
 #' @param seurat Seurat object, where dimensionality reduction has been applied,
 #' i.e. (after applying Seurat::RunTSNE() to the object).
@@ -115,8 +116,8 @@ clusterCenters <- function(seurat) {
     # Compute cluster centers
     centers <- df %>%
         group_by(Cluster) %>%
-        summarise(mean_tSNE_1 = mean(tSNE_1),
-                  mean_tSNE_2 = mean(tSNE_2))
+        summarise(mean_tSNE_1 = median(tSNE_1),
+                  mean_tSNE_2 = median(tSNE_2))
 
     return(centers)
 
