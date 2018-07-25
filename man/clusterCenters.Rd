@@ -15,7 +15,8 @@ Data frame with three columns: Cluster, mean_tSNE_1, and mean_tSNE_2
 }
 \description{
 Get centers of clusters given a Seurat object, to use for labelling
-in tSNE space.
+in tSNE space. The cluster center is defined as the median X and Y coordinate
+across cells in each cluster.
 }
 \examples{
 
