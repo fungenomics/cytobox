@@ -2,5 +2,8 @@
 
 language: r
 cache: packages
-sudo: false
+sudo: true
 warnings_are_errors: false
+
+before_install:
+  - sudo apt-get install -y libhdf5-dev
