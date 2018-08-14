@@ -11,4 +11,4 @@ warnings_are_errors: false
 before_install:
   - wget https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.0-patch1/src/hdf5-1.10.0-patch1.tar.gz
   - tar -xzf hdf5-1.10.0-patch1.tar.gz
-  - pushd hdf5-1.10.0-patch1 && ./configure --prefix=/usr/local --enable-cxx --enable-build-mode=production && sudo make install && popd
+  - pushd hdf5-1.10.0-patch1 && ./configure --prefix=/usr --enable-cxx --enable-build-mode=production && sudo make install && popd
