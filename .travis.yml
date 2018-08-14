@@ -8,7 +8,7 @@ warnings_are_errors: false
 # Following
 # https://gist.github.com/episodeyang/dfa69365203639fcde5f2aae73f7d9ac
 # https://docs.travis-ci.com/user/installing-dependencies/#installing-projects-from-source
-install:
+before_install:
   - wget https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.0-patch1/src/hdf5-1.10.0-patch1.tar.gz
   - tar -xzf hdf5-1.10.0-patch1.tar.gz
   - pushd hdf5-1.10.0-patch1 && ./configure --prefix=/usr/local --enable-cxx --enable-build-mode=production && sudo make install && popd
