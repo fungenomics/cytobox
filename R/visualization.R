@@ -83,7 +83,8 @@ tsne <- function(seurat,
                  colour_by = NULL,
                  colours = NULL,
                  colour_by_type = "discrete",
-                 label = TRUE, point_size = 0.6, alpha = 0.8,
+                 label = TRUE,
+                 point_size = 0.6, alpha = 0.8,
                  legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
                  label_repel = TRUE,
                  label_size = 4,
@@ -166,11 +167,11 @@ tsne <- function(seurat,
     if (label) {
 
         centers <- clusterCenters(seurat)
-        gg <- gg + addLabels(centers = centers,
+        gg <- gg + addLabels(centers     = centers,
                              label_repel = label_repel,
-                             label_size = label_size,
+                             label_size  = label_size,
                              label_short = label_short,
-                             clusters = clusters_to_label)
+                             clusters    = clusters_to_label)
 
     }
 
@@ -213,7 +214,7 @@ tsne <- function(seurat,
 #' @param label_all Logical, if labelling the tSNE (if \code{label == TRUE}), whether
 #' to label all the clusters, or only the ones being highlighted. Default: FALSE.
 #'
-#' @inheritDotParams tsne -seurat -clusters_to_label -colours
+#' @inheritDotParams tsne -seurat -clusters_to_label -colours -label
 #' @return A ggplot2 object
 #' @export
 #' @author Selin Jessa
@@ -233,26 +234,45 @@ tsne <- function(seurat,
 #'
 #' # Don't plot cells in other clusters
 #' highlight(pbmc, c(2, 3), default_colour = "none")
-highlight <- function(seurat, clusters,
-                      original_colours = NULL, default_colour = "gray80",
-                      label_all = FALSE, ...) {
+highlight <- function(seurat,
+                      clusters,
+                      original_colours = NULL,
+                      default_colour = "gray90",
+                      label_all = FALSE,
+                      label = TRUE,
+                      ...) {
 
     highlight_colours <- getClusterColours(seurat = seurat,
                                            clusters = clusters,
                                            original_colours = original_colours,
                                            default_colour = default_colour)
 
-    if (label_all) tsne(seurat,colours = highlight_colours, ...)
+    cells_label <- whichCells(seurat, clusters)
+
+    if (label_all) {
+
+        # Assign an order to the cells so the highlighted ones will be plot on top
+        seurat@meta.data$Order_cells <- ifelse(seurat@cell.names %in% cells_label,
+                                               as.character(seurat@ident),
+                                               "Other")
+
+        seurat@meta.data$Order_cells <- factor(seurat@meta.data$Order_cells, levels = c(clusters, "Other"))
+
+        tsne(seurat, colours = highlight_colours, order_by = "Order_cells", ...)
+
+    }
+
     else if (default_colour == "none") tsne(seurat,
                                             colours = highlight_colours,
                                             clusters_to_label = clusters,
-                                            # Don't plot cells from the non-
-                                            # highlighted clusterss
-                                            cells = whichCells(seurat, clusters),
+                                            # Don't plot cells from the non-highlighted clusterss
+                                            cells = cells_label,
+                                            label = label,
                                             ...)
     else tsne(seurat,
               colours = highlight_colours,
               clusters_to_label = clusters,
+              label = label,
               ...)
 
 }

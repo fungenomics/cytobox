@@ -4,7 +4,6 @@
 \name{cytokit}
 \alias{cytokit}
 \alias{cytokit-package}
-\alias{cytokit-package}
 \title{cytokit: A toolkit for analyzing single cell RNA-seq data}
 \description{
 Shared Kleinman lab functions for processing, interrogating, and

@@ -4,10 +4,10 @@
 \alias{tsneByMeanMarkerExpression}
 \title{Colour cells in t-SNE space by gene expression}
 \usage{
-tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", label = TRUE,
-  palette = "redgrey", title = NULL, alpha = 0.6, label_repel = TRUE,
-  label_size = 4, legend = TRUE, hide_ticks = FALSE, limits = NULL,
-  label_short = FALSE)
+tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne",
+  label = TRUE, palette = "redgrey", title = NULL, alpha = 0.6,
+  label_repel = TRUE, label_size = 4, legend = TRUE,
+  hide_ticks = FALSE, limits = NULL, label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
