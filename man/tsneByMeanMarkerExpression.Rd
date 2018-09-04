@@ -2,12 +2,12 @@
 % Please edit documentation in R/computed_plots.R
 \name{tsneByMeanMarkerExpression}
 \alias{tsneByMeanMarkerExpression}
-\title{Colour cells in t-SNE space by gene expression}
+\title{Colour cells in t-SNE or PCA space by gene expression}
 \usage{
-tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne",
-  label = TRUE, palette = "redgrey", title = NULL, alpha = 0.6,
-  label_repel = TRUE, label_size = 4, legend = TRUE,
-  hide_ticks = FALSE, limits = NULL, label_short = FALSE)
+tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", label = TRUE,
+  palette = "redgrey", title = NULL, alpha = 0.6, label_repel = TRUE,
+  label_size = 4, legend = TRUE, hide_ticks = FALSE, limits = NULL,
+  label_short = FALSE, dim1 = 1, dim2 = 2, return_df = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -50,6 +50,11 @@ from \code{\link[ggplot2]{continous_scale}}. Default: 0 and max of the data.}
 (at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
 numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
+
+\item{dim1}{Numeric, index of dimension from \code{reduction} to plot on
+the x-axis. e.g. to plot the 3rd PC on the x-axis, pass 3. Default: 1.}
+
+\item{dim2}{Numeric, like \code{dim2}, but for the y-axis. Default: 2.}
 }
 \value{
 A ggplot object
@@ -63,7 +68,7 @@ how to plot in PCA space instead.
 \examples{
 tsneByMeanMarkerExpression(pbmc, "IL32")
 tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
-tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+tsneByMeanMarkerExpression(pbmc, "IL32", reduction = "pca", dim1 = 1, dim2 = 3)
 }
 \author{
 Selin Jessa
