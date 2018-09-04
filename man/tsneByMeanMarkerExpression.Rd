@@ -7,7 +7,8 @@
 tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", label = TRUE,
   palette = "redgrey", title = NULL, alpha = 0.6, label_repel = TRUE,
   label_size = 4, legend = TRUE, hide_ticks = FALSE, limits = NULL,
-  label_short = FALSE, dim1 = 1, dim2 = 2, return_df = FALSE)
+  label_short = FALSE, dim1 = 1, dim2 = 2, return_df = FALSE,
+  point_size = 1)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -55,6 +56,9 @@ and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
 the x-axis. e.g. to plot the 3rd PC on the x-axis, pass 3. Default: 1.}
 
 \item{dim2}{Numeric, like \code{dim2}, but for the y-axis. Default: 2.}
+
+\item{point_size}{Numeric, size of points in scatterplot. Default: 1. (A smaller
+value around 0.5 is better for plots which will be viewed at small scale.)}
 }
 \value{
 A ggplot object

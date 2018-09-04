@@ -26,6 +26,8 @@
 #' to interpolate to create the scael. Default: redgrey.
 #' @param title (Optional) String specifying the plot title
 #' @param alpha Numeric, fixed alpha for points. Default: 0.6
+#' @param point_size Numeric, size of points in scatterplot. Default: 1. (A smaller
+#' value around 0.5 is better for plots which will be viewed at small scale.)
 #' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
 #' labels repelled from the center, on a slightly transparent white background and
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
@@ -63,7 +65,8 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
                                        label_short = FALSE,
                                        dim1 = 1,
                                        dim2 = 2,
-                                       return_df = FALSE) {
+                                       return_df = FALSE,
+                                       point_size = 1) {
 
     # Get mean expression for markers
     exp_df <- meanMarkerExpression(seurat, genes)
@@ -84,7 +87,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
     # Plot
     gg <- exp_df %>%
         ggplot(aes(x = exp_df[[vars[1]]], y = exp_df[[vars[2]]])) +
-        geom_point(aes(colour = Mean_marker_expression), size = rel(0.8), alpha = alpha)
+        geom_point(aes(colour = Mean_marker_expression), size = point_size, alpha = alpha)
 
     if (length(palette) == 1) {
 
@@ -594,6 +597,7 @@ feature <- function(seurat, genes,
                                                                             label_repel = label_repel,
                                                                             label_size = label_size,
                                                                             hide_ticks = hide_ticks,
+                                                                            point_size = point_size,
                                                                             dim1 = dim1,
                                                                             dim2 = dim2)),
                 ncol = ncol)
@@ -619,6 +623,7 @@ feature <- function(seurat, genes,
                                        label_size = label_size,
                                        label_short = label_short,
                                        hide_ticks = hide_ticks,
+                                       point_size = point_size,
                                        dim1 = dim1,
                                        dim2 = dim2)
         }
