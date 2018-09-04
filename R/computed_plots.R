@@ -2,7 +2,7 @@
 
 
 
-#' Colour cells in t-SNE space by gene expression
+#' Colour cells in t-SNE or PCA space by gene expression
 #'
 #' Plot a low-dimensional embedding of the cells,
 #' coloured by expression of a gene, or mean expression of a group of marker
@@ -16,6 +16,9 @@
 #' retrieves t-SNE by default. This should match the names of the elements of
 #' the list seurat@@dr, so it will typically be one of "pca" or "tsne".
 #' Default: "tsne"
+#' @param dim1 Numeric, index of dimension from \code{reduction} to plot on
+#' the x-axis. e.g. to plot the 3rd PC on the x-axis, pass 3. Default: 1.
+#' @param dim2 Numeric, like \code{dim2}, but for the y-axis. Default: 2.
 #' @param label Logical, whether to label clusters on the plot. Default: TRUE.
 #' @param palette String or character vector. If a string,
 #' one of "viridis", "blues", or "redgrey", specifying which gradient
@@ -45,7 +48,7 @@
 #' @examples
 #' tsneByMeanMarkerExpression(pbmc, "IL32")
 #' tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
-#' tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
+#' tsneByMeanMarkerExpression(pbmc, "IL32", reduction = "pca", dim1 = 1, dim2 = 3)
 tsneByMeanMarkerExpression <- function(seurat, genes,
                                        reduction = "tsne",
                                        label = TRUE,
@@ -57,18 +60,23 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
                                        legend = TRUE,
                                        hide_ticks = FALSE,
                                        limits = NULL,
-                                       label_short = FALSE) {
+                                       label_short = FALSE,
+                                       dim1 = 1,
+                                       dim2 = 2,
+                                       return_df = FALSE) {
 
     # Get mean expression for markers
     exp_df <- meanMarkerExpression(seurat, genes)
 
     # Get dimensionality reduction coordinates
-    exp_df <- addEmbedding(seurat, exp_df, reduction) %>%
+    exp_df <- addEmbedding(seurat, exp_df, reduction, dim1, dim2) %>%
         # Order in which points will be plot, "front" points at the bottom
         dplyr::arrange(Mean_marker_expression)
 
+    if (return_df) return(exp_df)
+
     # Get the variable names
-    vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
+    vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(dim1, dim2)]
 
     # Set limits: if not provided, use default min/max
     if (is.null(limits)) limits <- c(NA, NA)
@@ -115,21 +123,32 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 
     }
 
+
     if (label) {
 
         if (reduction == "pca") {
 
             message("Plotting labels is currently only available for reduction = 'tsne';",
                     " returning plot without labels.")
-            return(gg)
+        } else {
+
+            centers <- clusterCenters(seurat)
+            gg <- gg + addLabels(centers, label_repel, label_size, label_short)
+
         }
-
-        centers <- clusterCenters(seurat)
-        gg <- gg + addLabels(centers, label_repel, label_size, label_short)
-
     }
 
-    axes <- gsub("_", " ", vars)
+    if (reduction == "tsne") axes <- gsub("_", " ", vars)
+    else if (reduction == "pca") {
+
+        pve <- getVarianceExplained(seurat) %>%
+            .$percent.var.explained %>%
+            round(1)
+
+        axes <- c(glue('{gsub("_", " ", vars[1])} ({pve[dim1]}%)'),
+                  glue('{gsub("_", " ", vars[2])} ({pve[dim2]}%)'))
+
+    }
 
     gg <- gg +
         xlab(axes[1]) +
@@ -195,12 +214,10 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' @aliases dashboard feature
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
-#' tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 #' dashboard(pbmc, "IL32", "Test dashboard")
 #' feature(pbmc, "IL32")
 tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label = TRUE,
-                                             reduction = "tsne",
                                              palette = "blues",
                                              title = NULL,
                                              alpha = TRUE,
@@ -213,6 +230,8 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              verbose = FALSE,
                                              hide_ticks = FALSE,
                                              label_short = FALSE) {
+
+    reduction <- "tsne"
 
     if (verbose) message("Computing percentiles...")
 
@@ -450,12 +469,16 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
 
 #' @export
-dashboard <- function(seurat, genes,
+dashboard <- function(seurat,
+                      genes,
+                      # palette = "viridis",
                       title = NULL,
                       verbose = FALSE) {
 
 
-    tsneByPercentileMarkerExpression(seurat, genes, title = title,
+    tsneByPercentileMarkerExpression(seurat, genes,
+                                     # palette = palette,
+                                     title = title,
                                      extra = TRUE, verbose = verbose)
 
 }
@@ -472,6 +495,8 @@ feature <- function(seurat, genes,
                     legend = FALSE,
                     title = NULL,
                     reduction = "tsne",
+                    dim1 = 1,
+                    dim2 = 2,
                     alpha = ifelse(statistic == "percentiles", FALSE, 0.6),
                     point_size = 0.5,
                     ncol = ifelse(length(genes) == 1, 1, ifelse(length(genes) %in% c(2, 4), 2, 3)),
@@ -483,6 +508,9 @@ feature <- function(seurat, genes,
                                                   "to plot a summary statistic of all genes.")
 
     if (statistic == "percentiles")  {
+
+        if (reduction != "pca") warning("Mapping expression by percentiles ",
+                                        "is not yet implemented for ")
 
         if (per_gene) {
 
@@ -565,7 +593,9 @@ feature <- function(seurat, genes,
                                                                             label_short = label_short,
                                                                             label_repel = label_repel,
                                                                             label_size = label_size,
-                                                                            hide_ticks = hide_ticks)),
+                                                                            hide_ticks = hide_ticks,
+                                                                            dim1 = dim1,
+                                                                            dim2 = dim2)),
                 ncol = ncol)
 
             if (is.null(title)) return(plots)
@@ -588,7 +618,9 @@ feature <- function(seurat, genes,
                                        label_repel = label_repel,
                                        label_size = label_size,
                                        label_short = label_short,
-                                       hide_ticks = hide_ticks)
+                                       hide_ticks = hide_ticks,
+                                       dim1 = dim1,
+                                       dim2 = dim2)
         }
     }
 }

@@ -41,7 +41,7 @@ A ggplot2 object
 }
 \description{
 A grid of small violin plots, one plot per gene per cluster, similar to
-Figure 5D in the Drop-seq paper by Macosko et al.
+Figure 5D in the Drop-seq paper by Macosko et al. Aka "fish plot".
 }
 \examples{
 # Use the first 15 genes in the data, order by gene

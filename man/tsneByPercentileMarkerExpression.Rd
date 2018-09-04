@@ -7,10 +7,10 @@
 \title{Colour cells in t-SNE space by percentile gene expression}
 \usage{
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
-  reduction = "tsne", palette = "blues", title = NULL, alpha = TRUE,
-  legend = TRUE, legend_options = "percentiles", point_size = 1,
-  label_repel = TRUE, label_size = 4, extra = FALSE, verbose = FALSE,
-  hide_ticks = FALSE, label_short = FALSE)
+  palette = "blues", title = NULL, alpha = TRUE, legend = TRUE,
+  legend_options = "percentiles", point_size = 1, label_repel = TRUE,
+  label_size = 4, extra = FALSE, verbose = FALSE, hide_ticks = FALSE,
+  label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -72,7 +72,6 @@ group of marker genes.
 }
 \examples{
 tsneByPercentileMarkerExpression(pbmc, "IL32")
-tsneByPercentileMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")
 dashboard(pbmc, "IL32", "Test dashboard")
 feature(pbmc, "IL32")
 }

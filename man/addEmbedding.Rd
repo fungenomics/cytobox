@@ -4,7 +4,7 @@
 \alias{addEmbedding}
 \title{addEmbedding}
 \usage{
-addEmbedding(seurat, df, reduction = "tsne")
+addEmbedding(seurat, df, reduction = "tsne", dim1 = 1, dim2 = 2)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,

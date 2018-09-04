@@ -25,11 +25,11 @@
 #'                  Cluster = pbmc@meta.data$res.1)
 #'
 #' addEmbedding(pbmc, df, reduction = "tsne")
-addEmbedding <- function(seurat, df, reduction = "tsne") {
+addEmbedding <- function(seurat, df, reduction = "tsne", dim1 = 1, dim2 = 2) {
 
     # Get the axes for the reduced space
     # See here: http://dplyr.tidyverse.org/articles/programming.html#setting-variable-names
-    vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
+    vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(dim1, dim2)]
 
     df$Cell <- as.character(df$Cell)
 
@@ -184,3 +184,31 @@ whichCells <- function(seurat, clusters) {
 
 
 
+
+#' Compute variance explained by PCA, given a Seurat object for which the PCA
+#' dim. reduction has been calculated
+#'
+#' @param seurat Seurat object
+#' @param n Numeric, number of PCs for which variance should be reported.
+#' Default: 10
+#'
+#' @return List with two vectors, "percent.var.explained" and "cumulative.var.explained",
+#' reported for the first \code{n} PCs
+#'
+#' @examples
+#' getVarianceExplained(pbmc, n = 5)
+#'
+#' @author Selin Jessa
+#' @export
+getVarianceExplained <- function(seurat, n = 10) {
+
+    sdev <- seurat@dr$pca@sdev
+    variance <- sdev^2
+    sum.variance <- sum(variance)
+    proportion.variance <- variance/sum.variance * 100
+    acc_prop_var <- cumsum(proportion.variance)
+
+    return(list(percent.var.explained = head(proportion.variance, n),
+                cum.var.explained = head(acc_prop_var, n)))
+
+}

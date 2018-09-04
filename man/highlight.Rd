@@ -5,7 +5,7 @@
 \title{Highlight select clusters on a tSNE plot}
 \usage{
 highlight(seurat, clusters, original_colours = NULL,
-  default_colour = "gray80", label_all = FALSE, ...)
+  default_colour = "gray90", label_all = FALSE, label = TRUE, ...)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
@@ -33,7 +33,6 @@ by which to colour cells. Default: NULL, colour cells by cluster (in \code{seura
 If specifying \code{colour_by} and providing colours to the \code{colours}
 argument, specify whether the \code{colour_by} variable is discrete or continuous.
 Default: discrete.}
-  \item{label}{Logical, whether to plot cluster labels. Default: TRUE}
   \item{point_size}{Numeric, size of points in scatter plot. Default: 0.6}
   \item{alpha}{Numeric, fixed alpha value for points: Default: 0.8}
   \item{legend}{Logical, whether to plot legend. Default: FALSE if \code{colour_by}
