@@ -474,13 +474,13 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 #' @export
 dashboard <- function(seurat,
                       genes,
-                      # palette = "viridis",
+                      palette = "viridis",
                       title = NULL,
                       verbose = FALSE) {
 
 
     tsneByPercentileMarkerExpression(seurat, genes,
-                                     # palette = palette,
+                                     palette = palette,
                                      title = title,
                                      extra = TRUE, verbose = verbose)
 
@@ -489,7 +489,7 @@ dashboard <- function(seurat,
 #' @export
 feature <- function(seurat, genes,
                     per_gene = TRUE,
-                    statistic = "percentiles",
+                    statistic = "mean",
                     label = TRUE,
                     palette = "redgrey",
                     label_repel = FALSE,
