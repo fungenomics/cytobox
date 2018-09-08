@@ -2,10 +2,10 @@
 
 
 
-#' meanMarkerExprByCluster
+#' meanClusterMarkerExpr
 #'
-#' Compute the mean expression of markers for each cluster in one dataset,
-#' in each cluster of another dataset. Used for \code{\link{markerViolinPlot}}
+#' For each cluster, compute each cell's mean expression of that cluster's
+#' markers. Used for \code{\link{markerViolinPlot}}.
 #'
 #' @param seurat Seurat object, whose expression values will be used
 #' @param markers Markers data frame, for the same or another Seurat object. The
@@ -24,15 +24,15 @@
 #' library(dplyr)
 #'
 #' # Using the same sample's marker:
-#' meanMarkerExprByCluster(pbmc, markers_pbmc, "gene")
+#' meanClusterMarkerExpr(pbmc, markers_pbmc, "gene")
 #'
 #' # Change the name of the clusters in the markers df, as if it were
 #' # from a different sample where the clusters are A, B, C, D:
 #' markers2 <- mutate(markers_pbmc, cluster = recode(
 #'     cluster, `0` = "A", `1` = "B", `2` = "C", `3` = "D"))
 #'
-#' meanMarkerExprByCluster(pbmc, markers2, "gene")
-meanMarkerExprByCluster <- function(seurat, markers, marker_col = "gene") {
+#' meanClusterMarkerExpr(pbmc, markers2, "gene")
+meanClusterMarkerExpr <- function(seurat, markers, marker_col = "gene") {
 
     perCluster <- function(i) {
 
@@ -94,7 +94,7 @@ pairwiseVln <- function(seurat1, markers, seurat2,
 
     clusters2 <- glue("{sample_names[2]} cluster {levels(seurat2@ident)}")
 
-    exp <- meanMarkerExprByCluster(seurat1, markers, marker_col)
+    exp <- meanClusterMarkerExpr(seurat1, markers, marker_col)
 
     gg <- exp %>%
         tidyr::gather(s2_cluster, mean_expression, 3:ncol(.)) %>%
