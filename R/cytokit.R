@@ -38,7 +38,7 @@ NULL
 #' @importFrom rlang :=
 NULL
 
-#' @importFrom stats median
+#' @importFrom stats median cor
 NULL
 
 #' @importFrom cowplot plot_grid

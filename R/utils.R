@@ -185,6 +185,8 @@ whichCells <- function(seurat, clusters) {
 
 
 
+#' getVarianceExplained
+#'
 #' Compute variance explained by PCA, given a Seurat object for which the PCA
 #' dim. reduction has been calculated
 #'
@@ -198,7 +200,7 @@ whichCells <- function(seurat, clusters) {
 #' @examples
 #' getVarianceExplained(pbmc, n = 5)
 #'
-#' @author Selin Jessa
+#' @author Adapted from Yang Yang
 #' @export
 getVarianceExplained <- function(seurat, n = 10) {
 

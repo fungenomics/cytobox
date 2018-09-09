@@ -107,7 +107,7 @@ highlight(pbmc, c(2, 3), default_colour = "none")
 
 # Computed visualizations
 
-Plot a t-SNE coloured by mean marker expression
+Plot a t-SNE coloured by mean marker expression, feature-plot style:
 
 ```{r tsneByMeanMarkerExpression, fig.width = 6, fig.height = 4, echo = TRUE, eval = TRUE}
 

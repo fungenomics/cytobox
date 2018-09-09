@@ -69,7 +69,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
                                        point_size = 1) {
 
     # Get mean expression for markers
-    exp_df <- meanMarkerExpression(seurat, genes)
+    exp_df <- meanGeneExpression(seurat, genes)
 
     # Get dimensionality reduction coordinates
     exp_df <- addEmbedding(seurat, exp_df, reduction, dim1, dim2) %>%
@@ -217,7 +217,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' @aliases dashboard feature
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
-#' dashboard(pbmc, "IL32", "Test dashboard")
+#' dashboard(pbmc, "IL32", title = "Test dashboard")
 #' feature(pbmc, "IL32")
 tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label = TRUE,
@@ -420,7 +420,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
             if (verbose) message("Computing means...")
 
             # Ridge plot
-            df_means <- meanMarkerExpression(seurat, genes) %>%
+            df_means <- meanGeneExpression(seurat, genes) %>%
                 full_join(df, by = "Cell") %>%
                 group_by(Cluster) %>%
                 mutate(Median = median(Gradient_group)) %>%

@@ -1,6 +1,6 @@
-context("test-pairwise-comparisons.R")
+context("test-comparisons.R")
 
-test_that("meanMarkerExprByCluster works", {
+test_that("meanMarkerExpressionPerCell works", {
 
     markers2 <- dplyr::mutate(markers_pbmc,
                               cluster = recode(cluster,
@@ -14,7 +14,7 @@ test_that("meanMarkerExprByCluster works", {
                          D = as.numeric(c(1.488204, 1.086767, 1.013582)),
                          stringsAsFactors = FALSE)
 
-    expect_equal(head(meanMarkerExprByCluster(pbmc, markers2), 3),
+    expect_equal(head(meanMarkerExpressionPerCell(pbmc, markers2), 3),
                  df_out, tolerance = 1e-3)
 
 })

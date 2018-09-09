@@ -72,7 +72,7 @@ group of marker genes.
 }
 \examples{
 tsneByPercentileMarkerExpression(pbmc, "IL32")
-dashboard(pbmc, "IL32", "Test dashboard")
+dashboard(pbmc, "IL32", title = "Test dashboard")
 feature(pbmc, "IL32")
 }
 \author{

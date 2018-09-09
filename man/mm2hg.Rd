@@ -4,21 +4,27 @@
 \alias{mm2hg}
 \title{mm2hg}
 \usage{
-mm2hg(...)
+mm2hg(x, ...)
 }
 \arguments{
-\item{...}{Mouse genes to convert, as individual strings or one character vector}
-}
-\value{
-Character vector of converted names
+\item{x}{Character vector or matrix with mouse gene symbols to convert.
+If character, provide either individual strings or one character vector.
+If a matrix, rownames should be gene symbols.}
 }
 \description{
-Convert genes from mouse to human, wrapper around \code{\link{convertName}}
+Convert genes from mouse to human, wrapper around \code{\link{convertGenesBetweenSpeciesHomologs}}.
+For vectors, the output is \strong{not order preserving}.
+For matrices, order is preserved, but \strong{genes where the homolog is not
+found are silently dropped}.
 }
 \examples{
 mm2hg("Tubb5", "Nes")
 mm2hg(c("Tubb5", "Nes"))
+
+mat1 <- matrix(seq(1, 15), nrow = 3)
+rownames(mat1) <- c("Gfap", "Fabp7", "Foo")
+mm2hg(mat1)
 }
 \author{
-adapted from Claudia Kleinman
+Selin Jessa, adapted from Claudia Kleinman
 }
