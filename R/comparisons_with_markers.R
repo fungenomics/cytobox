@@ -2,10 +2,10 @@
 
 
 
-#' meanMarkerExprByCluster
+#' meanMarkerExpression
 #'
-#' Compute the mean expression of markers for each cluster in one dataset,
-#' in each cluster of another dataset. Used for \code{\link{markerViolinPlot}}
+#' This function computes each cell's mean expression of each cluster's
+#' markers. Used for \code{\link{markerViolinPlot}}.
 #'
 #' @param seurat Seurat object, whose expression values will be used
 #' @param markers Markers data frame, for the same or another Seurat object. The
@@ -24,15 +24,15 @@
 #' library(dplyr)
 #'
 #' # Using the same sample's marker:
-#' meanMarkerExprByCluster(pbmc, markers_pbmc, "gene")
+#' meanMarkerExpressionPerCell(pbmc, markers_pbmc, "gene")
 #'
 #' # Change the name of the clusters in the markers df, as if it were
 #' # from a different sample where the clusters are A, B, C, D:
 #' markers2 <- mutate(markers_pbmc, cluster = recode(
 #'     cluster, `0` = "A", `1` = "B", `2` = "C", `3` = "D"))
 #'
-#' meanMarkerExprByCluster(pbmc, markers2, "gene")
-meanMarkerExprByCluster <- function(seurat, markers, marker_col = "gene") {
+#' meanMarkerExpressionPerCell(pbmc, markers2, "gene")
+meanMarkerExpressionPerCell <- function(seurat, markers, marker_col = "gene") {
 
     perCluster <- function(i) {
 
@@ -94,7 +94,7 @@ pairwiseVln <- function(seurat1, markers, seurat2,
 
     clusters2 <- glue("{sample_names[2]} cluster {levels(seurat2@ident)}")
 
-    exp <- meanMarkerExprByCluster(seurat1, markers, marker_col)
+    exp <- meanMarkerExpressionPerCell(seurat1, markers, marker_col)
 
     gg <- exp %>%
         tidyr::gather(s2_cluster, mean_expression, 3:ncol(.)) %>%
@@ -137,20 +137,25 @@ markerViolinPlot <- pairwiseVln
 #' percentMarkerOverlap(markers_pbmc, markers_pbmc)
 percentMarkerOverlap <- function(markers1, markers2, mode = "min", marker_col = "gene") {
 
-    n_clust1 <- length(unique(markers1$cluster))
-    n_clust2 <- length(unique(markers2$cluster))
+    clust1 <- unique(markers1$cluster)
+    clust2 <- unique(markers2$cluster)
+
+    n_clust1 <- length(clust1)
+    n_clust2 <- length(clust2)
 
     olaps_s1 <- vector("list", n_clust1 * n_clust2)
     olaps_s2 <- vector("list", n_clust1 * n_clust2)
     k <- 1
 
-    for (i in 0:(n_clust1 - 1)) {
+    for (c1 in clust1) {
 
-        for (j in 0:(n_clust2 - 1)) {
+        for (c2 in clust2) {
 
-            mk_1 <- markers1[markers1$cluster == i,][[marker_col]]
-            mk_2 <- markers2[markers2$cluster == j,][[marker_col]]
+            mk_1 <- markers1[markers1$cluster == c1, ][[marker_col]]
+            mk_2 <- markers2[markers2$cluster == c2, ][[marker_col]]
+
             n_olap <- length(base::intersect(mk_1, mk_2))
+
             olaps_s1[[k]] <- n_olap / length(mk_1)
             olaps_s2[[k]] <- n_olap / length(mk_2)
             k <- k + 1
@@ -158,8 +163,8 @@ percentMarkerOverlap <- function(markers1, markers2, mode = "min", marker_col = 
         }
     }
 
-    df_olap <- data.frame(s1_cluster = rep(0:(n_clust1-1), each = n_clust2),
-                           s2_cluster = rep(0:(n_clust2-1), times = n_clust1))
+    df_olap <- data.frame(s1_cluster = rep(clust1, each = n_clust2),
+                          s2_cluster = rep(clust2, times = n_clust1))
 
     if (mode == "s1") df_olap$marker_overlap <- unlist(olaps_s1)
     else if (mode == "s2") df_olap$marker_overlap <- unlist(olaps_s2)

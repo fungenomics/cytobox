@@ -2,8 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{getVarianceExplained}
 \alias{getVarianceExplained}
-\title{Compute variance explained by PCA, given a Seurat object for which the PCA
-dim. reduction has been calculated}
+\title{getVarianceExplained}
 \usage{
 getVarianceExplained(seurat, n = 10)
 }
@@ -26,5 +25,5 @@ getVarianceExplained(pbmc, n = 5)
 
 }
 \author{
-Selin Jessa
+Adapted from Yang Yang
 }

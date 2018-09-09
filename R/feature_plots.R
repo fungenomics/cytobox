@@ -26,6 +26,8 @@
 #' to interpolate to create the scael. Default: redgrey.
 #' @param title (Optional) String specifying the plot title
 #' @param alpha Numeric, fixed alpha for points. Default: 0.6
+#' @param point_size Numeric, size of points in scatterplot. Default: 1. (A smaller
+#' value around 0.5 is better for plots which will be viewed at small scale.)
 #' @param label_repel Logical, if \code{label} is TRUE, whether to plot cluster
 #' labels repelled from the center, on a slightly transparent white background and
 #' with an arrow pointing to the cluster center. If FALSE, simply plot the
@@ -63,10 +65,11 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
                                        label_short = FALSE,
                                        dim1 = 1,
                                        dim2 = 2,
-                                       return_df = FALSE) {
+                                       return_df = FALSE,
+                                       point_size = 1) {
 
     # Get mean expression for markers
-    exp_df <- meanMarkerExpression(seurat, genes)
+    exp_df <- meanGeneExpression(seurat, genes)
 
     # Get dimensionality reduction coordinates
     exp_df <- addEmbedding(seurat, exp_df, reduction, dim1, dim2) %>%
@@ -84,7 +87,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
     # Plot
     gg <- exp_df %>%
         ggplot(aes(x = exp_df[[vars[1]]], y = exp_df[[vars[2]]])) +
-        geom_point(aes(colour = Mean_marker_expression), size = rel(0.8), alpha = alpha)
+        geom_point(aes(colour = Mean_marker_expression), size = point_size, alpha = alpha)
 
     if (length(palette) == 1) {
 
@@ -214,7 +217,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' @aliases dashboard feature
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
-#' dashboard(pbmc, "IL32", "Test dashboard")
+#' dashboard(pbmc, "IL32", title = "Test dashboard")
 #' feature(pbmc, "IL32")
 tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              label = TRUE,
@@ -417,7 +420,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
             if (verbose) message("Computing means...")
 
             # Ridge plot
-            df_means <- meanMarkerExpression(seurat, genes) %>%
+            df_means <- meanGeneExpression(seurat, genes) %>%
                 full_join(df, by = "Cell") %>%
                 group_by(Cluster) %>%
                 mutate(Median = median(Gradient_group)) %>%
@@ -471,13 +474,13 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 #' @export
 dashboard <- function(seurat,
                       genes,
-                      # palette = "viridis",
+                      palette = "viridis",
                       title = NULL,
                       verbose = FALSE) {
 
 
     tsneByPercentileMarkerExpression(seurat, genes,
-                                     # palette = palette,
+                                     palette = palette,
                                      title = title,
                                      extra = TRUE, verbose = verbose)
 
@@ -486,7 +489,7 @@ dashboard <- function(seurat,
 #' @export
 feature <- function(seurat, genes,
                     per_gene = TRUE,
-                    statistic = "percentiles",
+                    statistic = "mean",
                     label = TRUE,
                     palette = "redgrey",
                     label_repel = FALSE,
@@ -594,6 +597,7 @@ feature <- function(seurat, genes,
                                                                             label_repel = label_repel,
                                                                             label_size = label_size,
                                                                             hide_ticks = hide_ticks,
+                                                                            point_size = point_size,
                                                                             dim1 = dim1,
                                                                             dim2 = dim2)),
                 ncol = ncol)
@@ -619,6 +623,7 @@ feature <- function(seurat, genes,
                                        label_size = label_size,
                                        label_short = label_short,
                                        hide_ticks = hide_ticks,
+                                       point_size = point_size,
                                        dim1 = dim1,
                                        dim2 = dim2)
         }

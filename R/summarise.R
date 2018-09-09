@@ -1,7 +1,7 @@
 # Functions for computing summary stats
 
 
-#' meanMarkerExpression
+#' meanGeneExpression
 #'
 #' Calculate, for each cell, the mean expression of the given set of marker genes.
 #'
@@ -16,8 +16,8 @@
 #' @export
 #' @author Selin Jessa
 #' @examples
-#' meanMarkerExpression(pbmc, genes = c("IL32", "MS4A1"))
-meanMarkerExpression <- function(seurat, genes) {
+#' meanGeneExpression(pbmc, genes = c("IL32", "MS4A1"))
+meanGeneExpression <- function(seurat, genes) {
 
     # Get expression data from the Seurat seurat
     data.frame(Cell = seurat@cell.names,

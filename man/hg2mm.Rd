@@ -4,21 +4,23 @@
 \alias{hg2mm}
 \title{hg2mm}
 \usage{
-hg2mm(...)
+hg2mm(x, ...)
 }
 \arguments{
-\item{...}{Human genes to convert, as individual strings or one character vector}
-}
-\value{
-Character vector of converted names
+\item{x}{Character vector or matrix with human gene symbols to convert.
+If character, provide either individual strings or one character vector.
+If a matrix, rownames should be gene symbols.}
 }
 \description{
-Convert genes from human to mouse, wrapper around \code{\link{convertName}}
+Convert genes from human to mouse, wrapper around \code{\link{convertGenesBetweenSpeciesHomologs}}.
+For vectors, the output is \strong{not order preserving}.
+For matrices, order is preserved, but \strong{genes where the homolog is not
+found are silently dropped}.
 }
 \examples{
 hg2mm("TUBB", "NES")
 hg2mm(c("TUBB", "NES"))
 }
 \author{
-adapted from Claudia Kleinman
+Selin Jessa, adapted from Claudia Kleinman
 }
