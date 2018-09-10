@@ -116,7 +116,7 @@ convertGenesBetweenSpeciesHomologs.matrix <- function(x, from, to = NULL) {
     gene_map <- annotation %>%
         # TODO: This drops gene names if there are duplicates
         distinct(gene_symbol, .keep_all = TRUE) %>%
-        filter(!is.na(homologous_gene_symbol)) %>%
+        filter(!is.na(gene_symbol), !is.na(homologous_gene_symbol)) %>%
         select(gene_symbol, homologous_gene_symbol) %>%
         as.data.frame() %>%
         tibble::column_to_rownames(., var = "gene_symbol")
