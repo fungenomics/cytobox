@@ -4,7 +4,8 @@
 \alias{tsneByPercentileMarkerExpressionAlexis}
 \title{cellCyclePlot}
 \usage{
-tsneByPercentileMarkerExpressionAlexis(seurat, genes, legend = "percentiles")
+tsneByPercentileMarkerExpressionAlexis(seurat, genes,
+  legend = "percentiles")
 }
 \arguments{
 \item{seurat}{Seurat object.}
