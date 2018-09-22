@@ -9,8 +9,8 @@
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
   palette = "blues", title = NULL, alpha = TRUE, legend = TRUE,
   legend_options = "percentiles", point_size = 1, label_repel = TRUE,
-  label_size = 4, extra = FALSE, verbose = FALSE, hide_ticks = FALSE,
-  label_short = FALSE)
+  label_size = 4, extra = FALSE, verbose = FALSE,
+  hide_ticks = FALSE, label_short = FALSE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,

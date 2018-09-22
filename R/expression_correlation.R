@@ -84,16 +84,21 @@ correlateExpression <- function(s1, s2, genes, from_sp, to_sp,
     if (class(s1) == "seurat") mat1 <- meanClusterExpression(s1, genes)
     else mat1 <- s1
 
-    if (class(s2) == "seurat") mat2 <- meanClusterExpression(s2, genes)
-    else mat2 <- s2
+    if (class(s2) == "seurat") {
 
-    # 1. If needed, convert matrices to have gene names in the same species
+        # If species are not the same, don't use the provided genes for s2
+        if (from_sp != to_sp) mat2 <- meanClusterExpression(s2)
+        else mat2 <- meanClusterExpression(s2, genes)
+
+    } else mat2 <- s2
+
+    # 1. If needed, convert matrices to have gene names in the same species (as s1)
     if (from_sp != to_sp) {
 
         # mat2 is in hg, convert to mm
-        if (to_sp == "hg") mat2 <- mm2hg(mat2)
+        if (to_sp == "hg") mat2 <- hg2mm(mat2)
         # mat2 is in mm, convert to hg
-        else if (to_sp == "mm") mat2 <- hg2mm(mat2)
+        else if (to_sp == "mm") mat2 <- mm2hg(mat2)
 
     }
     # Now we should have two matrices with gene names in the same species

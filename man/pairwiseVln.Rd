@@ -5,8 +5,9 @@
 \alias{markerViolinPlot}
 \title{pairwiseVln}
 \usage{
-pairwiseVln(seurat1, markers, seurat2, sample_names = c(seurat1@project.name,
-  seurat2@project.name), marker_col = "gene")
+pairwiseVln(seurat1, markers, seurat2,
+  sample_names = c(seurat1@project.name, seurat2@project.name),
+  marker_col = "gene")
 }
 \arguments{
 \item{seurat1}{Seurat object for which to plot expression}
