@@ -9,6 +9,6 @@
 pbmc
 }
 \description{
-A subsetted version of 10X Genomics' 3k PBMC dataset
+pbmc
 }
 \keyword{datasets}

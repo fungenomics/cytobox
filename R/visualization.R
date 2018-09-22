@@ -58,6 +58,9 @@
 #' in the variable specified in \code{colour_by}. Default: light gray ("gray80),
 #' change to "white" to purposely hide those cells. If you do not want to plot
 #' certain cells at all, pass names of cells to plot to the \code{cells} argument.
+#' @param limits Numeric vector of length two providing the lower and upper limits of
+#' the colour scale, if colouring by a continuous variable. Default: min and max
+#' of the values the variable takes on in the data.
 #' @param constrain_scale Logical, if plotting a subset of cells, whether to
 #' use the limits of the tSNE embedding computed on the whole dataset (useful
 #' for constraining scales across plots while only plotting specific cells).
@@ -95,6 +98,7 @@ tsne <- function(seurat,
                  title = NULL,
                  label_short = FALSE,
                  na_color = "gray80",
+                 limits = NULL,
                  constrain_scale = TRUE) {
 
     embedding <- data.frame(Cell = seurat@cell.names,
@@ -153,13 +157,31 @@ tsne <- function(seurat,
 
     } else {
 
+        if (is.null(limits)) lims <- c(NA, NA)
+        else lims <- limits
+
         gg <- gg +
             geom_point(aes_string(colour = colour_by), size = point_size, alpha = alpha)
 
-        if (!is.null(colours)) { # Otherwise default ggplot2 colours are used
+        if (!is.null(colours)) {
 
             if (colour_by_type == "discrete") gg <- gg + scale_color_manual(values = colours, na.value = na_color)
-            else if (colour_by_type == "continuous") gg <- gg + scale_color_gradientn(colours = colours, na.value = na_color)
+            else if (colour_by_type == "continuous") {
+
+                gg <- gg + scale_color_gradientn(colours = colours,
+                                                 na.value = na_color,
+                                                 limits = lims)
+            }
+
+        } else {
+
+            if (colour_by_type == "continuous") { # Otherwise for discrete, default ggplot2 colours are used
+
+                gg <- gg + scale_color_gradientn(colours = grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "OrRd"))(n = 100),
+                                                 na.value = na_color,
+                                                 limits = lims)
+
+            }
         }
 
     }

@@ -4,8 +4,7 @@
 \alias{vln}
 \title{Generate violin plots of gene expression in each cluster}
 \usage{
-vln(seurat, genes, facet_by = "cluster", point_size = 0.1,
-  adjust = 1)
+vln(seurat, genes, facet_by = "cluster", point_size = 0.1, adjust = 1)
 }
 \arguments{
 \item{seurat}{Seurat object}
