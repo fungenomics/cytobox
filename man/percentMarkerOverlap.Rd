@@ -4,8 +4,7 @@
 \alias{percentMarkerOverlap}
 \title{percentMarkerOverlap}
 \usage{
-percentMarkerOverlap(markers1, markers2, mode = "min",
-  marker_col = "gene")
+percentMarkerOverlap(markers1, markers2, mode = "min", marker_col = "gene")
 }
 \arguments{
 \item{markers1}{Data frame of markers for one dataset as returned by Seurat::FindAllMarkers()}
