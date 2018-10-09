@@ -504,7 +504,7 @@ feature <- function(seurat, genes,
                     alpha = ifelse(statistic == "percentiles", FALSE, 0.6),
                     point_size = 0.5,
                     ncol = ifelse(length(genes) == 1, 1, ifelse(length(genes) %in% c(2, 4), 2, 3)),
-                    hide_ticks = FALSE) {
+                    hide_ticks = TRUE) {
 
     if ((length(genes) >= 20) & per_gene) message("NOTE: you have input a lot of genes! ",
                                                   "This function by default generates ",
