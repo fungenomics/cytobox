@@ -35,6 +35,7 @@
 #' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param legend Logical, whether or not to plot legend. Default: TRUE
 #' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
+#' @param hide_axes Logical, whether to hide axis labels. Default: TRUE
 #' @param label_short (Optional/Experimental!!) Logical, if TRUE, assumes clusters
 #' (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
 #' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
@@ -61,6 +62,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
                                        label_size = 4,
                                        legend = TRUE,
                                        hide_ticks = FALSE,
+                                       hide_axes = FALSE,
                                        limits = NULL,
                                        label_short = FALSE,
                                        dim1 = 1,
@@ -162,6 +164,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
     if (!is.null(title)) gg <- gg + ggtitle(title)
     if (!legend) gg <- gg + noLegend()
     if (hide_ticks) gg <- gg + noTicks()
+    if (hide_axes) gg <- gg + xlab(NULL) + ylab(NULL)
 
     return(gg)
 
@@ -504,7 +507,8 @@ feature <- function(seurat, genes,
                     alpha = ifelse(statistic == "percentiles", FALSE, 0.6),
                     point_size = 0.5,
                     ncol = ifelse(length(genes) == 1, 1, ifelse(length(genes) %in% c(2, 4), 2, 3)),
-                    hide_ticks = TRUE) {
+                    hide_ticks = TRUE,
+                    hide_axes = TRUE) {
 
     if ((length(genes) >= 20) & per_gene) message("NOTE: you have input a lot of genes! ",
                                                   "This function by default generates ",
@@ -598,6 +602,7 @@ feature <- function(seurat, genes,
                                                                             label_repel = label_repel,
                                                                             label_size = label_size,
                                                                             hide_ticks = hide_ticks,
+                                                                            hide_axes = hide_axes,
                                                                             point_size = point_size,
                                                                             limits = limits,
                                                                             dim1 = dim1,
@@ -625,6 +630,7 @@ feature <- function(seurat, genes,
                                        label_size = label_size,
                                        label_short = label_short,
                                        hide_ticks = hide_ticks,
+                                       hide_axes = hide_axes,
                                        point_size = point_size,
                                        limits = limits,
                                        dim1 = dim1,

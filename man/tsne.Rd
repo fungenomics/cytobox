@@ -9,8 +9,8 @@ tsne(seurat, colour_by = NULL, colours = NULL,
   alpha = 0.8, legend = ifelse((is.null(colour_by)) && (label), FALSE,
   TRUE), label_repel = TRUE, label_size = 4, cells = NULL,
   order_by = NULL, clusters_to_label = NULL, hide_ticks = FALSE,
-  title = NULL, label_short = FALSE, na_color = "gray80", limits = NULL,
-  constrain_scale = TRUE)
+  title = NULL, label_short = FALSE, na_color = "gray80",
+  limits = NULL, constrain_scale = TRUE)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}

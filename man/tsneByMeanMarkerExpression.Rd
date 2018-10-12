@@ -4,9 +4,10 @@
 \alias{tsneByMeanMarkerExpression}
 \title{Colour cells in t-SNE or PCA space by gene expression}
 \usage{
-tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne", label = TRUE,
-  palette = "redgrey", title = NULL, alpha = 0.6, label_repel = TRUE,
-  label_size = 4, legend = TRUE, hide_ticks = FALSE, limits = NULL,
+tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne",
+  label = TRUE, palette = "redgrey", title = NULL, alpha = 0.6,
+  label_repel = TRUE, label_size = 4, legend = TRUE,
+  hide_ticks = FALSE, hide_axes = FALSE, limits = NULL,
   label_short = FALSE, dim1 = 1, dim2 = 2, return_df = FALSE,
   point_size = 1)
 }
@@ -42,6 +43,8 @@ cluster label at the cluster center. Default: TRUE.}
 \item{legend}{Logical, whether or not to plot legend. Default: TRUE}
 
 \item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
+
+\item{hide_axes}{Logical, whether to hide axis labels. Default: TRUE}
 
 \item{limits}{(Optional) A numeric vector of length two providing the limits to
 use for the colour scale (documentation
