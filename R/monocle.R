@@ -3,6 +3,7 @@
 #' Converts a Seurat object to a Monocle object.
 #'
 #' Full name of selected clusters must be given.
+#' In your script, you must load the monocle library, before calling this function.
 #'
 #' @param seurat Seurat object to convert to a Monocle (CellDataSet) object.
 #' @param selected_clusters Selected clusters in Seurat object. Full names of clusters must be given.
