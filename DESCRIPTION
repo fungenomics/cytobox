@@ -16,6 +16,7 @@ Imports:
     viridis (>= 0.4.1),
     magrittr (>= 1.5),
     tibble,
+    monocle (>= 2.8.0),
     rlang (>= 0.1.2),
     purrr,
     glue,
@@ -25,7 +26,7 @@ Imports:
     cowplot,
     ggridges,
     plyr
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: 
     testthat,
     knitr,
