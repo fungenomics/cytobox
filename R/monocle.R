@@ -62,24 +62,24 @@ seurat_to_monocle <- function(seurat, selected_clusters) {
     monocle@experimentData@other <- seurat@misc
 
     # Compute the size factors.
-    monocle <- estimateSizeFactors(monocle)
+    monocle <- monocle::estimateSizeFactors(monocle)
     # Compute the dispersions. Slow.
-    monocle <- estimateDispersions(monocle)
+    monocle <- monocle::estimateDispersions(monocle)
     # Detect the number of genes expressed.
-    monocle <- detectGenes(monocle, min_expr = 0.1)
+    monocle <- monocle::detectGenes(monocle, min_expr = 0.1)
 
     # Computes a smooth function describing how variance in each gene's expression across cells varies according to the mean.
-    disp_table <- dispersionTable(monocle)
+    disp_table <- monocle::dispersionTable(monocle)
 
     # Ordering_genes
     ordering_genes <- subset(disp_table, mean_expression >= 0.1 &
                                  dispersion_empirical >= 1 * dispersion_fit)$gene_id
-    monocle <- setOrderingFilter(monocle, ordering_genes)
+    monocle <- monocle::setOrderingFilter(monocle, ordering_genes)
 
     # Reduce dimensions. Slow.
-    monocle <- reduceDimension(monocle, residualModelFormulaStr="~num_genes_expressed + percent_mito")
+    monocle <- monocle::reduceDimension(monocle, residualModelFormulaStr="~num_genes_expressed + percent_mito")
     # Order cells
-    monocle <- orderCells(monocle, reverse=FALSE)
+    monocle <- monocle::orderCells(monocle, reverse=FALSE)
 
     return(monocle)
 }
@@ -192,7 +192,7 @@ tsne_plot_clusters_highlighted_with_pseudotime <- function(seurat, monocle, sele
     }
     seurat_meta_data <- seurat@meta.data
 
-    monocle_PData <- pData(monocle)
+    monocle_PData <- Biobase::pData(monocle)
     if(!"cell" %in% colnames(monocle_PData)) { monocle_PData <- rownames_to_column(monocle_PData, "cell") }
 
     seurat_meta_data <- left_join(seurat_meta_data, dplyr::select(monocle_PData, cell, Pseudotime), by=c("cell"="cell"))
