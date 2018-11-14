@@ -16,6 +16,7 @@ A CellDataSet object
 }
 \description{
 Full name of selected clusters must be given.
+In your script, you must load the monocle library, before calling this function.
 }
 \author{
 Alexis Blanchet-Cohen

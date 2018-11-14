@@ -3,6 +3,7 @@
 #' Converts a Seurat object to a Monocle object.
 #'
 #' Full name of selected clusters must be given.
+#' In your script, you must load the monocle library, before calling this function.
 #'
 #' @param seurat Seurat object to convert to a Monocle (CellDataSet) object.
 #' @param selected_clusters Selected clusters in Seurat object. Full names of clusters must be given.
@@ -55,33 +56,33 @@ seurat_to_monocle <- function(seurat, selected_clusters) {
         seurat@meta.data$cluster <- droplevels(seurat@meta.data$cluster)
         seurat@misc$colours <- seurat@misc$colours[as.character(selected_clusters)]
     }
-    monocle <- monocle::importCDS(seurat)
+    cds <- monocle::importCDS(seurat)
     # Add the sample name.
-    if (!is_empty(monocle@experimentData@name)) { monocle@experimentData@name <- seurat@project.name }
+    if (!is_empty(cds@experimentData@name)) { cds@experimentData@name <- seurat@project.name }
     # Add the misc data (colours and other information)
-    monocle@experimentData@other <- seurat@misc
+    cds@experimentData@other <- seurat@misc
 
     # Compute the size factors.
-    monocle <- BiocGenerics::estimateSizeFactors(monocle)
+    cds <- BiocGenerics::estimateSizeFactors(cds)
     # Compute the dispersions. Slow.
-    monocle <- BiocGenerics::estimateDispersions(monocle)
+    cds <- BiocGenerics::estimateDispersions(cds)
     # Detect the number of genes expressed.
-    monocle <- monocle::detectGenes(monocle, min_expr = 0.1)
+    cds <- monocle::detectGenes(cds, min_expr = 0.1)
 
     # Computes a smooth function describing how variance in each gene's expression across cells varies according to the mean.
-    disp_table <- monocle::dispersionTable(monocle)
+    disp_table <- monocle::dispersionTable(cds)
 
     # Ordering_genes
-    ordering_genes <- subset(disp_table, mean_expression >= 0.1 &
-                                 dispersion_empirical >= 1 * dispersion_fit)$gene_id
-    monocle <- monocle::setOrderingFilter(monocle, ordering_genes)
+    ordering_genes <- as.character(base::subset(disp_table, mean_expression >= 0.1 &
+                                 dispersion_empirical >= 1 * dispersion_fit)$gene_id)
+    cds <- monocle::setOrderingFilter(cds, ordering_genes)
 
     # Reduce dimensions. Slow.
-    monocle <- monocle::reduceDimension(monocle, residualModelFormulaStr="~num_genes_expressed + percent_mito")
+    cds <- monocle::reduceDimension(cds, residualModelFormulaStr="~num_genes_expressed + percent_mito")
     # Order cells
-    monocle <- monocle::orderCells(monocle, reverse=FALSE)
+    cds <- monocle::orderCells(cds, reverse=FALSE)
 
-    return(monocle)
+    return(cds)
 }
 
 #' Draws a tSNE plot highlighting the selected clusters.

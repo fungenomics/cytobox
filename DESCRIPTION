@@ -23,6 +23,8 @@ Imports:
     glue,
     tidyr,
     RColorBrewer,
+    DDRTree,
+    Rcpp,
     ggrepel,
     cowplot,
     ggridges,
