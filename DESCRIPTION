@@ -8,6 +8,7 @@ Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role
 Encoding: UTF-8
 License: file LICENSE
 LazyData: true
+biocViews:
 Depends: R (>= 3.4)
 Imports: 
     ggplot2 (>= 2.2.1),
