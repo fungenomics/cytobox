@@ -7,8 +7,6 @@
 #' @param seurat Seurat object to convert to a Monocle (CellDataSet) object.
 #' @param selected_clusters Selected clusters in Seurat object. Full names of clusters must be given.
 #'
-#' @import monocle
-#'
 #' @return A CellDataSet object
 #' @export
 #'
@@ -64,9 +62,9 @@ seurat_to_monocle <- function(seurat, selected_clusters) {
     monocle@experimentData@other <- seurat@misc
 
     # Compute the size factors.
-    monocle <- estimateSizeFactors(monocle)
+    monocle <- BiocGenerics::estimateSizeFactors(monocle)
     # Compute the dispersions. Slow.
-    monocle <- estimateDispersions(monocle)
+    monocle <- BiocGenerics::estimateDispersions(monocle)
     # Detect the number of genes expressed.
     monocle <- monocle::detectGenes(monocle, min_expr = 0.1)
 
@@ -169,7 +167,7 @@ tsne_plot_clusters_highlighted <- function(seurat, selected_clusters, legend=TRU
 tsne_plot_clusters_highlighted_with_pseudotime <- function(seurat, monocle, selected_clusters, legend=TRUE){
     seurat_meta_data <- seurat@meta.data
     if(!"cell" %in% colnames(seurat_meta_data)) {
-        seurat_meta_data <- rownames_to_column(seurat@meta.data, "cell")
+        seurat_meta_data <- tibble::rownames_to_column(seurat@meta.data, "cell")
         rownames(seurat_meta_data) <- seurat_meta_data$cell
         seurat@meta.data <- seurat_meta_data
     }
