@@ -62,9 +62,9 @@ seurat_to_monocle <- function(seurat, selected_clusters) {
     monocle@experimentData@other <- seurat@misc
 
     # Compute the size factors.
-    monocle <- estimateSizeFactors(monocle)
+    monocle <- BiocGenerics::estimateSizeFactors(monocle)
     # Compute the dispersions. Slow.
-    monocle <- estimateDispersions(monocle)
+    monocle <- BiocGenerics::estimateDispersions(monocle)
     # Detect the number of genes expressed.
     monocle <- monocle::detectGenes(monocle, min_expr = 0.1)
 
