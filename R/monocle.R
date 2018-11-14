@@ -7,6 +7,8 @@
 #' @param seurat Seurat object to convert to a Monocle (CellDataSet) object.
 #' @param selected_clusters Selected clusters in Seurat object. Full names of clusters must be given.
 #'
+#' @import monocle
+#'
 #' @return A CellDataSet object
 #' @export
 #'
@@ -62,9 +64,9 @@ seurat_to_monocle <- function(seurat, selected_clusters) {
     monocle@experimentData@other <- seurat@misc
 
     # Compute the size factors.
-    monocle <- BiocGenerics::estimateSizeFactors(monocle)
+    monocle <- estimateSizeFactors(monocle)
     # Compute the dispersions. Slow.
-    monocle <- BiocGenerics::estimateDispersions(monocle)
+    monocle <- estimateDispersions(monocle)
     # Detect the number of genes expressed.
     monocle <- monocle::detectGenes(monocle, min_expr = 0.1)
 
