@@ -62,9 +62,9 @@ seurat_to_monocle <- function(seurat, selected_clusters) {
     monocle@experimentData@other <- seurat@misc
 
     # Compute the size factors.
-    monocle <- monocle::estimateSizeFactors(monocle)
+    monocle <- BiocGenerics::estimateSizeFactors(monocle)
     # Compute the dispersions. Slow.
-    monocle <- monocle::estimateDispersions(monocle)
+    monocle <- BiocGenerics::estimateDispersions(monocle)
     # Detect the number of genes expressed.
     monocle <- monocle::detectGenes(monocle, min_expr = 0.1)
 
@@ -167,7 +167,7 @@ tsne_plot_clusters_highlighted <- function(seurat, selected_clusters, legend=TRU
 tsne_plot_clusters_highlighted_with_pseudotime <- function(seurat, monocle, selected_clusters, legend=TRUE){
     seurat_meta_data <- seurat@meta.data
     if(!"cell" %in% colnames(seurat_meta_data)) {
-        seurat_meta_data <- rownames_to_column(seurat@meta.data, "cell")
+        seurat_meta_data <- tibble::rownames_to_column(seurat@meta.data, "cell")
         rownames(seurat_meta_data) <- seurat_meta_data$cell
         seurat@meta.data <- seurat_meta_data
     }
