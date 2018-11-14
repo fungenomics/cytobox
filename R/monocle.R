@@ -55,7 +55,7 @@ seurat_to_monocle <- function(seurat, selected_clusters) {
         seurat@meta.data$cluster <- droplevels(seurat@meta.data$cluster)
         seurat@misc$colours <- seurat@misc$colours[as.character(selected_clusters)]
     }
-    monocle <- importCDS(seurat)
+    monocle <- monocle::importCDS(seurat)
     # Add the sample name.
     if (!is_empty(monocle@experimentData@name)) { monocle@experimentData@name <- seurat@project.name }
     # Add the misc data (colours and other information)
