@@ -7,13 +7,6 @@ Internal Kleinman Lab toolkit for analyzing single cell RNA-seq data.
 
 ## Installation
 
-#### Hydra/Cedar/Guillimin
-
-To use `cytokit` on Hydra or Guillimin, you can simply load it with `library(cytokit)` in R,
-as it's already installed in the Kleinman lab spaces. To update the version on the server, you can use the instructions below.
-
-#### Locally
-
 Since the repo is private, there are a couple steps to install `cytokit`:
 
 1. Install [`devtools`](https://cran.r-project.org/web/packages/devtools/)
@@ -64,7 +57,7 @@ Some functions will specify the author in the documentation, whom you could cont
 
 - The patch version z is updated for very minor changes like bug fixes
 - The minor version y is udpated for minor but important changes like addition of new functions
-- The major version z is updated for major changes, which may introduce backwards incompatibiility
+- The major version x is updated for major changes, which may introduce backwards incompatibiility
 
 #### Keeping track of cytokit versions in your work
 
