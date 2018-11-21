@@ -286,8 +286,8 @@ pca <- function(seurat, ...) {
 #' # Don't plot cells in other clusters
 #' highlight(pbmc, c(2, 3), default_colour = "none")
 highlight <- function(seurat,
-                      reduction = "tsne",
                       clusters,
+                      reduction = "tsne",
                       original_colours = NULL,
                       default_colour = "gray90",
                       label_all = FALSE,

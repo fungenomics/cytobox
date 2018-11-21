@@ -4,7 +4,7 @@
 \alias{highlight}
 \title{Highlight select clusters on a tSNE plot}
 \usage{
-highlight(seurat, reduction = "tsne", clusters,
+highlight(seurat, clusters, reduction = "tsne",
   original_colours = NULL, default_colour = "gray90",
   label_all = FALSE, label = TRUE, ...)
 }
