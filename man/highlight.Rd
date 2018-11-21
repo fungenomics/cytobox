@@ -4,8 +4,9 @@
 \alias{highlight}
 \title{Highlight select clusters on a tSNE plot}
 \usage{
-highlight(seurat, clusters, original_colours = NULL,
-  default_colour = "gray90", label_all = FALSE, label = TRUE, ...)
+highlight(seurat, clusters, reduction = "tsne",
+  original_colours = NULL, default_colour = "gray90",
+  label_all = FALSE, label = TRUE, ...)
 }
 \arguments{
 \item{seurat}{Seurat object, where Seurat::RunTSNE() has been applied}
@@ -25,7 +26,7 @@ Default: default ggplot2 colours used by Seurat.}
 \item{label_all}{Logical, if labelling the tSNE (if \code{label == TRUE}), whether
 to label all the clusters, or only the ones being highlighted. Default: FALSE.}
 
-\item{...}{Arguments passed on to \code{tsne}
+\item{...}{Arguments passed on to \code{plotDR}
 \describe{
   \item{colour_by}{(Optional) String, specifying the column in \code{seurat@meta.data}
 by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@ident}).}
@@ -72,6 +73,8 @@ of the values the variable takes on in the data.}
 use the limits of the tSNE embedding computed on the whole dataset (useful
 for constraining scales across plots while only plotting specific cells).
 Default: TRUE}
+  \item{dim1}{Numeric, dimension of embedding to use for x-axis. Default = 1.}
+  \item{dim2}{Numeric, dimension of embedding to use for y-axis. Default = 2.}
 }}
 }
 \value{

@@ -3,7 +3,6 @@
 \name{tsneByPercentileMarkerExpression}
 \alias{tsneByPercentileMarkerExpression}
 \alias{dashboard}
-\alias{feature}
 \title{Colour cells in t-SNE space by percentile gene expression}
 \usage{
 tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,

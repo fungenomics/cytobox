@@ -35,12 +35,14 @@ or all the options, so see the documentation for more details.
 
 ## t-SNE/PCA
 
-Basic t-SNE of a dataset (like `Seurat::TSNEPlot()`):
+Basic t-SNE of a dataset (like `Seurat::TSNEPlot()`), or PCA:
 
 ```{r tsne, fig.width = 6, fig.height = 4}
 
 tsne(pbmc)
 tsne(pbmc, label_repel = FALSE)
+
+pca(pbmc, label_repel = FALSE, point_size = 2)
 
 ```
 
@@ -102,6 +104,9 @@ highlight(pbmc, c(2, 3), c("red", "blue"))
 
 # Don't plot cells in other clusters
 highlight(pbmc, c(2, 3), default_colour = "none")
+
+# PCA space
+highlight(pbmc, c(2, 3), default_colour = "none", reduction = "pca")
 
 ```
 

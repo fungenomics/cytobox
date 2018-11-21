@@ -217,7 +217,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' @return A ggplot object
 #'
 #' @author Selin Jessa
-#' @aliases dashboard feature
+#' @aliases dashboard
 #' @examples
 #' tsneByPercentileMarkerExpression(pbmc, "IL32")
 #' dashboard(pbmc, "IL32", title = "Test dashboard")
@@ -489,6 +489,7 @@ dashboard <- function(seurat,
 
 }
 
+#' @describeIn tsneByMeanMarkerExpression Shortcut function for plotting mean expression
 #' @export
 feature <- function(seurat, genes,
                     per_gene = TRUE,
