@@ -2,6 +2,7 @@
 % Please edit documentation in R/feature_plots.R
 \name{tsneByMeanMarkerExpression}
 \alias{tsneByMeanMarkerExpression}
+\alias{feature}
 \title{Colour cells in t-SNE or PCA space by gene expression}
 \usage{
 tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne",
@@ -10,6 +11,15 @@ tsneByMeanMarkerExpression(seurat, genes, reduction = "tsne",
   hide_ticks = FALSE, hide_axes = FALSE, limits = NULL,
   label_short = FALSE, dim1 = 1, dim2 = 2, return_df = FALSE,
   point_size = 1)
+
+feature(seurat, genes, per_gene = TRUE, statistic = "mean",
+  label = TRUE, palette = "redgrey", label_repel = FALSE,
+  label_size = 4, label_short = FALSE, legend = FALSE,
+  title = NULL, reduction = "tsne", limits = c(NA, NA), dim1 = 1,
+  dim2 = 2, alpha = ifelse(statistic == "percentiles", FALSE, 0.6),
+  point_size = 0.5, ncol = ifelse(length(genes) == 1, 1,
+  ifelse(length(genes) \%in\% c(2, 4), 2, 3)), hide_ticks = TRUE,
+  hide_axes = TRUE)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
@@ -72,6 +82,11 @@ coloured by expression of a gene, or mean expression of a group of marker
 genes. Defaults to t-SNE space, but see the \code{reduction} argument for
 how to plot in PCA space instead.
 }
+\section{Functions}{
+\itemize{
+\item \code{feature}: Shortcut function for plotting mean expression
+}}
+
 \examples{
 tsneByMeanMarkerExpression(pbmc, "IL32")
 tsneByMeanMarkerExpression(pbmc, c("IL32", "CD2"), reduction = "pca")

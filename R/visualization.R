@@ -1,12 +1,11 @@
 # Functions for basic visualization of the data
 
 
-
-#' Plot a tSNE embedding for a dataset
-#'
-#' Plot a dataset in tSNE space, akin to Seurat::TSNEPlot()
+#' Plot a reduced dimensionality embedding for a dataset
 #'
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
+#' @param reduction String, specifying a lot of \code{seurat@@dr}, which
+#' indicates which embedding to plot. Default: "tsne". (Use "pca" for plotting PCA).
 #' @param colour_by (Optional) String, specifying the column in \code{seurat@@meta.data}
 #' by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@@ident}).
 #' @param colours (Optional) Character vector of colours for points. If \code{colour_by}
@@ -65,9 +64,12 @@
 #' use the limits of the tSNE embedding computed on the whole dataset (useful
 #' for constraining scales across plots while only plotting specific cells).
 #' Default: TRUE
+#' @param dim1 Numeric, dimension of embedding to use for x-axis. Default = 1.
+#' @param dim2 Numeric, dimension of embedding to use for y-axis. Default = 2.
 #'
 #' @return A ggplot2 object
 #' @export
+#' @aliase pca tsne
 #'
 #' @author Selin Jessa
 #'
@@ -82,28 +84,31 @@
 #'
 #' # Plot the prefixes only
 #' tsne(pbmc2, label_short = TRUE)
-tsne <- function(seurat,
-                 colour_by = NULL,
-                 colours = NULL,
-                 colour_by_type = "discrete",
-                 label = TRUE,
-                 point_size = 0.6, alpha = 0.8,
-                 legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
-                 label_repel = TRUE,
-                 label_size = 4,
-                 cells = NULL,
-                 order_by = NULL,
-                 clusters_to_label = NULL,
-                 hide_ticks = FALSE,
-                 title = NULL,
-                 label_short = FALSE,
-                 na_color = "gray80",
-                 limits = NULL,
-                 constrain_scale = TRUE) {
+plotDR <- function(seurat,
+                   reduction = "tsne",
+                   colour_by = NULL,
+                   colours = NULL,
+                   colour_by_type = "discrete",
+                   label = TRUE,
+                   point_size = 0.6, alpha = 0.8,
+                   legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
+                   label_repel = TRUE,
+                   label_size = 4,
+                   cells = NULL,
+                   order_by = NULL,
+                   clusters_to_label = NULL,
+                   hide_ticks = TRUE,
+                   title = NULL,
+                   label_short = FALSE,
+                   na_color = "gray80",
+                   limits = NULL,
+                   constrain_scale = TRUE,
+                   dim1 = 1,
+                   dim2 = 2) {
 
     embedding <- data.frame(Cell = seurat@cell.names,
-                            tSNE_1 = seurat@dr$tsne@cell.embeddings[, 1],
-                            tSNE_2 = seurat@dr$tsne@cell.embeddings[, 2],
+                            tSNE_1 = seurat@dr[[reduction]]@cell.embeddings[, dim1],
+                            tSNE_2 = seurat@dr[[reduction]]@cell.embeddings[, dim2],
                             Cluster = seurat@ident,
                             stringsAsFactors = FALSE)
 
@@ -197,7 +202,16 @@ tsne <- function(seurat,
 
     }
 
-    gg <- gg + theme_min() + xlab("tSNE 1") + ylab("tSNE 2")
+    if (reduction == "tsne") gg <- gg + theme_min() + xlab(glue("tSNE {dim1}")) + ylab(glue("tSNE {dim2}"))
+    else if (reduction == "pca") {
+
+        var_exp <- getVarianceExplained(seurat)
+        gg <- gg + theme_min() +
+            xlab(glue("PC{dim1} ({round(var_exp$percent.var.explained[dim1], 1)}%)")) +
+            ylab(glue("PC{dim2} ({round(var_exp$percent.var.explained[dim2], 1)}%)"))
+
+    }
+
 
     if (!legend) gg <- gg + noLegend()
     else if (!is.null(colour_by)) {
@@ -206,12 +220,27 @@ tsne <- function(seurat,
 
     if (!is.null(title)) gg <- gg + ggtitle(title)
     if (hide_ticks) gg <- gg + noTicks()
-    if (constrain_scale) gg <- gg + constrainScale(seurat, reduction = "tsne")
+    if (constrain_scale) gg <- gg + constrainScale(seurat, reduction = reduction)
 
     return(gg)
 
 }
 
+#' @describeIn plotDR Plot a tSNE embedding
+#' @export
+tsne <- function(seurat, ...) {
+
+    plotDR(seurat, reduction = "tsne", ...)
+
+}
+
+#' @describeIn plotDR Plot a PCA embedding
+#' @export
+pca <- function(seurat, ...) {
+
+    plotDR(seurat, reduction = "pca", ...)
+
+}
 
 
 
@@ -236,7 +265,7 @@ tsne <- function(seurat,
 #' @param label_all Logical, if labelling the tSNE (if \code{label == TRUE}), whether
 #' to label all the clusters, or only the ones being highlighted. Default: FALSE.
 #'
-#' @inheritDotParams tsne -seurat -clusters_to_label -colours -label
+#' @inheritDotParams plotDR -seurat -clusters_to_label -colours -label -reduction
 #' @return A ggplot2 object
 #' @export
 #' @author Selin Jessa
@@ -257,6 +286,7 @@ tsne <- function(seurat,
 #' # Don't plot cells in other clusters
 #' highlight(pbmc, c(2, 3), default_colour = "none")
 highlight <- function(seurat,
+                      reduction = "tsne",
                       clusters,
                       original_colours = NULL,
                       default_colour = "gray90",
@@ -284,7 +314,8 @@ highlight <- function(seurat,
 
     }
 
-    else if (default_colour == "none") tsne(seurat,
+    else if (default_colour == "none") plotDR(seurat,
+                                            reduction = reduction,
                                             colours = highlight_colours,
                                             clusters_to_label = clusters,
                                             # Don't plot cells from the non-highlighted clusterss
