@@ -220,7 +220,7 @@ plotDR <- function(seurat,
 
     if (!is.null(title)) gg <- gg + ggtitle(title)
     if (hide_ticks) gg <- gg + noTicks()
-    if (constrain_scale) gg <- gg + constrainScale(seurat, reduction = reduction)
+    if (constrain_scale & reduction == "tsne") gg <- gg + constrainScale(seurat, reduction = reduction)
 
     return(gg)
 
