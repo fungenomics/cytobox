@@ -1,7 +1,7 @@
 # Functions for basic visualization of the data
 
 
-#' Plot a reduced dimensionality embedding for a dataset
+#' Plot a reduced dimensionality embedding for a Seurat object
 #'
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
 #' @param reduction String, specifying a lot of \code{seurat@@dr}, which
