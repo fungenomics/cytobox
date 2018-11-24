@@ -615,7 +615,7 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
   ################################################################## Break
 
   retFrame<-data.frame(retFrame)
-
+  retFrame<-genelist_filter(retFrame, n.gene)
   return(retFrame)
 
 
