@@ -28,7 +28,10 @@ Imports:
     ggrepel,
     cowplot,
     ggridges,
-    plyr
+    plyr,
+    randomForest,
+    grid,
+    gridExtra
 RoxygenNote: 6.1.1
 Suggests: 
     testthat,
