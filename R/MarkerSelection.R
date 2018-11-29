@@ -672,7 +672,7 @@ get.AllMarkers2<-function(seurat, labels, output.graphs = FALSE, output.table = 
   for(i in Clusters[,1]){
     retVal<-select_best_markers3(df, labels,i, n.gene = n_genes, n.trees = n.trees)
     retVal<-retVal[1:topn_markers,]
-    retVal<-cbind(retVal,rep(i,NROW(retVal)), rep(length(which(seurat@meta.data[,NCOL(seurat@meta.data)] == i)),NROW(retVal)))
+    retVal<-cbind(retVal,rep(i,NROW(retVal)), rep(length(which(labels[,1] == i)),NROW(retVal)))
     colnames(retVal)[(NCOL(retVal)-1):NCOL(retVal)]<-c("cluster_index", "cluster_size")
     Table.merge<-rbind(Table.merge,retVal)
 
@@ -692,7 +692,7 @@ get.AllMarkers2<-function(seurat, labels, output.graphs = FALSE, output.table = 
 
 
   }
-  colnames(Table.merge)[NCOL(Table.merge)] <- "Cluster"
+
 
   if(output.table){
     plot.name<-paste(table.name, ".pdf" ,sep = "")
@@ -742,6 +742,22 @@ get.AllMarkers<-function(seurat, res, output.graphs = FALSE, output.table = FALS
 }
 
 
+
+
+increase_sample_size<-function(df,labels, cluster_index, multiplication_factor){
+
+    df.sampled<-df[which(labels==cluster_index),]
+    labels.sampled<-data.frame(labels[which(labels==cluster_index),])
+    colnames(labels.sampled)<-colnames(labels)
+
+    for(i in 1:multiplication_factor){
+        df<-rbind(df,df.sampled)
+        labels<-rbind(labels,labels.sampled)
+    }
+    return(list(df = df,
+                labels = labels))
+
+}
 
 
 
