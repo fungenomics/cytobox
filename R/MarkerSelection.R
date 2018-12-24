@@ -263,7 +263,7 @@ decision_tree<-function(training_data, training_labels, n_gene = 2){
   current_index<-1 # keeps of tract of howmany data are in the list
 
   error_change<-c()
-  
+
   breakpoint <-1
   j<-1
   while( j <= n_gene){
@@ -351,7 +351,7 @@ decision_tree<-function(training_data, training_labels, n_gene = 2){
     data_list[[current_index]]<-right
 
     error_change<-c(error_change, get.Error(tree,data_list[[1]]$data,data_list[[1]]$labels))
-    
+
     data_index<-get.split_index(data_list) # decides which place to split
 
 
@@ -493,11 +493,11 @@ genelist_filter<-function(df, n.genes){
 
 
 select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees = 0){
-  
+
   if(n.trees == 0){
     n.trees <-NCOL(df)*2
   }
-  
+
   # convert cluster assignments to a binary class
   # for example if there are 4 clusters and we are trying to identify cluster 2 then the
   # cluster id of cluster 2 would be 0 and clusters 1, 3, and 4 would be assigned 1
@@ -505,62 +505,62 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
   cluster_index$cluster_assignment[cluster_index$cluster_assignment != cluster_i] <- -1
   cluster_index$cluster_assignment[cluster_index$cluster_assignment == cluster_i] <- 0
   cluster_index$cluster_assignment[cluster_index$cluster_assignment == -1] <- 1
-  
+
   cluster_index$cluster_assignment<-as.integer(cluster_index$cluster_assignment)
-  
+
   ###### Compute sampling size#########
   sample_size<-cluster_index %>% group_by(cluster_assignment) %>% count()
   sample_size<-min(sample_size[,2])
-  
+
   ###### CREATE A BALANCED DATASET by SUBSAMPLING ########
   cell_in_cluster_0<-which(cluster_index == 0)
   cell_in_cluster_1<-which(cluster_index == 1)
   random_numbers0<-sample(1:length(cell_in_cluster_0),sample_size,replace = TRUE)
   random_numbers1<-sample(1:length(cell_in_cluster_1),sample_size, replace = TRUE)
-  
+
   cell_in_cluster_0<-cell_in_cluster_0[random_numbers0]
   cell_in_cluster_1<-cell_in_cluster_1[random_numbers1]
-  
-  
+
+
   ####### NOW do a train test split, into training and testing set########
   train_size <- floor(sample_size*0.80)
-  
+
   cluster_0_train_row_location <- cell_in_cluster_0[1:train_size]
-  
+
   cluster_1_train_row_location <- cell_in_cluster_1[1:train_size]
-  
+
   train_set_row_location<-c(cluster_0_train_row_location,cluster_1_train_row_location)
-  
+
   training_data <- df[train_set_row_location,]
-  
+
   training_labels <- data.frame(c(rep(0,length(cluster_0_train_row_location)),rep(1,length(cluster_1_train_row_location))))
   testing_data<-df[-train_set_row_location,]
   testing_labels<-data.frame(cluster_index[-train_set_row_location,])
-  
+
   #######################################
-  
+
   l<-list()
   errors<-c()
   marker.types<-c()
-  
+
   df.reduced<-training_data
   i<-1
   while(i <= n.trees){
-    
+
     ###################################
     # Create decision tree
     tree<- decision_tree(training_data, training_labels[,1], n_gene = n.gene)
     training_error<-get.Error(tree$Tree, training_data, training_labels[,1])
     testing_error<- get.Error(tree$Tree, testing_data, testing_labels[,1])
-    
+
     print("Tree created")
-    
+
     #remove trees that split at the same gene twice
     current_name<-get.geneid(tree$Tree)
     if(length(unique(current_name)) < length(current_name)){
       next
     }
-    
+
     # Report the lowest confidence score from the training and testing data
     # in other words use the largest error rate between the training and testing error
     # for the following computations
@@ -569,20 +569,20 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
     }else{
       errors<-rbind(errors,c(i,testing_error))
     }
-    
+
     l[[i]]<-tree
     i<-i+1
   }
-  
+
   errors<-errors[order(-errors[,NCOL(errors)]),]
   l<-l[errors[,1]]
-  
+
   ordered_marker.types<-c()
   gene_id <-c()
   filtered_errors<-c()
   error_change<-c()
-  
-  
+
+
   print("start extracting genes")
   i<-1
   while(i<=NROW(errors)){
@@ -591,35 +591,35 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
     ordered_marker.types<-rbind(ordered_marker.types, get.markers_types(l[[i]]$Tree, currentId))
     gene_id<-rbind(gene_id,currentId)
     filtered_errors<-rbind(filtered_errors, errors[i,])
-    
+
     error_change<-rbind(error_change,l[[i]]$error_change)
-    
+
     i<-i+1
-    
+
   }
-  
-  
+
+
   print("finished extracting genes")
-  
-  colnames(error_change)<-rep(c("false.pos_itr","false.neg_iter","conf_itr"),n.genes)
-  
+
+  colnames(error_change)<-rep(c("false.pos_itr","false.neg_iter","conf_itr"),n.gene)
+
   errors<-errors[,-1]
   filtered_errors<-filtered_errors[,-1]
   # append markers
   retFrame<-data.frame(ordered_marker.types,gene_id,error_change,filtered_errors)
-  
+
   print("retFrame constructed")
-  
+
   retFrame<-retFrame %>% group_by(.dots = colnames(retFrame)[1:(NCOL(gene_id)*2)]) %>% summarise_all(mean)
-  
-  
+
+
   print("grouping worked properly")
   #retFrame<-aggregate(retFrame$errors, by = list(retFrame$gene_id),FUN = mean)
-  
+
   retFrame<-retFrame[order(-retFrame[,NCOL(retFrame)]),]
-  
+
   print("ordering worked properly")
-  
+
   colnames(retFrame)[NCOL(retFrame)] <- "conf_index"
   print("conf index named")
   colnames(retFrame)[NCOL(retFrame)-1] <- "false negative"
@@ -627,12 +627,12 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
   colnames(retFrame)[NCOL(retFrame)-2] <-"false positive"
   print("false postive named")
   ################################################################## Break
-  
+
   retFrame<-data.frame(retFrame)
   retFrame<-genelist_filter(retFrame, n.gene)
   return(retFrame)
-  
-  
+
+
 }
 
 # input is a dataframe outputted from select_best_markers3
