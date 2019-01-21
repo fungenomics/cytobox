@@ -4,7 +4,7 @@
 \alias{plotDR}
 \alias{tsne}
 \alias{pca}
-\title{Plot a reduced dimensionality embedding for a dataset}
+\title{Plot a reduced dimensionality embedding for a Seurat object}
 \usage{
 plotDR(seurat, reduction = "tsne", colour_by = NULL, colours = NULL,
   colour_by_type = "discrete", label = TRUE, point_size = 0.6,
@@ -108,7 +108,7 @@ Default: TRUE}
 A ggplot2 object
 }
 \description{
-Plot a reduced dimensionality embedding for a dataset
+Plot a reduced dimensionality embedding for a Seurat object
 }
 \section{Functions}{
 \itemize{
