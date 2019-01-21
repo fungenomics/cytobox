@@ -1,6 +1,34 @@
-# Plots a labelled tSNE plot from a Seurat object, where the clusters are labelled directly on the plot
+#' computeCC
+#'
+#' Compute the cell cycle scores for a Seurat object, consisting of the mean expression,
+#' in every cell, of a set of G1/S and G2/M phase markers.
+#'
+#' @param seurat Seurat object
+#' @param species "mm" or "hg"
+#'
+#' @return A seurat object with scores in the \code{@meta.data} slot in two
+#' new columns, "G1_S_score" and "G2_M_score"
+#'
+#' @export
+#' @author Selin Jessa
+computeCC <- function(seurat, species = "mm") {
+
+    cc <- cytokit::cellCyclePlot(seurat, species = switch(species,
+                                                          "mm" = "m_musculus",
+                                                          "hg" = "h_sapiens"),
+                                 return_scores = TRUE)
+
+    seurat@meta.data$G1_S_score <- cc$g1.s.scores
+    seurat@meta.data$G2_M_score <- cc$g2.m.scores
+
+    return(seurat)
+
+
+}
 
 #' cellCyclePlot
+#'
+#' Plots a labelled tSNE plot from a Seurat object, where the clusters are labelled directly on the plot
 #'
 #' @param seurat Seurat object.
 #' @param species m_musculus or h_sapiens.
