@@ -645,13 +645,11 @@ clustering_evaluation_index<-function(data_frame){
 #'
 #' @param seurat The Seurat Object
 #' @param labels A dataframe that contains labels for the clustering solution. The dataframe should only have 1 column
-#' @param output.graphs Indicates whether or not you wish to output the feature plots of the markers found to a pdf file
-#' @param output.table Indicates whether or not you wish to output the table of markers to a pdf file
+#' @param output_graphs Indicates whether or not you wish to output the feature plots of the markers found to a pdf file
 #' @param n_genes The number of genes used in each decision tree
 #' @param topn_markers An integer indicating how many markers you wish to return for each cluster
-#' @param graph.name The name of the feature plot if one wishes to output them to a pdf file
-#' @param table.name The name of the list of markers if one wishes to output it into a pdf file
-#' @param n.trees The number of trees one wishes to construct for each cluster, if zero, then the value will be determined automatically as the number of most variable genes indicated in the seurat object
+#' @param graph_name The name of the feature plot if one wishes to output them to a pdf file
+#' @param n_trees The number of trees one wishes to construct for each cluster, if zero, then the value will be determined automatically as the number of most variable genes indicated in the seurat object
 #'
 #' @return A dataframe that contains the list of markers and their associated attributes
 #' @export
@@ -661,7 +659,7 @@ clustering_evaluation_index<-function(data_frame){
 #' labels <- data.frame(as.numeric(pbmc_small@meta.data$res.1))
 #' marker_list<-getAllMarkers(data, labels = labels)
 #'
-getAllMarkers<-function(df , labels, specify_clusters = NULL ,output.graphs = FALSE,n_genes = 2, topn_markers = 10, graph.name = "Feature plot for cluster ", table.name = "Table of computed confidence values for resolution: ", n_trees=NCOL(df)*n_genes, method = "RF"){
+getAllMarkers<-function(df , labels, specify_clusters = NULL ,output_graphs = FALSE,n_genes = 2, topn_markers = 10, graph_name = "Feature plot for cluster ", n_trees=NCOL(df)*n_genes, method = "RF"){
   Clusters<-c()
   if(is.null(specify_clusters)){
     Clusters <-unique(labels)[,1]
@@ -682,8 +680,8 @@ getAllMarkers<-function(df , labels, specify_clusters = NULL ,output.graphs = FA
     colnames(retVal)[(NCOL(retVal)-1):NCOL(retVal)]<-c("cluster_index", "cluster_size")
     Table.merge<-rbind(Table.merge,retVal)
 
-    if(output.graphs){
-      plot.name<-paste(graph.name , i, ".pdf")
+    if(output_graphs){
+      plot.name<-paste(graph_name , i, ".pdf")
       pdf(plot.name)
       for(j in 1:NROW(retVal)){
         num_of_genes_used = (NCOL(retVal)-4)/2
