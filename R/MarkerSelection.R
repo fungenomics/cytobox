@@ -128,14 +128,22 @@ tree.predict<-function(node_list, df){
 
 get.Error<-function(node_list, df,labels){# only works for binary classes
   predictions<-tree.predict(node_list, df)
-  false_positive<-length(which(predictions==0 & labels==1))/length(which(predictions==0))
-  false_negative<-length(which(predictions==1 & labels == 0))/ length(which(predictions==1))
+  FP<-length(which(predictions==0 & labels==1))
+  FN<-length(which(predictions==1 & labels == 0))
+  TP <- length(which(predictions == 0 & labels == 0))
+  TN <- length(which(predictions == 1 & labels == 1))
+  percision <- TP/(TP + FP)
+  recall <- TP/(TP+FN)
+
+  #class_0_error <-length(which(predictions==1 & labels==0)) / length(which(labels == 0))
+  #class_1_error <-length(which(predictions== 0& labels==1)) / length(which(labels == 1))
+
   score<-length(which(predictions != labels))/NROW(df)
   score<-1/score
 
 
 
-  return(c(false_positive,false_negative, score))
+  return(c(percision,recall, score))
 }
 
 
@@ -262,7 +270,9 @@ decision_tree<-function(training_data, training_labels, n_gene = 2){
   data_index<-1 # keeps tract of the largest error
   current_index<-1 # keeps of tract of howmany data are in the list
 
+  # stores the error change and split value each time a node is added
   error_change<-c()
+  split_values<-c()
 
   breakpoint <-1
   j<-1
@@ -354,7 +364,8 @@ decision_tree<-function(training_data, training_labels, n_gene = 2){
 
     data_index<-get.split_index(data_list) # decides which place to split
 
-
+    # stores the split value of the current node
+    split_values<-c(split_values, currentNode$split_val)
 
     j<-j+1
 
@@ -366,7 +377,8 @@ decision_tree<-function(training_data, training_labels, n_gene = 2){
   return(list(Tree = tree,
               genes = gene_id,
               types = markers_tyeps,
-              error_change = error_change))
+              error_change = error_change,
+              split_values = split_values))
 
 }
 
@@ -382,51 +394,6 @@ decision_tree<-function(training_data, training_labels, n_gene = 2){
 
 
 
-
-
-#' Title
-#' @description Outputs a dataframe into a pdf file. Useful for very long tables that spans multiple pages
-#' @param file.name The file name of the output file
-#' @param sga_hits The data Frame to be printed
-#'
-#' @return No return value
-#' @importFrom grid grid.newpage
-#' @importFrom gridExtra grid.table
-#' @export
-#'
-print_table <- function(file.name, sga_hits){
-
-  pdf(file = file.name, height = 12, width = 12)
-  total_rows_per_page = 30
-  start_row = 1
-  end_row = 0
-  if(total_rows_per_page > nrow(sga_hits)){
-    end_row = nrow(sga_hits)
-  }else {
-    end_row = total_rows_per_page
-  }
-
-  for(i in 1:ceiling(nrow(sga_hits)/total_rows_per_page)){
-
-    grid.newpage()
-
-    grid.table(sga_hits[start_row:end_row, ])
-
-    start_row = end_row + 1
-
-    if((total_rows_per_page + end_row) < nrow(sga_hits)){
-
-      end_row = total_rows_per_page + end_row
-
-    }else {
-
-      end_row = nrow(sga_hits)
-    }
-  }
-
-  dev.off()
-
-}
 
 
 
@@ -477,8 +444,10 @@ genelist_filter<-function(df, n.genes){
 #' @param df A dataframe represents the single cell data matrix, with the genes as the features and cells as the rows. NAs are not allowed
 #' @param cluster_index A one column dataframe that contains the cluster labels assigned to each cell.
 #' @param cluster_i The cluster which we wish to extract the markers for
-#' @param n.gene The number of genes used in each decision tree
-#' @param n.trees The number of trees one wishes to construct for each cluster, if zero, then the value will be determined automatically as the number of most variable genes indicated in the seurat object
+#' @param n_genes The number of genes used in each decision tree
+#' @param n_trees The number of trees one wishes to construct for each cluster, default is the n_genes times the number of features in the data matrix
+#' @param reduced_form Indicates whether or not the output should be in its reduced form. The full form contains the recall, percision and 1/error rate at each iteration.
+#' Whereas the reduced form only contains the final recall, percision, and 1/error rate
 #'
 #' @return The dataframe with the list of markers
 #' @importFrom randomForest randomForest
@@ -487,16 +456,15 @@ genelist_filter<-function(df, n.genes){
 #' @export
 #'
 #' @examples ### Suppose you want to extract the markers for cluster 0
-#' markers<-select_best_markers3(t(pbmc@scale.data), cluster_index = data.frame(as.numeric(pbmc@meta.data$res.1)), cluster_i = 0)
-#' ### Usually this function is only used if one only wishes to extract markers for a single cluster and don't want to compute the rest to save computation time
-#' ### For getting markers for all the clusters, see get.AllMarkers and get.AllMarkers2
+#' df <- t(pbmc_small@scale.data)
+#' labels <- data.frame(as.numeric(pbmc_small@meta.data$res.1))
+#' #Make sure the labels are not factors as they cause problems during the mapping to binary labels. Use either character or integers
+#' markers<-selectMarkersRF(df, cluster_index = labels, cluster_i = 0)
 
 
-select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees = 0){
+selectMarkersRF<-function(df,cluster_index,cluster_i, n_genes = 2, n_trees = NCOL(df)*2, reduced_form = TRUE){
 
-  if(n.trees == 0){
-    n.trees <-NCOL(df)*2
-  }
+
 
   # convert cluster assignments to a binary class
   # for example if there are 4 clusters and we are trying to identify cluster 2 then the
@@ -543,15 +511,18 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
   errors<-c()
   marker.types<-c()
 
+
   df.reduced<-training_data
   i<-1
-  while(i <= n.trees){
+  while(i <= n_trees){
 
     ###################################
     # Create decision tree
-    tree<- decision_tree(training_data, training_labels[,1], n_gene = n.gene)
+    tree<- decision_tree(training_data, training_labels[,1], n_gene = n_genes)
     training_error<-get.Error(tree$Tree, training_data, training_labels[,1])
     testing_error<- get.Error(tree$Tree, testing_data, testing_labels[,1])
+
+
 
     print("Tree created")
 
@@ -582,6 +553,7 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
   filtered_errors<-c()
   error_change<-c()
 
+  split_vals<-c()
 
   print("start extracting genes")
   i<-1
@@ -594,19 +566,30 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
 
     error_change<-rbind(error_change,l[[i]]$error_change)
 
+    split_vals <-rbind(split_vals,l[[i]]$split_values)
+
     i<-i+1
 
   }
 
 
+
+
   print("finished extracting genes")
 
-  colnames(error_change)<-rep(c("false.pos_itr","false.neg_iter","conf_itr"),n.gene)
+  colnames(split_vals) <- rep(c("split_val"), n_genes)
+  colnames(gene_id) <- rep(c("gene"), n_genes)
+  colnames(ordered_marker.types) <-rep(c("marker_type"), n_genes)
+  colnames(error_change)<-rep(c("percision_on_itr","recall_on_iter","invers_error_itr"),n_genes)
 
   errors<-errors[,-1]
   filtered_errors<-filtered_errors[,-1]
   # append markers
-  retFrame<-data.frame(ordered_marker.types,gene_id,error_change,filtered_errors)
+  retFrame<-data.frame(ordered_marker.types,gene_id, split_vals,filtered_errors)
+  if(reduced_form == FALSE){
+      retFrame<-data.frame(ordered_marker.types,gene_id, split_vals,error_change,filtered_errors)
+  }
+
 
   print("retFrame constructed")
 
@@ -620,16 +603,16 @@ select_best_markers3<-function(df,cluster_index,cluster_i, n.gene = 2, n.trees =
 
   print("ordering worked properly")
 
-  colnames(retFrame)[NCOL(retFrame)] <- "conf_index"
-  print("conf index named")
-  colnames(retFrame)[NCOL(retFrame)-1] <- "false negative"
-  print("false negative named")
-  colnames(retFrame)[NCOL(retFrame)-2] <-"false positive"
-  print("false postive named")
+  colnames(retFrame)[NCOL(retFrame)] <- "inverse_error"
+
+  colnames(retFrame)[NCOL(retFrame)-1] <- "recall"
+
+  colnames(retFrame)[NCOL(retFrame)-2] <-"percision"
+
   ################################################################## Break
 
   retFrame<-data.frame(retFrame)
-  retFrame<-genelist_filter(retFrame, n.gene)
+  retFrame<-genelist_filter(retFrame, n_genes)
   return(retFrame)
 
 
@@ -674,16 +657,26 @@ clustering_evaluation_index<-function(data_frame){
 #' @export
 #'
 #' @examples
-#' marker_list<-get.AllMarkers2(pbmc, labels = data.frame(as.numeric(pbmc@meta.data$res.1)), n.trees = 50)
+#' data <- t(pbmc_small@scale.data)
+#' labels <- data.frame(as.numeric(pbmc_small@meta.data$res.1))
+#' marker_list<-getAllMarkers(data, labels = labels)
 #'
-get.AllMarkers2<-function(seurat, labels, output.graphs = FALSE, output.table = FALSE,n_genes = 2, topn_markers = 10, graph.name = "Feature plot for cluster ", table.name = "Table of computed confidence values for resolution: ", n.trees=0){
-  df<-t(seurat@scale.data)
-  df<-df[,seurat@var.genes]
-  Clusters <-unique(labels)
+getAllMarkers<-function(df , labels, specify_clusters = NULL ,output.graphs = FALSE,n_genes = 2, topn_markers = 10, graph.name = "Feature plot for cluster ", table.name = "Table of computed confidence values for resolution: ", n_trees=NCOL(df)*n_genes, method = "RF"){
+  Clusters<-c()
+  if(is.null(specify_clusters)){
+    Clusters <-unique(labels)[,1]
+  }else{
+    Clusters <-specify_clusters
+  }
+
 
   Table.merge <- c()
-  for(i in Clusters[,1]){
-    retVal<-select_best_markers3(df, labels,i, n.gene = n_genes, n.trees = n.trees)
+  for(i in Clusters){
+    retVal <- c()
+    if (method == "RF"){
+      retVal<-selectMarkersRF(df, labels,i, n_genes = n_genes, n_trees = n_trees)
+    }
+
     retVal<-retVal[1:topn_markers,]
     retVal<-cbind(retVal,rep(i,NROW(retVal)), rep(length(which(labels[,1] == i)),NROW(retVal)))
     colnames(retVal)[(NCOL(retVal)-1):NCOL(retVal)]<-c("cluster_index", "cluster_size")
@@ -707,52 +700,12 @@ get.AllMarkers2<-function(seurat, labels, output.graphs = FALSE, output.table = 
   }
 
 
-  if(output.table){
-    plot.name<-paste(table.name, ".pdf" ,sep = "")
-    print_table(plot.name, Table.merge)
-  }
+
 
   return(Table.merge)
 }
 
 
-
-
-
-
-
-
-
-
-#' Title
-#' @description Finds the markers for all of the clusters for a given resolution of the k-nn clustering
-#' @param seurat The Seurat Object
-#' @param res The resolution of the clustering
-#' @param output.graphs Indicates whether or not you wish to output the feature plots of the markers found to a pdf file
-#' @param output.table Indicates whether or not you wish to output the table of markers to a pdf file
-#' @param n_genes The number of genes used in each decision tree
-#' @param topn_markers The number of markers you wish to return for each cluster
-#' @param graph.name The name of the feature plot if one wishes to output them to a pdf file
-#' @param table.name The name of the list of markers if one wishes to output it into a pdf file
-#' @param n.trees The number of trees one wishes to construct for each cluster, if zero, then the value will be determined automatically as the number of most variable genes indicated in the seurat object
-#' @param dims.use A vector that represents the PCs used in the clustering
-#'
-#' @return A dataframe that contains the list of markers and their associated attributes
-#' @importFrom Seurat FindClusters
-#' @export
-#'
-#' @examples
-#' marker_list<-get.AllMarkers(pbmc, res = 1,n.trees=50)
-#' ### If you wish to use your own clustering solution that has been previously prepaired see get.AllMarkers2
-get.AllMarkers<-function(seurat, res, output.graphs = FALSE, output.table = FALSE,n_genes = 2, topn_markers = 10, graph.name = "Feature plot for cluster ", table.name = "Table of computed confidence values for resolution: ", n.trees=0, dims.use = 1:20){
-
-
-  seurat@meta.data<-seurat@meta.data[,1:4]
-  seurat <- FindClusters(object = seurat, reduction.type = "pca", dims.use = dims.use, resolution =res, save.SNN = TRUE, force.recalc = TRUE)
-  NClusters <- NROW(unique(seurat@meta.data[NCOL(seurat@meta.data)]))
-  Table.merge <- get.AllMarkers2(seurat, seurat@meta.data[NCOL(seurat@meta.data)],output.graphs = output.graphs, output.table = output.table, n_genes = n_genes, topn_markers = topn_markers, graph.name = graph.name, table.name = table.name, n.trees = n.trees)
-  return(Table.merge)
-}
 
 
 
