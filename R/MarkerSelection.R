@@ -456,8 +456,8 @@ genelist_filter<-function(df, n.genes){
 #' @export
 #'
 #' @examples ### Suppose you want to extract the markers for cluster 0
-#' df <- t(pbmc_small@scale.data)
-#' labels <- data.frame(as.numeric(pbmc_small@meta.data$res.1))
+#' df <- t(pbmc@scale.data)
+#' labels <- data.frame(as.numeric(pbmc@meta.data$res.1))
 #' #Make sure the labels are not factors as they cause problems during the mapping to binary labels. Use either character or integers
 #' markers<-selectMarkersRF(df, cluster_index = labels, cluster_i = 0)
 
@@ -657,8 +657,8 @@ clustering_evaluation_index<-function(data_frame){
 #' @export
 #'
 #' @examples
-#' data <- t(pbmc_small@scale.data)
-#' labels <- data.frame(as.numeric(pbmc_small@meta.data$res.1))
+#' data <- t(pbmc@scale.data)
+#' labels <- data.frame(as.numeric(pbmc@meta.data$res.1))
 #' marker_list<-getAllMarkers(data, labels = labels)
 #'
 getAllMarkers<-function(df , labels, specify_clusters = NULL ,output_graphs = FALSE,n_genes = 2, topn_markers = 10, graph_name = "Feature plot for cluster ", n_trees=NCOL(df)*n_genes, method = "RF"){
