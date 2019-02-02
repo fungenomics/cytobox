@@ -643,13 +643,15 @@ clustering_evaluation_index<-function(data_frame){
 #
 #' Title
 #'
-#' @param seurat The Seurat Object
+#' @param df A dataframe with the genes as columns and cells as rows
 #' @param labels A dataframe that contains labels for the clustering solution. The dataframe should only have 1 column
+#' @param specify_clusters If users only want to extract markers for a subset of clusters, enter the subset here in the form of a vector
 #' @param output_graphs Indicates whether or not you wish to output the feature plots of the markers found to a pdf file
 #' @param n_genes The number of genes used in each decision tree
 #' @param topn_markers An integer indicating how many markers you wish to return for each cluster
 #' @param graph_name The name of the feature plot if one wishes to output them to a pdf file
-#' @param n_trees The number of trees one wishes to construct for each cluster, if zero, then the value will be determined automatically as the number of most variable genes indicated in the seurat object
+#' @param n_trees The number of trees one wishes to construct for each cluster
+#' @param method the method used for extracting markers, currently only the randomForest(RF) method is avalible
 #'
 #' @return A dataframe that contains the list of markers and their associated attributes
 #' @export
