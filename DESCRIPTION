@@ -2,9 +2,10 @@ Package: cytokit
 Type: Package
 Title: A toolkit for analyzing single cell RNA-seq data
 Description: A toolkit for processing, interrogating, and visualizing single cell RNA-seq data.
-Version: 0.5.1
+Version: 0.6.0
 Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role = c("aut", "cre")),
-            person("Alexis", "Blanchet-Cohen", email = "alexis.blanchet-cohen@mail.mcgill.ca", role=c("aut")))
+            person("Alexis", "Blanchet-Cohen", email = "alexis.blanchet-cohen@mail.mcgill.ca", role = c("aut")),
+            person("Yixing", "Hu", role = c("aut")))
 Encoding: UTF-8
 License: file LICENSE
 LazyData: true
