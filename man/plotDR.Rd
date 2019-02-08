@@ -2,8 +2,8 @@
 % Please edit documentation in R/visualization.R
 \name{plotDR}
 \alias{plotDR}
-\alias{tsne}
 \alias{pca}
+\alias{tsne}
 \title{Plot a reduced dimensionality embedding for a dataset}
 \usage{
 plotDR(seurat, reduction = "tsne", colour_by = NULL, colours = NULL,

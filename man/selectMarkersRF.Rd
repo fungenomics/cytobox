@@ -4,7 +4,8 @@
 \alias{selectMarkersRF}
 \title{Title}
 \usage{
-selectMarkersRF(df, cluster_index, cluster_i, n_genes = 2, n_trees = 0)
+selectMarkersRF(df, cluster_index, cluster_i, n_genes = 2,
+  n_trees = NCOL(df) * 2, reduced_form = TRUE)
 }
 \arguments{
 \item{df}{A dataframe represents the single cell data matrix, with the genes as the features and cells as the rows. NAs are not allowed}
@@ -15,7 +16,10 @@ selectMarkersRF(df, cluster_index, cluster_i, n_genes = 2, n_trees = 0)
 
 \item{n_genes}{The number of genes used in each decision tree}
 
-\item{n.trees}{The number of trees one wishes to construct for each cluster, if zero, then the value will be determined automatically as the number of most variable genes indicated in the seurat object}
+\item{n_trees}{The number of trees one wishes to construct for each cluster, default is the n_genes times the number of features in the data matrix}
+
+\item{reduced_form}{Indicates whether or not the output should be in its reduced form. The full form contains the recall, percision and 1/error rate at each iteration.
+Whereas the reduced form only contains the final recall, percision, and 1/error rate}
 }
 \value{
 The dataframe with the list of markers
@@ -25,7 +29,7 @@ This function finds the gene markers for a given cluster.
 }
 \examples{
 ### Suppose you want to extract the markers for cluster 0
-markers<-selectMarkersRF(t(pbmc@scale.data), cluster_index = data.frame(as.numeric(pbmc@meta.data$res.1)), cluster_i = 0)
-### Usually this function is only used if one only wishes to extract markers for a single cluster and don't want to compute the rest to save computation time
-### For getting markers for all the clusters, see getAllMarkers
+df <- t(pbmc@scale.data)
+labels <- data.frame(as.numeric(pbmc@meta.data$res.1))
+markers<-selectMarkersRF(df, cluster_index = labels, cluster_i = 0)
 }

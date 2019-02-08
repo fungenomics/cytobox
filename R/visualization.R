@@ -69,7 +69,7 @@
 #'
 #' @return A ggplot2 object
 #' @export
-#' @aliase pca tsne
+#' @aliases pca tsne
 #'
 #' @author Selin Jessa
 #'

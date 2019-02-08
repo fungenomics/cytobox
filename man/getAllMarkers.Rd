@@ -5,29 +5,28 @@
 \title{Title}
 \usage{
 getAllMarkers(df, labels, specify_clusters = NULL,
-  output.graphs = FALSE, n_genes = 2, topn_markers = 10,
-  graph.name = "Feature plot for cluster ",
-  table.name = "Table of computed confidence values for resolution: ",
-  n_trees = NCOL(df) * n_genes, method = "RF")
+  output_graphs = FALSE, n_genes = 2, topn_markers = 10,
+  graph_name = "Feature plot for cluster ", n_trees = NCOL(df) *
+  n_genes, method = "RF")
 }
 \arguments{
+\item{df}{A dataframe with the genes as columns and cells as rows}
+
 \item{labels}{A dataframe that contains labels for the clustering solution. The dataframe should only have 1 column}
 
-\item{output.graphs}{Indicates whether or not you wish to output the feature plots of the markers found to a pdf file}
+\item{specify_clusters}{If users only want to extract markers for a subset of clusters, enter the subset here in the form of a vector}
+
+\item{output_graphs}{Indicates whether or not you wish to output the feature plots of the markers found to a pdf file}
 
 \item{n_genes}{The number of genes used in each decision tree}
 
 \item{topn_markers}{An integer indicating how many markers you wish to return for each cluster}
 
-\item{graph.name}{The name of the feature plot if one wishes to output them to a pdf file}
+\item{graph_name}{The name of the feature plot if one wishes to output them to a pdf file}
 
-\item{table.name}{The name of the list of markers if one wishes to output it into a pdf file}
+\item{n_trees}{The number of trees one wishes to construct for each cluster}
 
-\item{seurat}{The Seurat Object}
-
-\item{output.table}{Indicates whether or not you wish to output the table of markers to a pdf file}
-
-\item{n.trees}{The number of trees one wishes to construct for each cluster, if zero, then the value will be determined automatically as the number of most variable genes indicated in the seurat object}
+\item{method}{the method used for extracting markers, currently only the randomForest(RF) method is avalible}
 }
 \value{
 A dataframe that contains the list of markers and their associated attributes
@@ -36,7 +35,8 @@ A dataframe that contains the list of markers and their associated attributes
 Title
 }
 \examples{
-data <- t(pbmc_small@scale.data)
-marker_list<-getAllMarkers(data, labels = data.frame(as.numeric(pbmc@meta.data$res.1)))
+data <- t(pbmc@scale.data)
+labels <- data.frame(as.numeric(pbmc@meta.data$res.1))
+marker_list<-getAllMarkers(data, labels = labels)
 
 }
