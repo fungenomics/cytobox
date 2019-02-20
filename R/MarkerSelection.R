@@ -523,7 +523,7 @@ selectMarkersRF<-function(df,cluster_index,cluster_i, n_genes = 2, n_trees = NCO
 
 
 
-    print("Tree created")
+    #print("Tree created")
 
     #remove trees that split at the same gene twice
     current_name<-get.geneid(tree$Tree)
@@ -554,7 +554,7 @@ selectMarkersRF<-function(df,cluster_index,cluster_i, n_genes = 2, n_trees = NCO
 
   split_vals<-c()
 
-  print("start extracting genes")
+  #print("start extracting genes")
   i<-1
   while(i<=NROW(errors)){
     currentId<-get.geneid(l[[i]]$Tree)
@@ -574,7 +574,7 @@ selectMarkersRF<-function(df,cluster_index,cluster_i, n_genes = 2, n_trees = NCO
 
 
 
-  print("finished extracting genes")
+  #print("finished extracting genes")
 
   colnames(split_vals) <- rep(c("split_val"), n_genes)
   colnames(gene_id) <- rep(c("gene"), n_genes)
