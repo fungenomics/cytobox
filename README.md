@@ -10,7 +10,7 @@ Kleinman Lab toolkit for analyzing single cell RNA-seq data.
 You will need to install [`devtools`](https://cran.r-project.org/web/packages/devtools/), and then run:
 
 ```r
-devtools::install_github("sjessa/cytokit", auth_token = "abc123", build_vignettes = TRUE)
+devtools::install_github("sjessa/cytokit", build_vignettes = TRUE)
 
 ```
 
