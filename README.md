@@ -1,35 +1,18 @@
 [![Build Status](https://travis-ci.com/sjessa/cytokit.svg?token=ckZxkx4uN2RZSSwsdpLM&branch=master)](https://travis-ci.com/sjessa/cytokit)
 
 # cytokit: README
-Internal Kleinman Lab toolkit for analyzing single cell RNA-seq data.
+Kleinman Lab toolkit for analyzing single cell RNA-seq data.
 <!---Link to vignette: [https://rawgit.com/sjessa/cytokit/master/vignettes/cytokit.html](https://rawgit.com/sjessa/cytokit/master/vignettes/cytokit.html) -->
 
 
 ## Installation
 
-Since the repo is private, there are a couple steps to install `cytokit`:
-
-1. Install [`devtools`](https://cran.r-project.org/web/packages/devtools/)
-2. Generate a personal access token on Github here: https://github.com/settings/tokens  
-    Generate new token > Type in "cytokit" in *Token description* > Tick the checkbox for "repo" > Generate token (green button)  
-   Your token will be a string of letters and numbers, e.g. `abc123`. (For more details on these tokens, see the [GitHub documentation](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/))
-3. Install `cytokit` and include the token as an argument:
+You will need to install [`devtools`](https://cran.r-project.org/web/packages/devtools/), and then run:
 
 ```r
 devtools::install_github("sjessa/cytokit", auth_token = "abc123", build_vignettes = TRUE)
 
 ```
-
-You'll need this token again in the future to update `cytokit`, so it's a good
-idea to save the above command in a script, or save your token somewhere you 
-can copy-paste it. 
-
-#### Updating
-
-To update `cytokit`, re-run the install command in Step 3 above.
-
-If you don't know your old token, go to https://github.com/settings/tokens, click 'Edit' on
-your cytokit token, click 'Regenerate' and re-run the command with the new token.
 
 ## Getting help
 
