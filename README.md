@@ -1,5 +1,5 @@
 # cytobox: README
-Kleinman Lab toolkit for analyzing single cell RNA-seq data. The legacy package,
+A toolkit for analyzing single cell RNA-seq data created by the Kleinman Lab. The legacy package,
 which is no longer being developed, is available at https://github.com/sjessa/cytobox/
 
 ## Installation
@@ -7,7 +7,7 @@ which is no longer being developed, is available at https://github.com/sjessa/cy
 You will need to install [`devtools`](https://cran.r-project.org/web/packages/devtools/), and then run:
 
 ```r
-devtools::install_github("sjessa/cytobox", build_vignettes = TRUE)
+devtools::install_github("fungenomics/cytobox", build_vignettes = TRUE)
 
 ```
 
@@ -18,8 +18,6 @@ Access the barebones vignette from within R for a list of examples:
 ```r
 browseVignettes("cytobox")
 ```
-
-<!---Or checkout the version saved in the repository (not necessarily up to date!) here: https://rawgit.com/sjessa/cytobox/master/vignettes/cytobox.html-->
 
 You can look up the documentation for any `cytobox` function from the R console,
 these also contain an example or two for many functions:
@@ -60,7 +58,7 @@ packageVersion("cytobox")
 
 Clone the repository and create a development branch:
 ```bash
-git clone https://github.com/sjessa/cytobox.git
+git clone https://github.com/fungenomics/cytobox.git
 cd cytobox
 git checkout -b dev-selin
 ```
