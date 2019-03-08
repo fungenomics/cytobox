@@ -80,7 +80,7 @@ A ggplot object
 Plot a low-dimensional embedding of the cells,
 coloured by expression of a gene, or mean expression of a group of marker
 genes. Defaults to t-SNE space, but see the \code{reduction} argument for
-how to plot in PCA space instead.
+how to plot in PCA space instead. This function is based on \code{Seurat::FeaturePlot}.
 }
 \section{Functions}{
 \itemize{
