@@ -1,16 +1,13 @@
-[![Build Status](https://travis-ci.com/sjessa/cytokit.svg?token=ckZxkx4uN2RZSSwsdpLM&branch=master)](https://travis-ci.com/sjessa/cytokit)
-
-# cytokit: README
-Kleinman Lab toolkit for analyzing single cell RNA-seq data.
-<!---Link to vignette: [https://rawgit.com/sjessa/cytokit/master/vignettes/cytokit.html](https://rawgit.com/sjessa/cytokit/master/vignettes/cytokit.html) -->
-
+# cytobox: README
+Kleinman Lab toolkit for analyzing single cell RNA-seq data. The legacy package,
+which is no longer being developed, is available at https://github.com/sjessa/cytobox/
 
 ## Installation
 
 You will need to install [`devtools`](https://cran.r-project.org/web/packages/devtools/), and then run:
 
 ```r
-devtools::install_github("sjessa/cytokit", build_vignettes = TRUE)
+devtools::install_github("sjessa/cytobox", build_vignettes = TRUE)
 
 ```
 
@@ -19,15 +16,15 @@ devtools::install_github("sjessa/cytokit", build_vignettes = TRUE)
 Access the barebones vignette from within R for a list of examples:
 
 ```r
-browseVignettes("cytokit")
+browseVignettes("cytobox")
 ```
 
-<!---Or checkout the version saved in the repository (not necessarily up to date!) here: https://rawgit.com/sjessa/cytokit/master/vignettes/cytokit.html-->
+<!---Or checkout the version saved in the repository (not necessarily up to date!) here: https://rawgit.com/sjessa/cytobox/master/vignettes/cytobox.html-->
 
-You can look up the documentation for any `cytokit` function from the R console,
+You can look up the documentation for any `cytobox` function from the R console,
 these also contain an example or two for many functions:
 ```r
-?cytokit::tsne
+?cytobox::tsne
 ```
 
 Some functions will specify the author in the documentation, whom you could contact directly :)
@@ -36,13 +33,13 @@ Some functions will specify the author in the documentation, whom you could cont
 
 #### Semantic versioning
 
-`cytokit` uses a semantic versioning scheme, where package versions are of the form x.y.z:
+`cytobox` uses a semantic versioning scheme, where package versions are of the form x.y.z:
 
 - The patch version z is updated for very minor changes like bug fixes
 - The minor version y is udpated for minor but important changes like addition of new functions
 - The major version x is updated for major changes, which may introduce backwards incompatibiility
 
-#### Keeping track of cytokit versions in your work
+#### Keeping track of cytobox versions in your work
 
 If you use R Markdown, it's a great idea to include the following function as the last chunk in your
 documents, which will print a list of all packages loaded, and their versions.
@@ -54,7 +51,7 @@ sessionInfo()
 If you work with scripts, you could print the following to STDOUT/the log files:
 
 ```r
-packageVersion("cytokit")
+packageVersion("cytobox")
 ```
 
 ## Contribution
@@ -63,8 +60,8 @@ packageVersion("cytokit")
 
 Clone the repository and create a development branch:
 ```bash
-git clone https://github.com/sjessa/cytokit.git
-cd cytokit
+git clone https://github.com/sjessa/cytobox.git
+cd cytobox
 git checkout -b dev-selin
 ```
 

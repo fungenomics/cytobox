@@ -1,12 +1,12 @@
 # Package-level documentation and package-level imports
 
-#' cytokit: A toolkit for analyzing single cell RNA-seq data
+#' cytobox: A toolbox for analyzing single cell RNA-seq data
 #'
-#' Shared Kleinman lab functions for processing, interrogating, and
+#' Functions for processing, interrogating, and
 #' visualizing single cell RNA-seq data.
 #'
 #' @docType package
-#' @name cytokit
+#' @name cytobox
 "_PACKAGE"
 
 #' @importClassesFrom Seurat seurat

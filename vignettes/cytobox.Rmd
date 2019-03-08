@@ -1,12 +1,12 @@
 ---
-title: "cytokit examples"
+title: "cytobox examples"
 date: "`r Sys.Date()`"
 output:
     rmarkdown::html_vignette:
         toc: true
         toc_depth: 3
 vignette: >
-  %\VignetteIndexEntry{cytokit examples}
+  %\VignetteIndexEntry{cytobox examples}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,11 +23,11 @@ knitr::opts_chunk$set(
 Load the package
 
 ```{r load}
-library(cytokit)
+library(cytobox)
 ```
 
 Here is a quick overview of some of the most useful functions
-available in `cytokit` for exploring single cell RNA-seq data
+available in `cytobox` for exploring single cell RNA-seq data
 stored in a Seurat package. It's not an exhaustive list of the functions,
 or all the options, so see the documentation for more details.
 
@@ -93,7 +93,7 @@ areas of high density of cells.
 # Highlight cluster 3 on the tSNE plot
 highlight(pbmc, 3)
 
-# Pass additional arguments to cytokit::tsne
+# Pass additional arguments to cytobox::tsne
 highlight(pbmc, c(2, 3), label = FALSE, title = "Test highlight")
 
 # Change default colour
@@ -293,7 +293,7 @@ head(fetchData(pbmc, c("IL32", "MS4A1"), c(1, 2), return_cluster = TRUE, return_
 
 ```
 
-`cytokit` tells you if you try to plot genes which are undetected in the data:
+`cytobox` tells you if you try to plot genes which are undetected in the data:
 ```{r undetected}
 
 tsneByMeanMarkerExpression(pbmc, c("MS4A1", "foo"))

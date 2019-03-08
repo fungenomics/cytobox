@@ -7,7 +7,7 @@
 #' Plot a low-dimensional embedding of the cells,
 #' coloured by expression of a gene, or mean expression of a group of marker
 #' genes. Defaults to t-SNE space, but see the \code{reduction} argument for
-#' how to plot in PCA space instead.
+#' how to plot in PCA space instead. This function is based on \code{Seurat::FeaturePlot}.
 #'
 #' @param seurat Seurat object, where dimensionality reduction has been applied,
 #' i.e. (after applying Seurat::RunPCA() or Seurat::RunTSNE() to the object)
@@ -754,7 +754,7 @@ vlnGrid <- function(seurat, genes,
                     title = NULL,
                     scales = "free_x") {
 
-    expr <- cytokit::fetchData(seurat, genes, return_cell = TRUE, return_cluster = TRUE) %>%
+    expr <- cytobox::fetchData(seurat, genes, return_cell = TRUE, return_cluster = TRUE) %>%
         tidyr::gather(Marker, Expression, 3:length(.))
 
     # return(expr)

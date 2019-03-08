@@ -274,7 +274,7 @@ pca <- function(seurat, ...) {
 #' # Highlight cluster 3 on the tSNE plot
 #' highlight(pbmc, 3)
 #'
-#' # Pass additional arguments to cytokit::tsne
+#' # Pass additional arguments to cytobox::tsne
 #' highlight(pbmc, c(2, 3), label = FALSE, title = "Test highlight")
 #'
 #' # Change default colour

@@ -1,4 +1,4 @@
 library(testthat)
-library(cytokit)
+library(cytobox)
 
-test_check("cytokit")
+test_check("cytobox")

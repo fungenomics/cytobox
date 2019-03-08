@@ -22,7 +22,7 @@ meanClusterExpression <- function(seurat, genes = NULL) {
 
     meanClusterExpression.percluster <- function(cluster, seurat, genes) {
 
-        cells <- cytokit::whichCells(seurat, cluster)
+        cells <- cytobox::whichCells(seurat, cluster)
         expr <- as.matrix(seurat@data[genes, cells])
         rowMeans(expr)
 
