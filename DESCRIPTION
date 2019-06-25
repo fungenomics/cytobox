@@ -4,11 +4,12 @@ Title: A toolbox for analyzing single cell RNA-seq data
 Description: A toolkit for processing, interrogating, and visualizing single cell RNA-seq data.
 Version: 0.6.0
 Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role = c("aut", "cre")),
-            person("Alexis", "Blanchet-Cohen", email = "alexis.blanchet-cohen@mail.mcgill.ca", role = c("aut")),
-            person("Yixing", "Hu", role = c("aut")),
-            person(c("Claudia", "L."), "Kleinman", role = c("aut")))
+            person("Alexis", "Blanchet-Cohen", role = "aut"),
+            person("Yixing", "Hu", role = "aut"),
+            person(c("Claudia", "L."), "Kleinman", role = "aut"),
+            person(c("Kleinman", "Lab,"), c("McGill", "University"), role = "aut"))
 Encoding: UTF-8
-License: file LICENSE
+License: CC-BY-SA-4.0 + file LICENSE
 LazyData: true
 biocViews:
 Depends: R (>= 3.4)

@@ -14,9 +14,10 @@ visualizing single cell RNA-seq data.
 
 Authors:
 \itemize{
-  \item Alexis Blanchet-Cohen \email{alexis.blanchet-cohen@mail.mcgill.ca}
+  \item Alexis Blanchet-Cohen
   \item Yixing Hu
   \item Claudia L. Kleinman
+  \item Kleinman Lab, McGill University
 }
 
 }
