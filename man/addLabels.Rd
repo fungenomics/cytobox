@@ -8,7 +8,7 @@ addLabels(centers, label_repel = FALSE, label_size = 4,
   label_short = FALSE, clusters = NULL)
 }
 \arguments{
-\item{centers}{Data frame with at least three columns: "mean_tSNE_1", "mean_tSNE_2",
+\item{centers}{Data frame with at least three columns: "mean_x", "mean_y",
 and "Cluster", as returned by \code{\link{clusterCenters}}}
 
 \item{label_repel}{Logical, whether to plot cluster

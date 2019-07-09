@@ -33,6 +33,8 @@ addEmbedding <- function(seurat, df, reduction = "tsne", dim1 = 1, dim2 = 2) {
 
     df$Cell <- as.character(df$Cell)
 
+    # This is just a tidyeval-style way for getting the right coordinates
+    # for the right reduction
     embedding <- data.frame(Cell = seurat@cell.names, stringsAsFactors = FALSE) %>%
         mutate(!!vars[1] := seurat@dr[[reduction]]@cell.embeddings[, 1],
                !!vars[2] := seurat@dr[[reduction]]@cell.embeddings[, 2])

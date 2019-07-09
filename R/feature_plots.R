@@ -131,16 +131,9 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 
     if (label) {
 
-        if (reduction == "pca") {
-
-            message("Plotting labels is currently only available for reduction = 'tsne';",
-                    " returning plot without labels.")
-        } else {
-
-            centers <- clusterCenters(seurat)
+        centers <- clusterCenters(seurat, reduction = reduction, dim1 = dim1, dim2 = dim2)
             gg <- gg + addLabels(centers, label_repel, label_size, label_short)
 
-        }
     }
 
     if (reduction == "tsne") axes <- gsub("_", " ", vars)
@@ -223,6 +216,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
 #' dashboard(pbmc, "IL32", title = "Test dashboard")
 #' feature(pbmc, "IL32")
 tsneByPercentileMarkerExpression <- function(seurat, genes,
+                                             reduction = "tsne",
                                              label = TRUE,
                                              palette = "blues",
                                              title = NULL,
@@ -235,9 +229,9 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
                                              extra = FALSE,
                                              verbose = FALSE,
                                              hide_ticks = FALSE,
-                                             label_short = FALSE) {
-
-    reduction <- "tsne"
+                                             label_short = FALSE,
+                                             dim1 = 1,
+                                             dim2 = 2) {
 
     if (verbose) message("Computing percentiles...")
 
@@ -349,14 +343,7 @@ tsneByPercentileMarkerExpression <- function(seurat, genes,
 
     if (label) {
 
-        if (reduction == "pca") {
-
-            message("Plotting labels is currently only available for reduction = 'tsne';",
-                    " returning plot without labels.")
-            return(gg)
-        }
-
-        centers <- clusterCenters(seurat)
+        centers <- clusterCenters(seurat, reduction = reduction, dim1 = dim1, dim2 = dim2)
         gg <- gg + addLabels(centers, label_repel, label_size, label_short)
 
         if (extra) {

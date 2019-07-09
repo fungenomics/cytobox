@@ -185,9 +185,52 @@ noTicks <- function() {
 }
 
 
+#' clusterCenters
+#'
+#' Get centers of clusters given a Seurat object, to use for labelling
+#' in tSNE space. The cluster center is defined as the median X and Y coordinate
+#' across cells in each cluster.
+#'
+#' @param seurat Seurat object, where dimensionality reduction has been applied,
+#' i.e. (after applying Seurat::RunTSNE() to the object).
+#'
+#' @return Data frame with three columns: Cluster, mean_tSNE_1, and mean_tSNE_2
+#' @export
+#'
+#' @author Selin Jessa
+#' @examples
+#'
+#' clusterCenters(pbmc, reduction = "pca", dim1 = 1, dim2 = 3)
+clusterCenters <- function(seurat, reduction, dim1, dim2) {
+
+    n_clusters <- length(unique(seurat@ident))
+
+    # Attempts at tidyeval...
+    # vars <- colnames(seurat@dr[[reduction]]@cell.embeddings)[c(1, 2)]
+    # col_names <- paste0("mean_", vars)
+
+    # Get the embedding
+    df <- as.data.frame(seurat@dr[[reduction]]@cell.embeddings[, c(dim1, dim2)]) %>%
+        mutate(Cell = names(seurat@ident),
+               Cluster = seurat@ident)
+
+    # Generalize these
+    colnames(df)[c(1, 2)] <- c("Dim_1", "Dim_2")
+
+    # Compute cluster centers
+    centers <- df %>%
+        group_by(Cluster) %>%
+        summarise(mean_x = median(Dim_1),
+                  mean_y = median(Dim_2))
+
+    return(centers)
+
+}
+
+
 #' Add cluster labels to a tSNE ggplot2 plot
 #'
-#' @param centers Data frame with at least three columns: "mean_tSNE_1", "mean_tSNE_2",
+#' @param centers Data frame with at least three columns: "mean_x", "mean_y",
 #' and "Cluster", as returned by \code{\link{clusterCenters}}
 #' @param label_repel Logical, whether to plot cluster
 #' labels repelled from the center, on a slightly transparent white background and
@@ -214,23 +257,25 @@ addLabels <- function(centers, label_repel = FALSE, label_size = 4, label_short 
     if (label_repel) {
 
         ggrepel::geom_label_repel(data = centers,
-                                      aes(x = mean_tSNE_1, y = mean_tSNE_2),
-                                      label = centers$Cluster,
-                                      size = label_size,
-                                      segment.color = 'grey50',
-                                      fontface = 'bold',
-                                      alpha = 0.8,
-                                      segment.alpha = 0.8,
-                                      label.size = NA,
-                                      force = 2,
-                                      nudge_x = 5, nudge_y = 5,
-                                      segment.size = 0.5,
-                                      arrow = arrow(length = unit(0.01, 'npc')))
+                                  aes(x = mean_x, y = mean_y),
+                                  label = centers$Cluster,
+                                  size = label_size,
+                                  segment.color = 'grey50',
+                                  fontface = 'bold',
+                                  alpha = 0.8,
+                                  segment.alpha = 0.8,
+                                  label.size = NA,
+                                  force = 2,
+                                  # Leaving these unspecified for now, since it really depends on
+                                  # the dimensionality reduction
+                                  # nudge_x = 5, nudge_y = 5,
+                                  segment.size = 0.5,
+                                  arrow = arrow(length = unit(0.01, 'npc')))
 
     } else {
 
         geom_text(data = centers,
-                  aes(x = mean_tSNE_1, y = mean_tSNE_2, label = Cluster),
+                  aes(x = mean_x, y = mean_y, label = Cluster),
                   size = label_size)
 
     }
@@ -293,14 +338,17 @@ constrainScale <- function(seurat, reduction = "tsne")  {
 #' @importFrom ggplot2 theme_light theme
 #' @author Selin Jessa
 #' @export
-theme_min <- function(base_size = 11, base_family = "") {
+theme_min <- function(base_size = 11, base_family = "",
+                      border_colour = "grey90",
+                      border_size = 1) {
 
     theme_light(base_size = 11, base_family = "") +
         theme(
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank(),
             panel.background = element_blank(),
-            panel.border = element_rect(fill = NA, colour = "grey90", size = 1),
+            panel.border = element_rect(fill = NA, colour = border_colour, size = border_size),
+            axis.ticks = element_line(colour = border_colour),
             strip.background = element_rect(fill = NA, colour = NA),
             strip.text.x = element_text(colour = "black", size = rel(1.2)),
             strip.text.y = element_text(colour = "black", size = rel(1.2)),
@@ -314,3 +362,5 @@ theme_min <- function(base_size = 11, base_family = "") {
             legend.background = element_rect(colour = NA, fill = NA)
         )
 }
+
+

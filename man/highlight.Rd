@@ -2,9 +2,9 @@
 % Please edit documentation in R/visualization.R
 \name{highlight}
 \alias{highlight}
-\title{Highlight select clusters on a tSNE plot}
+\title{Highlight select clusters on a dimensionality reduction plot}
 \usage{
-highlight(seurat, clusters, reduction = "tsne",
+highlight(seurat, clusters = NULL, cells = NULL, reduction = "tsne",
   original_colours = NULL, default_colour = "gray90",
   label_all = FALSE, label = TRUE, ...)
 }
@@ -13,6 +13,8 @@ highlight(seurat, clusters, reduction = "tsne",
 
 \item{clusters}{Vector of one or more clusters to highlight, matching the levels at
 \code{levels(seurat@ident)}. If "none", all clusters are coloured by \code{default_colour}.}
+
+\item{cells}{Character vector of cell IDs specifying cells to highlight.}
 
 \item{original_colours}{(Optional) Vector of colours to use. Either one colour
 per cluster, in the order of \code{levels(seurat@ident)}, or one colour per
@@ -26,15 +28,19 @@ Default: default ggplot2 colours used by Seurat.}
 \item{label_all}{Logical, if labelling the tSNE (if \code{label == TRUE}), whether
 to label all the clusters, or only the ones being highlighted. Default: FALSE.}
 
-\item{...}{Arguments passed on to \code{plotDR}
+\item{...}{Arguments passed on to \code{plot_dr}
 \describe{
+  \item{reduction}{String, specifying a lot of \code{seurat@dr}, which
+indicates which embedding to plot. Default: "tsne". (Can also take "umap" or "pca").}
   \item{colour_by}{(Optional) String, specifying the column in \code{seurat@meta.data}
 by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@ident}).}
   \item{colour_by_type}{(Optional) String, one of "discrete" or "continuous".
 If specifying \code{colour_by} and providing colours to the \code{colours}
 argument, specify whether the \code{colour_by} variable is discrete or continuous.
-Default: discrete.}
-  \item{point_size}{Numeric, size of points in scatter plot. Default: 0.6}
+Default: discrete. The function is pretty good at setting the palette correctly on
+its own, but try modifying this in case of errors.}
+  \item{point_size}{Numeric, size of points in scatter plot. Default: 0.6 for datasets
+with < 300 cells, and 1.3 for datasets with otherwise.}
   \item{alpha}{Numeric, fixed alpha value for points: Default: 0.8}
   \item{legend}{Logical, whether to plot legend. Default: FALSE if \code{colour_by}
 is NULL and \code{label} is TRUE, true otherwise.}
@@ -44,7 +50,9 @@ with an arrow pointing to the cluster center. If FALSE, simply plot the
 cluster label at the cluster center. Default: TRUE.}
   \item{label_size}{Numeric, controls the size of text labels. Default: 4.}
   \item{title}{(Optional) String specifying title.}
-  \item{hide_ticks}{Logical, whether to hide axis ticks. Default: FALSE}
+  \item{hide_ticks}{Logical, whether to hide axis ticks, i.e. both the text and the
+small lines indicating the breaks along the x- and y-axes. Default: FALSE}
+  \item{hide_axes}{Logical, whether to hide axis labels. Default: TRUE}
   \item{label_short}{(Optional/Experimental!!) Logical, if TRUE, assumes cluster
 names (at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
 numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
@@ -52,10 +60,11 @@ and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
   \item{cells}{Character vector of cell names if only a subset of cells should be
 plot (these should correspond to seurat@cell.names). Default: Plot all cells.
 See the argument \code{clusters_to_label} for only labelling certain clusters.
-See the \code{constrain_scale} argument for controlling the scales of the plot.}
-  \item{order_by}{String, corresponding to a column in seurat@meta.data, specifying
+See the \code{constrain_scale} argument for controlling the scales of the plot.
+See \code{\link{highlight}} for more options for plotting specific cells.}
+  \item{order_by}{String, corresponding to a column in \code{seurat@meta.data}, specifying
 a variable to control the order in which cells are plot. (Thus, you can manually
-specify the order, add it as a new column in seurat@meta.data, and pass that).
+specify the order, add it as a new column in \code{seurat@meta.data}, and pass that).
 If numeric, cells with high values are plot on top. If not, the column must
 be a factor, and cells will be ordered according to the levels, with cells
 in the first level plot on top. Default: if a numeric column is specified
@@ -81,7 +90,7 @@ Default: TRUE}
 A ggplot2 object
 }
 \description{
-Plot the tSNE embedding for the dataset, with cells from select clusters coloured
+Plot the embedding for the dataset, with cells from select clusters coloured
 by either their original colours or provided colours, and cells from all
 other clusters in another (non-intrusive) colour, or not at all. This is a
 thin wrapper for \code{\link{tsne}} which takes care of specifying cells and colours
