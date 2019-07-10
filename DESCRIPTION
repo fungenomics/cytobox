@@ -15,7 +15,7 @@ biocViews:
 Depends: R (>= 3.4)
 Imports: 
     ggplot2 (>= 2.2.1),
-    Seurat (>= 2.2.0),
+    Seurat (< 3.0.0),
     dplyr (>= 0.7.0),
     viridis (>= 0.4.1),
     magrittr (>= 1.5),

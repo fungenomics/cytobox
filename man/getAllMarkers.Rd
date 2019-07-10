@@ -7,7 +7,7 @@
 getAllMarkers(df, labels, specify_clusters = NULL,
   output_graphs = FALSE, n_genes = 2, topn_markers = 10,
   graph_name = "Feature plot for cluster ", n_trees = NCOL(df) *
-  n_genes, method = "RF")
+  n_genes, method = "RF", seurat)
 }
 \arguments{
 \item{df}{A dataframe with the genes as columns and cells as rows}

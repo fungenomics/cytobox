@@ -9,10 +9,10 @@
 #' @name cytobox
 "_PACKAGE"
 
-#' @importClassesFrom Seurat seurat
+#' @importFrom magrittr %>%
 NULL
 
-#' @importFrom magrittr %>%
+#' @importClassesFrom Seurat seurat
 NULL
 
 #' pbmc

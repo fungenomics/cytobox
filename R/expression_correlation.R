@@ -73,11 +73,13 @@ meanClusterExpression <- function(seurat, genes = NULL) {
 #'
 #' @examples
 #' # Compute pairwise correlations between clusters in pbmc
-#' correlateExpression(s1 = pbmc,
-#'                     s2 = pbmc,
-#'                     genes = head(rownames(pbmc@@raw.data), 100),
-#'                     from_sp = "hg",
-#'                     to_sp = "hg")
+#'
+#' # NOT RUN
+#' # correlateExpression(s1 = pbmc,
+#' #                     s2 = pbmc,
+#' #                     genes = head(rownames(pbmc@@raw.data), 100),
+#' #                     from_sp = "hg",
+#' #                     to_sp = "hg")
 correlateExpression <- function(s1, s2, genes, from_sp, to_sp,
                                 return_input = FALSE) {
 
