@@ -9,6 +9,13 @@
 Functions for processing, interrogating, and
 visualizing single cell RNA-seq data.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/fungenomics/cytobox}
+}
+
+}
 \author{
 \strong{Maintainer}: Selin Jessa \email{selin.jessa@mail.mcgill.ca}
 
@@ -17,7 +24,11 @@ Authors:
   \item Alexis Blanchet-Cohen
   \item Yixing Hu
   \item Claudia L. Kleinman
-  \item Kleinman Lab, McGill University
+}
+
+Other contributors:
+\itemize{
+  \item Kleinman Lab, McGill University [contributor]
 }
 
 }

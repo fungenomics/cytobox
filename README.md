@@ -11,21 +11,8 @@ devtools::install_github("fungenomics/cytobox", build_vignettes = TRUE)
 
 ```
 
-## Getting help
 
-Access the barebones vignette from within R for a list of examples:
 
-```r
-browseVignettes("cytobox")
-```
-
-You can look up the documentation for any `cytobox` function from the R console,
-these also contain an example or two for many functions:
-```r
-?cytobox::tsne
-```
-
-Some functions will specify the author in the documentation, whom you could contact directly :)
 
 ## Versioning
 

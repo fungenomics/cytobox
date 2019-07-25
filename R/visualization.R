@@ -116,6 +116,8 @@ plot_dr <- function(seurat,
                     border_colour = NULL,
                     border_size = NULL) {
 
+    if (!(reduction %in% names(seurat@dr))) stop(reduction, " reduction has not been computed.")
+
     # Get the data
     embedding <- data.frame(Cell = seurat@cell.names,
                             dim1 = seurat@dr[[reduction]]@cell.embeddings[, dim1],

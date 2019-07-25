@@ -7,11 +7,12 @@ Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role
             person("Alexis", "Blanchet-Cohen", role = "aut"),
             person("Yixing", "Hu", role = "aut"),
             person(c("Claudia", "L."), "Kleinman", role = "aut"),
-            person(c("Kleinman", "Lab,"), c("McGill", "University"), role = "aut"))
+            person(c("Kleinman", "Lab,"), c("McGill", "University"), role = "ctb"))
 Encoding: UTF-8
 License: CC-BY-SA-4.0 + file LICENSE
 LazyData: true
 biocViews:
+URL: https://github.com/fungenomics/cytobox
 Depends: R (>= 3.4)
 Imports: 
     ggplot2 (>= 2.2.1),
