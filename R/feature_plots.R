@@ -146,6 +146,8 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
         axes <- c(glue('{gsub("_", " ", vars[1])} ({pve[dim1]}%)'),
                   glue('{gsub("_", " ", vars[2])} ({pve[dim2]}%)'))
 
+    } else {
+	axes <- vars	    
     }
 
     gg <- gg +
