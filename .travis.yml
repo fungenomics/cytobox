@@ -23,6 +23,12 @@ addons:
 before_install:
   - mkdir $HOME/.R && echo -e 'CXX_STD = CXX14\n\nVER=\nCCACHE=ccache\nCC=$(CCACHE) gcc$(VER) -std=gnu99\nCXX=$(CCACHE) g++$(VER)\nC11=$(CCACHE) g++$(VER)\nC14=$(CCACHE) g++$(VER)\nFC=$(CCACHE) gfortran$(VER)\nF77=$(CCACHE) gfortran$(VER)' > $HOME/.R/Makevars
 
+# This should only apply to Travis, since we'll never need the Read10X
+# function, try this workaround, following
+# https://github.com/satijalab/seurat/issues/1114#issuecomment-488092170
+r_github_packages:
+  - UCSF-TI/fake-hdf5r
+
 # Notes:
 # We can specify a specific version of an R package (older than the CRAN version)#
 # https://github.com/r-lib/devtools/blob/master/vignettes/dependencies.Rmd#L20
