@@ -67,24 +67,17 @@
       
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="cytobox-readme" class="section level1">
+
+
+<div id="cytobox" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#cytobox-readme" class="anchor"></a>cytobox: README</h1></div>
+<a href="#cytobox" class="anchor"></a>cytobox</h1></div>
 <p>A toolkit for analyzing single cell RNA-seq data created by the Kleinman Lab. The legacy package, which is no longer being developed, is available at <a href="https://github.com/sjessa/cytobox/" class="uri">https://github.com/sjessa/cytobox/</a></p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>You will need to install <a href="https://cran.r-project.org/web/packages/devtools/"><code>devtools</code></a>, and then run:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"fungenomics/cytobox"</span>, <span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)</code></pre></div>
-</div>
-<div id="getting-help" class="section level2">
-<h2 class="hasAnchor">
-<a href="#getting-help" class="anchor"></a>Getting help</h2>
-<p>Access the barebones vignette from within R for a list of examples:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/browseVignettes">browseVignettes</a></span>(<span class="st">"cytobox"</span>)</code></pre></div>
-<p>You can look up the documentation for any <code>cytobox</code> function from the R console, these also contain an example or two for many functions:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?cytobox<span class="op">::</span>tsne</code></pre></div>
-<p>Some functions will specify the author in the documentation, whom you could contact directly :)</p>
 </div>
 <div id="versioning" class="section level2">
 <h2 class="hasAnchor">
@@ -99,44 +92,9 @@
 <li>The major version x is updated for major changes, which may introduce backwards incompatibiility</li>
 </ul>
 </div>
-<div id="keeping-track-of-cytobox-versions-in-your-work" class="section level4">
-<h4 class="hasAnchor">
-<a href="#keeping-track-of-cytobox-versions-in-your-work" class="anchor"></a>Keeping track of cytobox versions in your work</h4>
-<p>If you use R Markdown, it’s a great idea to include the following function as the last chunk in your documents, which will print a list of all packages loaded, and their versions.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/sessionInfo">sessionInfo</a></span>()</code></pre></div>
-<p>If you work with scripts, you could print the following to STDOUT/the log files:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/packageDescription">packageVersion</a></span>(<span class="st">"cytobox"</span>)</code></pre></div>
 </div>
 </div>
-<div id="contribution" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contribution" class="anchor"></a>Contribution</h2>
-<div id="the-first-time" class="section level4">
-<h4 class="hasAnchor">
-<a href="#the-first-time" class="anchor"></a>The first time</h4>
-<p>Clone the repository and create a development branch:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">git</span> clone https://github.com/fungenomics/cytobox.git
-<span class="bu">cd</span> cytobox
-<span class="fu">git</span> checkout -b dev-selin</code></pre></div>
-<p>Make changes locally on your branch and once the package passes <a href="http://r-pkgs.had.co.nz/check.html"><code>R CMD check</code></a> with 0 errors, commit them. Then, push your changes:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">git</span> push -u origin dev-selin</code></pre></div>
-<p>If the Travis build passes, there will be a green checkmark next to the most recent commit on your branch. When the build has passed, create a pull request on the GitHub website and merge changes in your dev branch with the master branch.</p>
-</div>
-<div id="from-now-on" class="section level4">
-<h4 class="hasAnchor">
-<a href="#from-now-on" class="anchor"></a>From now on</h4>
-<p>From now on, to continue contributing to the package, switch to your branch and make your changes there, following the same edit/commit/push workflow.</p>
-<p>If changes have been made to master since first merge the latest changes from the master branch:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">git</span> checkout master
-<span class="fu">git</span> pull
-<span class="fu">git</span> checkout dev-selin
-<span class="co"># Apply all the changes from master to dev-selin, and set HEAD so that new work</span>
-<span class="co"># will happen on top of those changes</span>
-<span class="fu">git</span> rebase master</code></pre></div>
-<p>For more on rebasing, see: <a href="https://www.atlassian.com/git/tutorials/merging-vs-rebasing" class="uri">https://www.atlassian.com/git/tutorials/merging-vs-rebasing</a></p>
-</div>
-</div>
-</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -165,7 +123,13 @@
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.com/fungenomics/cytobox"><img src="https://travis-ci.com/fungenomics/cytobox.svg?branch=master" alt="Build Status"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
       <footer><div class="copyright">
