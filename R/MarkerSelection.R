@@ -660,7 +660,8 @@ clustering_evaluation_index<-function(data_frame){
 #' labels <- data.frame(as.numeric(pbmc@meta.data$res.1))
 #' marker_list<-getAllMarkers(data, labels = labels)
 #'
-getAllMarkers<-function(df , labels, specify_clusters = NULL ,output_graphs = FALSE,n_genes = 2, topn_markers = 10, graph_name = "Feature plot for cluster ", n_trees=NCOL(df)*n_genes, method = "RF"){
+getAllMarkers<-function(df , labels, specify_clusters = NULL ,output_graphs = FALSE,n_genes = 2, topn_markers = 10, graph_name = "Feature plot for cluster ", n_trees=NCOL(df)*n_genes, method = "RF",
+                        seurat){
   Clusters<-c()
   if(is.null(specify_clusters)){
     Clusters <-unique(labels)[,1]

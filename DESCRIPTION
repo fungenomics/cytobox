@@ -7,19 +7,20 @@ Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role
             person("Alexis", "Blanchet-Cohen", role = "aut"),
             person("Yixing", "Hu", role = "aut"),
             person(c("Claudia", "L."), "Kleinman", role = "aut"),
-            person(c("Kleinman", "Lab,"), c("McGill", "University"), role = "aut"))
+            person(c("Kleinman", "Lab,"), c("McGill", "University"), role = "ctb"))
 Encoding: UTF-8
 License: CC-BY-SA-4.0 + file LICENSE
 LazyData: true
 biocViews:
+URL: https://github.com/fungenomics/cytobox
 Depends: R (>= 3.4)
 Imports: 
     ggplot2 (>= 2.2.1),
-    Seurat (>= 2.2.0),
     dplyr (>= 0.7.0),
     viridis (>= 0.4.1),
     magrittr (>= 1.5),
     monocle (>= 2.8.0),
+    Seurat (< 3.0.0),
     tibble,
     rlang (>= 0.1.2),
     purrr,
@@ -40,4 +41,6 @@ Suggests:
     testthat,
     knitr,
     rmarkdown
+Remotes:
+    satijalab/seurat@v2.3.3
 VignetteBuilder: knitr

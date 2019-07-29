@@ -270,28 +270,3 @@ symbols2ensembl <- function(x, sp = "hg") {
 }
 
 
-#' Annotate cluster markers computed by Seurat
-#'
-#' @param markers A dataframe containing cluster markers as computed by
-#' \link[Seurat]{FindAllMarkers}. Rownames should be gene symbols.
-#' @param species String specifying the species, one of "mm" or "hg", used to determine the
-#' annotation. Default: "mm".
-#'
-#'
-#' @author Selin Jessa
-#' @export
-#' @examples
-#' annotateMarkers(markers_pbmc, "hg")
-annotateMarkers <- function(markers, species = "mm") {
-
-    annotation <- switch(species, "hg" = hg.genes, "mm" = mm.genes)
-
-    markers %>%
-        tibble::rownames_to_column(var = "external_gene_name") %>%
-        left_join(annotation, by = c("external_gene_name" = "gene_symbol")) %>%
-        distinct(cluster, external_gene_name, .keep_all = TRUE) %>%
-        select(cluster, external_gene_name, avg_logFC, p_val_adj, pct.1, pct.2, description, p_val, gene_biotype, ensembl_gene_id) %>%
-        arrange(cluster, desc(avg_logFC))
-
-
-}

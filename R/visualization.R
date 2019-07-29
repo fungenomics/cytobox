@@ -1,11 +1,12 @@
 # Functions for basic visualization of the data
 
 
-#' Plot a reduced dimensionality embedding for a Seurat object
+#' Plot a reduced dimensionality embedding for a Seurat object, colouring
+#' by cluster or arbitrary variables.
 #'
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
 #' @param reduction String, specifying a lot of \code{seurat@@dr}, which
-#' indicates which embedding to plot. Default: "tsne". (Use "pca" for plotting PCA).
+#' indicates which embedding to plot. Default: "tsne". (Can also take "umap" or "pca").
 #' @param colour_by (Optional) String, specifying the column in \code{seurat@@meta.data}
 #' by which to colour cells. Default: NULL, colour cells by cluster (in \code{seurat@@ident}).
 #' @param colours (Optional) Character vector of colours for points. If \code{colour_by}
@@ -20,9 +21,11 @@
 #' @param colour_by_type (Optional) String, one of "discrete" or "continuous".
 #' If specifying \code{colour_by} and providing colours to the \code{colours}
 #' argument, specify whether the \code{colour_by} variable is discrete or continuous.
-#' Default: discrete.
+#' Default: discrete. The function is pretty good at setting the palette correctly on
+#' its own, but try modifying this in case of errors.
 #' @param label Logical, whether to plot cluster labels. Default: TRUE
-#' @param point_size Numeric, size of points in scatter plot. Default: 0.6
+#' @param point_size Numeric, size of points in scatter plot. Default: 0.6 for datasets
+#' with < 300 cells, and 1.3 for datasets with otherwise.
 #' @param alpha Numeric, fixed alpha value for points: Default: 0.8
 #' @param legend Logical, whether to plot legend. Default: FALSE if \code{colour_by}
 #' is NULL and \code{label} is TRUE, true otherwise.
@@ -32,7 +35,9 @@
 #' cluster label at the cluster center. Default: TRUE.
 #' @param label_size Numeric, controls the size of text labels. Default: 4.
 #' @param title (Optional) String specifying title.
-#' @param hide_ticks Logical, whether to hide axis ticks. Default: FALSE
+#' @param hide_ticks Logical, whether to hide axis ticks, i.e. both the text and the
+#' small lines indicating the breaks along the x- and y-axes. Default: FALSE
+#' @param hide_axes Logical, whether to hide axis labels. Default: TRUE
 #' @param label_short (Optional/Experimental!!) Logical, if TRUE, assumes cluster
 #' names (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
 #' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
@@ -41,9 +46,10 @@
 #' plot (these should correspond to seurat@@cell.names). Default: Plot all cells.
 #' See the argument \code{clusters_to_label} for only labelling certain clusters.
 #' See the \code{constrain_scale} argument for controlling the scales of the plot.
-#' @param order_by String, corresponding to a column in seurat@@meta.data, specifying
+#' See \code{\link{highlight}} for more options for plotting specific cells.
+#' @param order_by String, corresponding to a column in \code{seurat@@meta.data}, specifying
 #' a variable to control the order in which cells are plot. (Thus, you can manually
-#' specify the order, add it as a new column in seurat@@meta.data, and pass that).
+#' specify the order, add it as a new column in \code{seurat@@meta.data}, and pass that).
 #' If numeric, cells with high values are plot on top. If not, the column must
 #' be a factor, and cells will be ordered according to the levels, with cells
 #' in the first level plot on top. Default: if a numeric column is specified
@@ -69,7 +75,7 @@
 #'
 #' @return A ggplot2 object
 #' @export
-#' @aliases pca tsne
+#' @aliases plot_pca plot_tsne plot_umap
 #'
 #' @author Selin Jessa
 #'
@@ -84,34 +90,42 @@
 #'
 #' # Plot the prefixes only
 #' tsne(pbmc2, label_short = TRUE)
-plotDR <- function(seurat,
-                   reduction = "tsne",
-                   colour_by = NULL,
-                   colours = NULL,
-                   colour_by_type = "discrete",
-                   label = TRUE,
-                   point_size = 0.6, alpha = 0.8,
-                   legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
-                   label_repel = TRUE,
-                   label_size = 4,
-                   cells = NULL,
-                   order_by = NULL,
-                   clusters_to_label = NULL,
-                   hide_ticks = TRUE,
-                   title = NULL,
-                   label_short = FALSE,
-                   na_color = "gray80",
-                   limits = NULL,
-                   constrain_scale = TRUE,
-                   dim1 = 1,
-                   dim2 = 2) {
+plot_dr <- function(seurat,
+                    reduction = "tsne",
+                    colour_by = NULL,
+                    colours = NULL,
+                    colour_by_type = "discrete",
+                    label = TRUE,
+                    point_size = ifelse(length(seurat@cell.names) > 300, 0.6, 1.3),
+                    alpha = 0.8,
+                    legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
+                    label_repel = TRUE,
+                    label_size = 4,
+                    cells = NULL,
+                    order_by = NULL,
+                    clusters_to_label = NULL,
+                    hide_ticks = TRUE,
+                    title = NULL,
+                    label_short = FALSE,
+                    na_color = "gray80",
+                    limits = NULL,
+                    constrain_scale = TRUE,
+                    hide_axes = FALSE,
+                    dim1 = 1,
+                    dim2 = 2,
+                    border_colour = NULL,
+                    border_size = NULL) {
 
+    if (!(reduction %in% names(seurat@dr))) stop(reduction, " reduction has not been computed.")
+
+    # Get the data
     embedding <- data.frame(Cell = seurat@cell.names,
-                            tSNE_1 = seurat@dr[[reduction]]@cell.embeddings[, dim1],
-                            tSNE_2 = seurat@dr[[reduction]]@cell.embeddings[, dim2],
+                            dim1 = seurat@dr[[reduction]]@cell.embeddings[, dim1],
+                            dim2 = seurat@dr[[reduction]]@cell.embeddings[, dim2],
                             Cluster = seurat@ident,
                             stringsAsFactors = FALSE)
 
+    # Control cell ordering (in the z-axis)
     if (!is.null(order_by)) {
 
         # Check the variable is usable for sorting
@@ -137,22 +151,28 @@ plotDR <- function(seurat,
     if (!is.null(cells)) embedding <- embedding %>% filter(Cell %in% cells)
     if (!is.null(order_by)) embedding <- embedding %>% arrange_(order_by)
 
-    gg <- ggplot(embedding, aes(x = tSNE_1, y = tSNE_2))
+    gg <- ggplot(embedding, aes(x = dim1, y = dim2))
 
     if (label && all(is.na(seurat@ident))) {
         label <- FALSE
         message("NOTE: identity of all cells is NA, setting 'label' to FALSE.")
     }
 
+    # Deal with the palette
     if (is.null(colour_by)) {
 
         if (is.null(colours)) {
 
-            # Assuming that the order of the levels is correct in the seurat object,
-            # this should find the colours of the original clusters, and whatever they've been renamed,
-            # if and only if the number of new cluster IDs is equal to the number of old ones
-            colours <- ggColors(length(levels(seurat@ident)))
-            names(colours) <- levels(seurat@ident)
+            # Check if there's a cluster palette stored with the object
+            if (!is.null(seurat@misc$colours)) colours <- seurat@misc$colours
+            else {
+
+                # Assuming that the order of the levels is correct in the seurat object,
+                # find the default colours for the clusters
+                colours <- ggColors(length(levels(seurat@ident)))
+                names(colours) <- levels(seurat@ident)
+
+            }
 
         }
 
@@ -188,12 +208,12 @@ plotDR <- function(seurat,
 
             }
         }
-
     }
 
+    # Label clusters
     if (label) {
 
-        centers <- clusterCenters(seurat)
+        centers <- clusterCenters(seurat, reduction = reduction, dim1 = dim1, dim2 = dim2)
         gg <- gg + addLabels(centers     = centers,
                              label_repel = label_repel,
                              label_size  = label_size,
@@ -202,17 +222,25 @@ plotDR <- function(seurat,
 
     }
 
-    if (reduction == "tsne") gg <- gg + theme_min() + xlab(glue("tSNE {dim1}")) + ylab(glue("tSNE {dim2}"))
+    gg <- gg + theme_min(border_colour = border_colour, border_size = border_size)
+
+    # Set the right axes titles
+    if (hide_axes) gg <- gg + xlab(NULL) + ylab(NULL)
+    else if (reduction == "tsne") gg <- gg + xlab(glue("tSNE {dim1}")) + ylab(glue("tSNE {dim2}"))
+    else if (reduction == "umap") gg <- gg + xlab(glue("UMAP {dim1}")) + ylab(glue("UMAP {dim2}"))
+    else if (reduction == "phate") gg <- gg + xlab(glue("PHATE {dim1}")) + ylab(glue("PHATE {dim2}"))
     else if (reduction == "pca") {
 
         var_exp <- getVarianceExplained(seurat)
-        gg <- gg + theme_min() +
+        gg <- gg +
             xlab(glue("PC{dim1} ({round(var_exp$percent.var.explained[dim1], 1)}%)")) +
             ylab(glue("PC{dim2} ({round(var_exp$percent.var.explained[dim2], 1)}%)"))
 
+    } else {
+        gg <- gg + xlab(glue("{reduction} {dim1}")) + ylab(glue("{reduction} {dim2}"))
     }
 
-
+    # More aesthetics
     if (!legend) gg <- gg + noLegend()
     else if (!is.null(colour_by)) {
         if (colour_by == "orig.ident") gg <- gg + labs(colour = "Sample")
@@ -220,33 +248,50 @@ plotDR <- function(seurat,
 
     if (!is.null(title)) gg <- gg + ggtitle(title)
     if (hide_ticks) gg <- gg + noTicks()
-    if (constrain_scale & reduction == "tsne") gg <- gg + constrainScale(seurat, reduction = reduction)
+    if (constrain_scale) gg <- gg + constrainScale(seurat, reduction = reduction)
 
     return(gg)
 
 }
 
-#' @describeIn plotDR Plot a tSNE embedding
+#' @describeIn plot_dr Plot a tSNE embedding
 #' @export
 tsne <- function(seurat, ...) {
 
-    plotDR(seurat, reduction = "tsne", ...)
+    plot_dr(seurat, reduction = "tsne", ...)
 
 }
 
-#' @describeIn plotDR Plot a PCA embedding
+#' @describeIn plot_dr Plot a PCA embedding
 #' @export
 pca <- function(seurat, ...) {
 
-    plotDR(seurat, reduction = "pca", ...)
+    plot_dr(seurat, reduction = "pca", ...)
+
+}
+
+
+#' @describeIn plot_dr Plot a UMAP embedding
+#' @export
+umap <- function(seurat, ...) {
+
+    plot_dr(seurat, reduction = "umap", ...)
+
+}
+
+#' @describeIn plot_dr Plot a PHATE embedding
+#' @export
+phate <- function(seurat, ...) {
+
+    plot_dr(seurat, reduction = "phate", ...)
 
 }
 
 
 
-#' Highlight select clusters on a tSNE plot
+#' Highlight select clusters on a dimensionality reduction plot
 #'
-#' Plot the tSNE embedding for the dataset, with cells from select clusters coloured
+#' Plot the embedding for the dataset, with cells from select clusters coloured
 #' by either their original colours or provided colours, and cells from all
 #' other clusters in another (non-intrusive) colour, or not at all. This is a
 #' thin wrapper for \code{\link{tsne}} which takes care of specifying cells and colours
@@ -255,6 +300,7 @@ pca <- function(seurat, ...) {
 #' @param seurat Seurat object, where Seurat::RunTSNE() has been applied
 #' @param clusters Vector of one or more clusters to highlight, matching the levels at
 #' \code{levels(seurat@@ident)}. If "none", all clusters are coloured by \code{default_colour}.
+#' @param cells Character vector of cell IDs specifying cells to highlight.
 #' @param original_colours (Optional) Vector of colours to use. Either one colour
 #' per cluster, in the order of \code{levels(seurat@@ident)}, or one colour per
 #' cluster passed to \code{clusters}, in the other they were provided.
@@ -265,7 +311,7 @@ pca <- function(seurat, ...) {
 #' @param label_all Logical, if labelling the tSNE (if \code{label == TRUE}), whether
 #' to label all the clusters, or only the ones being highlighted. Default: FALSE.
 #'
-#' @inheritDotParams plotDR -seurat -clusters_to_label -colours -label -reduction
+#' @inheritDotParams plot_dr -seurat -clusters_to_label -colours -label
 #' @return A ggplot2 object
 #' @export
 #' @author Selin Jessa
@@ -286,7 +332,8 @@ pca <- function(seurat, ...) {
 #' # Don't plot cells in other clusters
 #' highlight(pbmc, c(2, 3), default_colour = "none")
 highlight <- function(seurat,
-                      clusters,
+                      clusters = NULL,
+                      cells = NULL,
                       reduction = "tsne",
                       original_colours = NULL,
                       default_colour = "gray90",
@@ -299,9 +346,46 @@ highlight <- function(seurat,
                                            original_colours = original_colours,
                                            default_colour = default_colour)
 
-    cells_label <- whichCells(seurat, clusters)
+    if (is.null(clusters) & is.null(cells)) stop("Please specify either cells or",
+                                                 "clusters to highlight.")
 
-    if (label_all) {
+    if (!is.null(clusters)) cells_label <- whichCells(seurat, clusters)
+    else if (!is.null(cells)) {
+
+        cells_label <- cells
+
+    }
+
+    # There are a few ways to achieve this plot depending on the parameters:
+
+    # Case 1: Don't label cells outside the cluster/cells of interest --> implemented in plot_dr
+    if (default_colour == "none") plot_dr(seurat,
+                                          reduction = reduction,
+                                          colours = highlight_colours,
+                                          clusters_to_label = clusters,
+                                          # Don't plot cells from the non-highlighted clusterss
+                                          cells = cells_label,
+                                          label = label,
+                                          ...)
+
+    # Case 2: Label all cells, but highlight cells based on a specification of individual
+    # cells (as opposed to clusters)
+    else if (!is.null(cells)) {
+
+        levels(seurat@ident) <- c(levels(seurat@ident), "Other")
+        seurat@ident[!(seurat@cell.names %in% cells_label)] <- "Other"
+        plot_dr(seurat,
+                reduction = reduction,
+                colours = c(highlight_colours, "Other" = default_colour),
+                clusters_to_label = levels(seurat@ident)[levels(seurat@ident) != "Other"],
+                # Don't plot cells from the non-highlighted clusterss
+                label = label,
+                ...)
+
+
+    # Case 3: Highlight the cells based on specification of clusters, but label
+    # all clusters
+    } else if (label_all) {
 
         # Assign an order to the cells so the highlighted ones will be plot on top
         seurat@meta.data$Order_cells <- ifelse(seurat@cell.names %in% cells_label,
@@ -310,23 +394,17 @@ highlight <- function(seurat,
 
         seurat@meta.data$Order_cells <- factor(seurat@meta.data$Order_cells, levels = c(clusters, "Other"))
 
-        tsne(seurat, colours = highlight_colours, order_by = "Order_cells", ...)
+        plot_dr(seurat, colours = highlight_colours, reduction = reduction,
+                order_by = "Order_cells", ...)
 
-    }
-
-    else if (default_colour == "none") plotDR(seurat,
-                                            reduction = reduction,
-                                            colours = highlight_colours,
-                                            clusters_to_label = clusters,
-                                            # Don't plot cells from the non-highlighted clusterss
-                                            cells = cells_label,
-                                            label = label,
-                                            ...)
-    else tsne(seurat,
-              colours = highlight_colours,
-              clusters_to_label = clusters,
-              label = label,
-              ...)
+    # Case 4: Highlight the cells based on specification of clusters, and label
+    # only those clusters
+    } else plot_dr(seurat,
+                 reduction = reduction,
+                 colours = highlight_colours,
+                 clusters_to_label = clusters,
+                 label = label,
+                 ...)
 
 }
 

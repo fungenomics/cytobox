@@ -34,11 +34,13 @@ and then correlates the cluster means.
 }
 \examples{
 # Compute pairwise correlations between clusters in pbmc
-correlateExpression(s1 = pbmc,
-                    s2 = pbmc,
-                    genes = head(rownames(pbmc@raw.data), 100),
-                    from_sp = "hg",
-                    to_sp = "hg")
+
+# NOT RUN
+# correlateExpression(s1 = pbmc,
+#                     s2 = pbmc,
+#                     genes = head(rownames(pbmc@raw.data), 100),
+#                     from_sp = "hg",
+#                     to_sp = "hg")
 }
 \author{
 Selin Jessa

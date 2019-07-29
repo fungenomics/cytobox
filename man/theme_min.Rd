@@ -4,7 +4,8 @@
 \alias{theme_min}
 \title{Apply a clean theme to a ggplot2 object}
 \usage{
-theme_min(base_size = 11, base_family = "")
+theme_min(base_size = 11, base_family = "", border_colour = "grey90",
+  border_size = 1)
 }
 \description{
 Apply a clean theme to a ggplot2 object

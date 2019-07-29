@@ -5,11 +5,12 @@
 \alias{dashboard}
 \title{Colour cells in t-SNE space by percentile gene expression}
 \usage{
-tsneByPercentileMarkerExpression(seurat, genes, label = TRUE,
-  palette = "blues", title = NULL, alpha = TRUE, legend = TRUE,
-  legend_options = "percentiles", point_size = 1, label_repel = TRUE,
-  label_size = 4, extra = FALSE, verbose = FALSE,
-  hide_ticks = FALSE, label_short = FALSE)
+tsneByPercentileMarkerExpression(seurat, genes, reduction = "tsne",
+  label = TRUE, palette = "blues", title = NULL, alpha = TRUE,
+  legend = TRUE, legend_options = "percentiles", point_size = 1,
+  label_repel = TRUE, label_size = 4, extra = FALSE,
+  verbose = FALSE, hide_ticks = FALSE, label_short = FALSE,
+  dim1 = 1, dim2 = 2)
 }
 \arguments{
 \item{seurat}{Seurat object, where dimensionality reduction has been applied,
