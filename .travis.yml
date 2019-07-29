@@ -17,10 +17,10 @@ addons:
 # Following
 # https://gist.github.com/episodeyang/dfa69365203639fcde5f2aae73f7d9ac
 # https://docs.travis-ci.com/user/installing-dependencies/#installing-projects-from-source
+# - wget https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.0-patch1/src/hdf5-1.10.0-patch1.tar.gz
+#  - tar -xzf hdf5-1.10.0-patch1.tar.gz
+#  - pushd hdf5-1.10.0-patch1 && ./configure --prefix=/usr --enable-cxx --enable-build-mode=production && sudo make install && popd
 before_install:
-  - wget https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.0-patch1/src/hdf5-1.10.0-patch1.tar.gz
-  - tar -xzf hdf5-1.10.0-patch1.tar.gz
-  - pushd hdf5-1.10.0-patch1 && ./configure --prefix=/usr --enable-cxx --enable-build-mode=production && sudo make install && popd
   - mkdir $HOME/.R && echo -e 'CXX_STD = CXX14\n\nVER=\nCCACHE=ccache\nCC=$(CCACHE) gcc$(VER) -std=gnu99\nCXX=$(CCACHE) g++$(VER)\nC11=$(CCACHE) g++$(VER)\nC14=$(CCACHE) g++$(VER)\nFC=$(CCACHE) gfortran$(VER)\nF77=$(CCACHE) gfortran$(VER)' > $HOME/.R/Makevars
 
 # Notes:
