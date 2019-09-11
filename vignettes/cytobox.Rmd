@@ -65,7 +65,8 @@ tsne(pbmc,
      colour_by_type = "continuous",
      colours = viridis::magma(100),
      # Provide a vector of cell names
-     cells = cells_keep,
+     highlight_cells = cells_keep,
+     show_all_cells = FALSE,
      # Only label these two clusters
      clusters_to_label = c(1, 2))
 ```

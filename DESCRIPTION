@@ -10,7 +10,7 @@ Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role
             person(c("Claudia", "L."), "Kleinman", role = "aut"),
             person(c("Kleinman", "Lab,"), c("McGill", "University"), role = "ctb"))
 Encoding: UTF-8
-License: CC-BY-SA-4.0 + file LICENSE
+License: GPL-3 + file LICENSE
 LazyData: true
 biocViews:
 URL: https://github.com/fungenomics/cytobox
