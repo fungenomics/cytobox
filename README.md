@@ -12,13 +12,3 @@ You will need to install [`devtools`](https://cran.r-project.org/web/packages/de
 devtools::install_github("fungenomics/cytobox", build_vignettes = TRUE)
 
 ```
-
-## Versioning
-
-#### Semantic versioning
-
-`cytobox` uses a semantic versioning scheme, where package versions are of the form x.y.z:
-
-- The patch version z is updated for very minor changes like bug fixes
-- The minor version y is udpated for minor but important changes like addition of new functions
-- The major version x is updated for major changes, which may introduce backwards incompatibiility

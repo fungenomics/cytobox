@@ -1,0 +1,21 @@
+---
+title: "Highly-customizable feature plots"
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  collapse = TRUE,
+  dev = "png",
+  comment = "#>"
+)
+```
+
+Load the package
+
+```{r load}
+library(cytobox)
+```
+
+

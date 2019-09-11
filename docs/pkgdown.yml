@@ -2,5 +2,13 @@ pandoc: 1.19.2.1
 pkgdown: 1.3.0
 pkgdown_sha: ~
 articles:
-  cytobox: cytobox.html
-
+- title: Brief tour of `cytobox`
+  desc: >
+    A brief tour of functions available in the package
+  contents: cytobox
+- title: Highly-customizable feature plots
+  desc: >
+    Demonstration of options for plotting "feature plots", i.e. overlaying
+    arbitratry variables on cells in a low-dimensional embeddings, using the
+    E6-E8 whole mouse embryo dataset from Pijuan-Sala et al, Nature, 2019
+  contents: extra/feature_plots

@@ -3,7 +3,8 @@ Type: Package
 Title: A toolbox for analyzing single cell RNA-seq data
 Description: A toolkit for processing, interrogating, and visualizing single cell RNA-seq data.
 Version: 0.6.0
-Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role = c("aut", "cre")),
+Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role = c("aut", "cre"),
+              comment = c(ORCID = "0000-0003-4192-6523")),
             person("Alexis", "Blanchet-Cohen", role = "aut"),
             person("Yixing", "Hu", role = "aut"),
             person(c("Claudia", "L."), "Kleinman", role = "aut"),

@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Selin Jessa \email{selin.jessa@mail.mcgill.ca}
+\strong{Maintainer}: Selin Jessa \email{selin.jessa@mail.mcgill.ca} (0000-0003-4192-6523)
 
 Authors:
 \itemize{
