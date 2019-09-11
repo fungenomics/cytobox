@@ -176,7 +176,10 @@ plot_dr <- function(seurat,
         }
     }
 
-    if (!is.null(order_by)) embedding <- embedding %>% arrange_(order_by)
+    # We want to sort point such that any NAs will be plot first/underneath
+    colour_by2 <- ifelse(is.null(colour_by), "Cluster", colour_by)
+    if (!is.null(order_by)) embedding <- embedding %>% arrange_(paste0("!is.na(", colour_by2, ")"), order_by)
+    else embedding <- embedding %>% arrange(!is.na(Cluster))
 
     # Start the plot!
     gg <- ggplot(embedding, aes(x = dim1, y = dim2))
