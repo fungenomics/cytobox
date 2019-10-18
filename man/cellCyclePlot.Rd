@@ -12,7 +12,8 @@ cellCyclePlot(seurat, species = "m_musculus", facets = TRUE,
 
 \item{species}{m_musculus or h_sapiens.}
 
-\item{facets}{Boolean to indicate whether a facet should be used for each cluster., or if all the clusters should be plotted together.}
+\item{facets}{Boolean to indicate whether a facet should be used for each cluster., or if
+all the clusters should be plotted together.}
 
 \item{legend}{Boolean to indicate whether legend should be included.}
 }
@@ -20,7 +21,9 @@ cellCyclePlot(seurat, species = "m_musculus", facets = TRUE,
 A ggplot2 object. A tSNE plot with the cell cycle plots
 }
 \description{
-Plots a labelled tSNE plot from a Seurat object, where the clusters are labelled directly on the plot
+Computes cell cycle phase scores for each cell (based on the mean expression of phase markers
+from Whitfield et al, 2002). Plots a labelled tSNE plot from a Seurat object, where the clusters
+are labelled directly on the plot
 }
 \author{
 Alexis Blanchet-Cohen

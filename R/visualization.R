@@ -1,5 +1,6 @@
 # Functions for basic visualization of the data
-
+# These plots borrow the idea of the Seurat "FeaturePlot" function,
+# with additional options for customization of the visualizations.
 
 #' Plot a reduced dimensionality embedding for a Seurat object, colouring
 #' by cluster or arbitrary variables.
@@ -42,11 +43,13 @@
 #' names (at seurat@@ident) consist of a prefix and a suffix separated by a non-alpha
 #' numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 #' and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.
-#' @param cells Character vector of cell names if only a subset of cells should be
-#' plot (these should correspond to seurat@@cell.names). Default: Plot all cells.
+#' @param highlight_cells Character vector of cell names if only a subset of cells should be
+#' coloured in the plot (these should correspond to seurat@@cell.names). Default: Plot all cells.
 #' See the argument \code{clusters_to_label} for only labelling certain clusters.
 #' See the \code{constrain_scale} argument for controlling the scales of the plot.
-#' See \code{\link{highlight}} for more options for plotting specific cells.
+#' @param show_all_cells Logical. When passing cells to \code{highlight_cells},
+#' if TRUE, plot the remaining cells in \code{na_colour}, if FALSE,
+#' only plot the highlighted cells. Default: TRUE.
 #' @param order_by String, corresponding to a column in \code{seurat@@meta.data}, specifying
 #' a variable to control the order in which cells are plot. (Thus, you can manually
 #' specify the order, add it as a new column in \code{seurat@@meta.data}, and pass that).
@@ -58,7 +61,7 @@
 #' @param clusters_to_label (Optional.) If \code{label} is TRUE,
 #' clusters for which labels should be plot (if only a subset of clusters should be labelled).
 #' Default: NULL (Label all clusters).
-#' @param na_color String, specifying the colour (built-in or hex code) to use to
+#' @param na_colour String, specifying the colour (built-in or hex code) to use to
 #' plot points which have an NA value, for example
 #' in the variable specified in \code{colour_by}. Default: light gray ("gray80),
 #' change to "white" to purposely hide those cells. If you do not want to plot
@@ -90,6 +93,13 @@
 #'
 #' # Plot the prefixes only
 #' tsne(pbmc2, label_short = TRUE)
+#'
+#' # Only colour cells in cluster 3
+#' plot_dr(pbmc, highlight_cells = whichCells(pbmc, clusters = 3))
+#'
+#' # Plot the # of genes for only cells in cluster 3, but display all cells on the plot
+#' tsne(pbmc, highlight_cells = whichCells(pbmc, clusters = 3), colour_by = "nGene",
+#' show_all_cells = FALSE, colours = viridis::viridis(100), colour_by_type = "continuous")
 plot_dr <- function(seurat,
                     reduction = "tsne",
                     colour_by = NULL,
@@ -101,13 +111,14 @@ plot_dr <- function(seurat,
                     legend = ifelse((is.null(colour_by)) && (label), FALSE, TRUE),
                     label_repel = TRUE,
                     label_size = 4,
-                    cells = NULL,
+                    highlight_cells = NULL,
+                    show_all_cells = TRUE,
                     order_by = NULL,
                     clusters_to_label = NULL,
                     hide_ticks = TRUE,
                     title = NULL,
                     label_short = FALSE,
-                    na_color = "gray80",
+                    na_colour = "gray80",
                     limits = NULL,
                     constrain_scale = TRUE,
                     hide_axes = FALSE,
@@ -148,9 +159,30 @@ plot_dr <- function(seurat,
     }
 
     if (!is.null(colour_by)) embedding[[colour_by]] <- seurat@meta.data[[colour_by]]
-    if (!is.null(cells)) embedding <- embedding %>% filter(Cell %in% cells)
-    if (!is.null(order_by)) embedding <- embedding %>% arrange_(order_by)
 
+    # Deal with which cells to plot
+    if (!is.null(highlight_cells)) {
+
+        # Show all cells, but only colour the highlighted ones, by setting the colour_by
+        # value to NA for all other cells
+        if (show_all_cells) {
+
+            if (is.null(colour_by)) embedding[!(embedding$Cell %in% highlight_cells), ]$Cluster <- NA
+            else embedding[!(embedding$Cell %in% highlight_cells), ][[colour_by]] <- NA
+
+        } else { # Otherwise, only display and colour the highlighted ones
+
+            embedding <- embedding %>% filter(Cell %in% highlight_cells)
+
+        }
+    }
+
+    # We want to sort point such that any NAs will be plot first/underneath
+    colour_by2 <- ifelse(is.null(colour_by), "Cluster", colour_by)
+    if (!is.null(order_by)) embedding <- embedding %>% arrange_(paste0("!is.na(", colour_by2, ")"), order_by)
+    else embedding <- embedding %>% arrange_(paste0("!is.na(", colour_by2, ")"))
+
+    # Start the plot!
     gg <- ggplot(embedding, aes(x = dim1, y = dim2))
 
     if (label && all(is.na(seurat@ident))) {
@@ -178,7 +210,7 @@ plot_dr <- function(seurat,
 
         gg <- gg +
             geom_point(aes(colour = Cluster), size = point_size, alpha = alpha) +
-            scale_color_manual(values = colours)
+            scale_color_manual(values = colours, na.value = na_colour)
 
     } else {
 
@@ -190,11 +222,11 @@ plot_dr <- function(seurat,
 
         if (!is.null(colours)) {
 
-            if (colour_by_type == "discrete") gg <- gg + scale_color_manual(values = colours, na.value = na_color)
+            if (colour_by_type == "discrete") gg <- gg + scale_color_manual(values = colours, na.value = na_colour)
             else if (colour_by_type == "continuous") {
 
                 gg <- gg + scale_color_gradientn(colours = colours,
-                                                 na.value = na_color,
+                                                 na.value = na_colour,
                                                  limits = lims)
             }
 
@@ -203,7 +235,7 @@ plot_dr <- function(seurat,
             if (colour_by_type == "continuous") { # Otherwise for discrete, default ggplot2 colours are used
 
                 gg <- gg + scale_color_gradientn(colours = grDevices::colorRampPalette(RColorBrewer::brewer.pal(8, "OrRd"))(n = 100),
-                                                 na.value = na_color,
+                                                 na.value = na_colour,
                                                  limits = lims)
 
             }
@@ -364,7 +396,7 @@ highlight <- function(seurat,
                                           colours = highlight_colours,
                                           clusters_to_label = clusters,
                                           # Don't plot cells from the non-highlighted clusterss
-                                          cells = cells_label,
+                                          highlight_cells = cells_label,
                                           label = label,
                                           ...)
 

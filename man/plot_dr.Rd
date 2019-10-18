@@ -16,11 +16,12 @@ plot_dr(seurat, reduction = "tsne", colour_by = NULL, colours = NULL,
   colour_by_type = "discrete", label = TRUE,
   point_size = ifelse(length(seurat@cell.names) > 300, 0.6, 1.3),
   alpha = 0.8, legend = ifelse((is.null(colour_by)) && (label), FALSE,
-  TRUE), label_repel = TRUE, label_size = 4, cells = NULL,
-  order_by = NULL, clusters_to_label = NULL, hide_ticks = TRUE,
-  title = NULL, label_short = FALSE, na_color = "gray80",
-  limits = NULL, constrain_scale = TRUE, hide_axes = FALSE,
-  dim1 = 1, dim2 = 2, border_colour = NULL, border_size = NULL)
+  TRUE), label_repel = TRUE, label_size = 4, highlight_cells = NULL,
+  show_all_cells = TRUE, order_by = NULL, clusters_to_label = NULL,
+  hide_ticks = TRUE, title = NULL, label_short = FALSE,
+  na_colour = "gray80", limits = NULL, constrain_scale = TRUE,
+  hide_axes = FALSE, dim1 = 1, dim2 = 2, border_colour = NULL,
+  border_size = NULL)
 
 tsne(seurat, ...)
 
@@ -72,11 +73,14 @@ cluster label at the cluster center. Default: TRUE.}
 
 \item{label_size}{Numeric, controls the size of text labels. Default: 4.}
 
-\item{cells}{Character vector of cell names if only a subset of cells should be
-plot (these should correspond to seurat@cell.names). Default: Plot all cells.
+\item{highlight_cells}{Character vector of cell names if only a subset of cells should be
+coloured in the plot (these should correspond to seurat@cell.names). Default: Plot all cells.
 See the argument \code{clusters_to_label} for only labelling certain clusters.
-See the \code{constrain_scale} argument for controlling the scales of the plot.
-See \code{\link{highlight}} for more options for plotting specific cells.}
+See the \code{constrain_scale} argument for controlling the scales of the plot.}
+
+\item{show_all_cells}{Logical. When passing cells to \code{highlight_cells},
+if TRUE, plot the remaining cells in \code{na_colour}, if FALSE,
+only plot the highlighted cells. Default: TRUE.}
 
 \item{order_by}{String, corresponding to a column in \code{seurat@meta.data}, specifying
 a variable to control the order in which cells are plot. (Thus, you can manually
@@ -101,7 +105,7 @@ names (at seurat@ident) consist of a prefix and a suffix separated by a non-alph
 numeric character (\code{"[^[:alnum:]]+"}), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.}
 
-\item{na_color}{String, specifying the colour (built-in or hex code) to use to
+\item{na_colour}{String, specifying the colour (built-in or hex code) to use to
 plot points which have an NA value, for example
 in the variable specified in \code{colour_by}. Default: light gray ("gray80),
 change to "white" to purposely hide those cells. If you do not want to plot
@@ -151,6 +155,13 @@ tsne(pbmc2)
 
 # Plot the prefixes only
 tsne(pbmc2, label_short = TRUE)
+
+# Only colour cells in cluster 3
+plot_dr(pbmc, highlight_cells = whichCells(pbmc, clusters = 3))
+
+# Plot the # of genes for only cells in cluster 3, but display all cells on the plot
+tsne(pbmc, highlight_cells = whichCells(pbmc, clusters = 3), colour_by = "nGene",
+show_all_cells = FALSE, colours = viridis::viridis(100), colour_by_type = "continuous")
 }
 \author{
 Selin Jessa
