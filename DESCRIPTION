@@ -39,9 +39,7 @@ RoxygenNote: 6.1.1
 Suggests: 
     testthat,
     knitr,
-    rmarkdown,
-    monocle (>= 2.8.0),
-    DDRTree
+    rmarkdown
 Remotes:
     satijalab/seurat@v2.3.3
 VignetteBuilder: knitr

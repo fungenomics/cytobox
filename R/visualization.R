@@ -1,5 +1,6 @@
 # Functions for basic visualization of the data
-
+# These plots borrow the idea of the Seurat "FeaturePlot" function,
+# with additional options for customization of the visualizations.
 
 #' Plot a reduced dimensionality embedding for a Seurat object, colouring
 #' by cluster or arbitrary variables.

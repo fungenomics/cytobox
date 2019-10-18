@@ -1,4 +1,6 @@
 # Functions for plotting the data with computed information
+# These plots borrow the idea of the Seurat "FeaturePlot" function,
+# with additional options for customization of the visualizations.
 
 
 
@@ -147,7 +149,7 @@ tsneByMeanMarkerExpression <- function(seurat, genes,
                   glue('{gsub("_", " ", vars[2])} ({pve[dim2]}%)'))
 
     } else {
-	axes <- vars	    
+	axes <- vars
     }
 
     gg <- gg +

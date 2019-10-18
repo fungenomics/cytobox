@@ -28,11 +28,14 @@ computeCC <- function(seurat, species = "mm") {
 
 #' cellCyclePlot
 #'
-#' Plots a labelled tSNE plot from a Seurat object, where the clusters are labelled directly on the plot
+#' Computes cell cycle phase scores for each cell (based on the mean expression of phase markers
+#' from Whitfield et al, 2002). Plots a labelled tSNE plot from a Seurat object, where the clusters
+#' are labelled directly on the plot
 #'
 #' @param seurat Seurat object.
 #' @param species m_musculus or h_sapiens.
-#' @param facets Boolean to indicate whether a facet should be used for each cluster., or if all the clusters should be plotted together.
+#' @param facets Boolean to indicate whether a facet should be used for each cluster., or if
+#' all the clusters should be plotted together.
 #' @param legend Boolean to indicate whether legend should be included.
 #
 #' @return A ggplot2 object. A tSNE plot with the cell cycle plots
