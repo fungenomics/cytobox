@@ -67,7 +67,7 @@ in order to highlight the desired clusters." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cytobox</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -84,6 +84,18 @@ in order to highlight the desired clusters." />
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/extra/feature_plots.html">Highly-customizable feature plots</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -189,11 +201,13 @@ small lines indicating the breaks along the x- and y-axes. Default: FALSE</p></d
 names (at seurat@ident) consist of a prefix and a suffix separated by a non-alpha
 numeric character (<code>"[^[:alnum:]]+"</code>), and tries to separate these names
 and only plot the prefix, for shorter labels and a cleaner plot. Default: FALSE.</p></dd>
-  <dt>cells</dt><dd><p>Character vector of cell names if only a subset of cells should be
-plot (these should correspond to seurat@cell.names). Default: Plot all cells.
+  <dt>highlight_cells</dt><dd><p>Character vector of cell names if only a subset of cells should be
+coloured in the plot (these should correspond to seurat@cell.names). Default: Plot all cells.
 See the argument <code>clusters_to_label</code> for only labelling certain clusters.
-See the <code>constrain_scale</code> argument for controlling the scales of the plot.
-See <code>highlight</code> for more options for plotting specific cells.</p></dd>
+See the <code>constrain_scale</code> argument for controlling the scales of the plot.</p></dd>
+  <dt>show_all_cells</dt><dd><p>Logical. When passing cells to <code>highlight_cells</code>,
+if TRUE, plot the remaining cells in <code>na_colour</code>, if FALSE,
+only plot the highlighted cells. Default: TRUE.</p></dd>
   <dt>order_by</dt><dd><p>String, corresponding to a column in <code>seurat@meta.data</code>, specifying
 a variable to control the order in which cells are plot. (Thus, you can manually
 specify the order, add it as a new column in <code>seurat@meta.data</code>, and pass that).
@@ -202,7 +216,7 @@ be a factor, and cells will be ordered according to the levels, with cells
 in the first level plot on top. Default: if a numeric column is specified
 to <code>colour_by</code>, sort by that variable, otherwise, use the ordering of the cells
 in the Seurat object.</p></dd>
-  <dt>na_color</dt><dd><p>String, specifying the colour (built-in or hex code) to use to
+  <dt>na_colour</dt><dd><p>String, specifying the colour (built-in or hex code) to use to
 plot points which have an NA value, for example
 in the variable specified in <code>colour_by</code>. Default: light gray ("gray80),
 change to "white" to purposely hide those cells. If you do not want to plot

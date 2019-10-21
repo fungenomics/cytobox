@@ -32,7 +32,9 @@
 
 <meta property="og:title" content="cellCyclePlot — cellCyclePlot" />
 
-<meta property="og:description" content="Plots a labelled tSNE plot from a Seurat object, where the clusters are labelled directly on the plot" />
+<meta property="og:description" content="Computes cell cycle phase scores for each cell (based on the mean expression of phase markers
+from Whitfield et al, 2002). Plots a labelled tSNE plot from a Seurat object, where the clusters
+are labelled directly on the plot" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -63,7 +65,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">cytobox</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.1</span>
       </span>
     </div>
 
@@ -80,6 +82,18 @@
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/extra/feature_plots.html">Highly-customizable feature plots</a>
+    </li>
+  </ul>
 </li>
       </ul>
       
@@ -109,7 +123,9 @@
 
     <div class="ref-description">
     
-    <p>Plots a labelled tSNE plot from a Seurat object, where the clusters are labelled directly on the plot</p>
+    <p>Computes cell cycle phase scores for each cell (based on the mean expression of phase markers
+from Whitfield et al, 2002). Plots a labelled tSNE plot from a Seurat object, where the clusters
+are labelled directly on the plot</p>
     
     </div>
 
@@ -129,7 +145,8 @@
     </tr>
     <tr>
       <th>facets</th>
-      <td><p>Boolean to indicate whether a facet should be used for each cluster., or if all the clusters should be plotted together.</p></td>
+      <td><p>Boolean to indicate whether a facet should be used for each cluster., or if
+all the clusters should be plotted together.</p></td>
     </tr>
     <tr>
       <th>legend</th>

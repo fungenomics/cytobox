@@ -8,7 +8,7 @@ Authors@R: c(person("Selin", "Jessa", email = "selin.jessa@mail.mcgill.ca", role
             person("Alexis", "Blanchet-Cohen", role = "aut"),
             person("Yixing", "Hu", role = "aut"),
             person(c("Claudia", "L."), "Kleinman", role = "aut"),
-            person(c("Kleinman", "Lab,"), c("McGill", "University"), role = "ctb"))
+            person(c("Kleinman", "Lab,"), "McGill University", role = "ctb"))
 Encoding: UTF-8
 License: GPL-3 + file LICENSE
 LazyData: true
