@@ -13,7 +13,7 @@ addons:
   apt:
     packages:
      - ccache
-
+     
 # Following
 # https://gist.github.com/episodeyang/dfa69365203639fcde5f2aae73f7d9ac
 # https://docs.travis-ci.com/user/installing-dependencies/#installing-projects-from-source
@@ -28,6 +28,9 @@ before_install:
 # https://github.com/satijalab/seurat/issues/1114#issuecomment-488092170
 r_github_packages:
   - UCSF-TI/fake-hdf5r
+  
+bioc_packages:
+  - multtest
 
 # Notes:
 # We can specify a specific version of an R package (older than the CRAN version)#
